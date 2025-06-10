@@ -1,0 +1,89 @@
+# main.pyAdd commentMore actions
+# Interfaz estilo ChatGPT Dark usando PySide6
+# Panel lateral + ventana de chat + entrada de texto con estilo Fusion Dark
+
+import sys
+from PySide6.QtWidgets import (
+    QApplication, QMainWindow, QWidget,
+    QHBoxLayout, QVBoxLayout, QPushButton,
+    QListWidget, QListWidgetItem, QLineEdit,
+    QSplitter, QSizePolicy
+)
+from PySide6.QtCore import Qt, QFile, QTextStream
+
+class ChatApp(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Plataforma de Cálculos - ChatGPT Dark")
+        self.setMinimumSize(800, 600)
+        self.init_ui()
+
+    def init_ui(self):
+        central = QWidget()
+        main_layout = QHBoxLayout(central)
+        self.setCentralWidget(central)
+
+        # Panel lateral
+        sidebar = QWidget()
+        sidebar_layout = QVBoxLayout(sidebar)
+        sidebar_layout.setContentsMargins(0, 0, 0, 0)
+        sidebar.setFixedWidth(200)
+        for label in ["Inicio", "Historial", "Configuración", "Ayuda"]:
+            btn = QPushButton(label)
+            btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+            sidebar_layout.addWidget(btn)
+        sidebar_layout.addStretch()
+
+        # Área de chat
+        chat_widget = QWidget()
+        chat_layout = QVBoxLayout(chat_widget)
+        chat_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.chat_list = QListWidget()
+        self.chat_list.setStyleSheet("background: #0A0A0A; color: #EEEEEE;")
+        chat_layout.addWidget(self.chat_list)
+
+        input_layout = QHBoxLayout()
+        self.input_edit = QLineEdit()
+        self.input_edit.setPlaceholderText("Escribe un mensaje...")
+        send_btn = QPushButton("Enviar")
+        send_btn.setFixedWidth(80)
+        send_btn.clicked.connect(self.send_message)
+        input_layout.addWidget(self.input_edit)
+        input_layout.addWidget(send_btn)
+        chat_layout.addLayout(input_layout)
+
+        # Splitter para ajustar tamaños
+        splitter = QSplitter(Qt.Horizontal)
+        splitter.addWidget(sidebar)
+        splitter.addWidget(chat_widget)
+        splitter.setSizes([200, 600])
+        main_layout.addWidget(splitter)
+
+    def send_message(self):
+        text = self.input_edit.text().strip()
+        if not text:
+            return
+        user_item = QListWidgetItem(f"Usuario: {text}")
+        user_item.setTextAlignment(Qt.AlignRight)
+        self.chat_list.addItem(user_item)
+        self.input_edit.clear()
+        bot_item = QListWidgetItem("ChatGPT: Aquí aparecerá la respuesta...")
+        bot_item.setTextAlignment(Qt.AlignLeft)
+        self.chat_list.addItem(bot_item)
+        self.chat_list.scrollToBottom()
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+
+    # Cargar estilo desde QSS (fusion_dark.qss)
+    qss_file = QFile("resources/fusion_dark.qss")
+    if qss_file.open(QFile.ReadOnly | QFile.Text):
+        stream = QTextStream(qss_file)
+        qss = stream.readAll()
+        app.setStyleSheet(qss)
+        qss_file.close()
+
+    window = ChatApp()
+    window.show()
+    sys.exit(app.exec())
