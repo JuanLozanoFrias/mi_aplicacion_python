@@ -1,0 +1,66 @@
+/* resources/fusion_dark_v2.qss — tema oscuro suave, sin cambiar tu layout */
+
+* { font-size: 14px; }
+QWidget { background: #1f2331; color: #E8EBFF; }
+
+/* Etiquetas */
+QLabel { color: #E2E6FF; }
+
+/* Entradas */
+QLineEdit, QComboBox, QSpinBox, QTextEdit, QPlainTextEdit {
+  background: #202536;
+  color: #E8EBFF;
+  border: 1px solid #3a3f55;
+  border-radius: 8px;
+  padding: 6px 8px;
+  min-height: 30px;
+}
+QLineEdit:focus, QComboBox:focus, QSpinBox:focus, QTextEdit:focus, QPlainTextEdit:focus {
+  border: 1px solid #6FA0FF;
+}
+
+/* Dropdown */
+QComboBox::drop-down { width: 24px; border-left: 1px solid #3a3f55; }
+QComboBox QAbstractItemView {
+  background: #242a3b;
+  border: 1px solid #3a3f55;
+  selection-background-color: #384264;
+  selection-color: #ffffff;
+}
+
+/* Botones */
+QPushButton {
+  background: #5b8bea;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-weight: 700;
+}
+QPushButton:hover { background: #6c9cf0; }
+QPushButton:pressed { background: #4d7cdf; }
+QPushButton:disabled { background: #3e4766; color: #aab4d6; }
+
+/* Radios / Checks */
+QRadioButton, QCheckBox { color: #E2E6FF; spacing: 6px; }
+QRadioButton::indicator, QCheckBox::indicator { width: 16px; height: 16px; }
+QRadioButton::indicator::unchecked, QCheckBox::indicator::unchecked {
+  border: 2px solid #65719a; background: transparent; border-radius: 9px;
+}
+QRadioButton::indicator::checked, QCheckBox::indicator::checked {
+  border: 2px solid #6FA0FF; background: #6FA0FF; border-radius: 9px;
+}
+
+/* Listas / tablas */
+QListWidget, QTreeWidget, QTableWidget, QTableView {
+  background: #202536;
+  border: 1px solid #3b4258;
+  border-radius: 8px;
+}
+
+/* Barras de scroll discretas */
+QScrollBar:vertical {
+  background: transparent; width: 10px; margin: 8px 4px 8px 4px;
+}
+QScrollBar::handle:vertical { background: #5b8bea; border-radius: 6px; }
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0px; background: transparent; }

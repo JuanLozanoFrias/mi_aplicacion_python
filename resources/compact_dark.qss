@@ -1,0 +1,81 @@
+/* resources/compact_dark.qss — Tema oscuro COMPACTO (menos fatiga) */
+
+* { font-size: 13px; }
+QWidget { background: #181d2a; color: #E8ECFF; }
+
+/* --- Tarjetas / paneles --- */
+QFrame[role="card"] {
+  background: #222838;
+  border: 1px solid #2f3750;
+  border-radius: 12px;
+}
+
+/* --- Textos --- */
+QLabel { color: #E6EAFF; }
+
+/* --- Entradas: compactas --- */
+QLineEdit, QComboBox, QSpinBox, QDoubleSpinBox, QTextEdit, QPlainTextEdit {
+  background: #1e2333;
+  color: #E8ECFF;
+  border: 1px solid #38415c;
+  border-radius: 8px;
+  padding: 4px 6px;
+  min-height: 28px;           /* más bajo que lo que tienes ahora */
+}
+QLineEdit:focus, QComboBox:focus, QSpinBox:focus, QDoubleSpinBox:focus,
+QTextEdit:focus, QPlainTextEdit:focus {
+  border: 1px solid #6FA0FF;
+}
+
+/* Dropdown */
+QComboBox::drop-down { width: 22px; border-left: 1px solid #38415c; }
+QComboBox QAbstractItemView {
+  background: #20263a;
+  border: 1px solid #38415c;
+  selection-background-color: #354064;
+  selection-color: #ffffff;
+}
+
+/* --- Botones --- */
+QPushButton {
+  background: #5b8bea;
+  color: white;
+  border: none;
+  border-radius: 8px;          /* más pequeño */
+  padding: 8px 12px;           /* más compacto */
+  font-weight: 700;
+}
+QPushButton:hover { background: #6c9cf0; }
+QPushButton:pressed { background: #4d7cdf; }
+QPushButton:disabled { background: #3e4766; color: #aab4d6; }
+
+/* --- Radios / Checks compactos --- */
+QRadioButton, QCheckBox { color: #E8ECFF; spacing: 6px; }
+QRadioButton::indicator, QCheckBox::indicator { width: 14px; height: 14px; }
+QRadioButton::indicator:unchecked, QCheckBox::indicator:unchecked {
+  border: 2px solid #65719a; background: transparent; border-radius: 8px;
+}
+QRadioButton::indicator:checked, QCheckBox::indicator:checked {
+  border: 2px solid #6FA0FF; background: #6FA0FF; border-radius: 8px;
+}
+
+/* --- Listas / tablas --- */
+QListWidget, QTreeWidget, QTableWidget, QTableView {
+  background: #1e2333;
+  border: 1px solid #2f3750;
+  border-radius: 8px;
+}
+
+/* --- Barras de scroll discretas --- */
+QScrollArea { background: transparent; border: none; }
+QScrollBar:vertical {
+  background: transparent; width: 9px; margin: 8px 4px 8px 4px;
+}
+QScrollBar::handle:vertical { background: #5b8bea; border-radius: 5px; }
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0px; background: transparent; }
+
+QScrollBar:horizontal {
+  background: transparent; height: 9px; margin: 4px 8px 4px 8px;
+}
+QScrollBar::handle:horizontal { background: #5b8bea; border-radius: 5px; }
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal { width: 0px; background: transparent; }

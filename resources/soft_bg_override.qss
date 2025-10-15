@@ -1,0 +1,14 @@
+/* soft_bg_override.qss
+   OBJETIVO: cambiar SOLO el color del fondo global, sin alterar el resto.
+   Este archivo se carga DESPUÉS de fusion_dark.qss y solo define fondo. */
+
+QWidget {
+  /* degradé muy sutil, más descansado */
+  background: qlineargradient(
+    x1:0, y1:0, x2:0, y2:1,
+    stop:0  #1a2030,
+    stop:1  #141925
+  );
+}
+
+/* Nada más. No tocamos botones, inputs, ni paddings. */

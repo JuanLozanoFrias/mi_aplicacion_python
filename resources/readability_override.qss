@@ -1,0 +1,51 @@
+/* readability_override.qss — subir contraste sin tocar layout/tamaños */
+
+/* Texto general un poco más claro */
+QWidget { color: #ECF2FF; }               /* antes #e0e0e0 aprox */
+
+/* Etiquetas y títulos */
+QLabel { color: #ECF2FF; }
+QGroupBox::title, QLabel[role="title"] { color: #FFFFFF; }
+
+/* Texto dentro de entradas */
+QLineEdit, QComboBox, QSpinBox, QDoubleSpinBox, QTextEdit, QPlainTextEdit {
+  color: #F5F8FF;                          /* texto de campo */
+  background: #1B2131;                     /* pelín más claro que tu base */
+  border: 1px solid #46537A;               /* borde más definido */
+}
+QLineEdit[readOnly="true"] { color: #CAD4F7; }
+
+/* Placeholder más visible */
+QLineEdit[echoMode="0"]::placeholder,      /* normal */
+QLineEdit::placeholder,
+QTextEdit[acceptRichText="false"] {
+  color: #AAB7E6;                          /* sube contraste del placeholder */
+}
+
+/* Foco claro (sin “glow” chillón) */
+QLineEdit:focus, QComboBox:focus,
+QSpinBox:focus, QDoubleSpinBox:focus,
+QTextEdit:focus, QPlainTextEdit:focus {
+  border: 1px solid #86A8FF;               /* azul más luminoso */
+}
+
+/* Items en combos/listas: selección legible */
+QComboBox QAbstractItemView {
+  background: #202740;
+  border: 1px solid #46537A;
+  selection-background-color: #36467A;
+  selection-color: #FFFFFF;
+}
+
+/* Radios/Checks más visibles */
+QRadioButton, QCheckBox { color: #ECF2FF; }
+QRadioButton::indicator, QCheckBox::indicator { width: 16px; height: 16px; }
+QRadioButton::indicator:unchecked, QCheckBox::indicator:unchecked {
+  border: 2px solid #7E8BBC; background: transparent; border-radius: 9px;
+}
+QRadioButton::indicator:checked, QCheckBox::indicator:checked {
+  border: 2px solid #86A8FF; background: #86A8FF; border-radius: 9px;
+}
+
+/* Botones: solo texto más blanco (no cambiamos tamaño ni color base) */
+QPushButton { color: #FFFFFF; }

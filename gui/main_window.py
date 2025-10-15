@@ -10,9 +10,7 @@ from PySide6.QtGui import QColor
 from PySide6.QtSvgWidgets import QSvgWidget
 
 from gui.pages.carga_page import CargaPage
-#  >> aquí podrás importar tus páginas futuras
-# from gui.pages.materiales_page import MaterialesPage
-# from gui.pages.voltaje_page    import VoltajePage
+from gui.pages.materiales_page import MaterialesPage
 
 class ElectroCalcApp(QMainWindow):
     def __init__(self):
@@ -23,9 +21,9 @@ class ElectroCalcApp(QMainWindow):
         self._apply_base_style()
         self._build_ui()
 
-    # ------------------------------------------------------------------  
-    #  ESTILO GLOBAL (QSS BASE + EXTRA)  
-    # ------------------------------------------------------------------  
+    # ------------------------------------------------------------------
+    #  ESTILO GLOBAL (QSS BASE + EXTRA)
+    # ------------------------------------------------------------------
     def _apply_base_style(self):
         project_root = Path(__file__).resolve().parents[2]
         qss_file     = project_root / "resources" / "fusion_dark.qss"
@@ -119,9 +117,9 @@ QTableCornerButton::section {
 """
         self.setStyleSheet(base_qss + extra_qss)
 
-    # ------------------------------------------------------------------  
-    #  CONSTRUCCIÓN DE LA INTERFAZ  
-    # ------------------------------------------------------------------  
+    # ------------------------------------------------------------------
+    #  CONSTRUCCIÓN DE LA INTERFAZ
+    # ------------------------------------------------------------------
     def _build_ui(self):
         central = QWidget(); self.setCentralWidget(central)
         root    = QHBoxLayout(central); root.setContentsMargins(0,0,0,0)
@@ -135,24 +133,24 @@ QTableCornerButton::section {
         side_layout.addWidget(self._create_logo_section())
 
         self.nav = QListWidget()
-        for txt in ["Cargas Térmicas", "Materiales", "Voltaje", "Corriente", "Resistencia"]:
+        for txt in ["Cargas Térmicas", "Tableros Eléctricos Racks", "Voltaje", "Corriente", "Resistencia"]:
             self.nav.addItem(QListWidgetItem(txt))
         side_layout.addWidget(self.nav, stretch=1)
         root.addWidget(side)
 
         # -------- Área de páginas --------
         self.stack = QStackedWidget()
-        self.stack.addWidget(CargaPage())
-        # self.stack.addWidget(MaterialesPage())
-        # self.stack.addWidget(VoltajePage())
+        self.stack.addWidget(CargaPage())          # índice 0 → Cargas Térmicas
+        self.stack.addWidget(MaterialesPage())     # índice 1 → Materiales (Pasos 1..4)
         root.addWidget(self.stack, 1)
 
+        # Al hacer clic en elementos sin página creada, no cambia el índice
         self.nav.currentRowChanged.connect(self.stack.setCurrentIndex)
         self.nav.setCurrentRow(0)
 
-    # ------------------------------------------------------------------  
-    #  Logo en la parte superior de la barra lateral  
-    # ------------------------------------------------------------------  
+    # ------------------------------------------------------------------
+    #  Logo en la parte superior de la barra lateral
+    # ------------------------------------------------------------------
     def _create_logo_section(self):
         profile = QFrame(); profile.setFixedHeight(240)
         p_layout = QVBoxLayout(profile); p_layout.setContentsMargins(0,8,0,16)
