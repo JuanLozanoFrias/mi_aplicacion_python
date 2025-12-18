@@ -1,0 +1,2926 @@
+{
+  "version": 1,
+  "bloques": [
+{
+      "id": "RELE_DE_APERTURA",
+      "reglas": [
+{
+          "pregunta": "RELE DE APERTURA",
+          "accion": "pone",
+          "item": "A1-2Q1",
+          "nombre": "RELE DE APERTURA",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "APER"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "mult": null,
+              "bornera": {"fase": 1, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "APER"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "mult": null,
+              "item": "",
+              "bornera": {"fase": 1, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "PROTECCION TRANSFORMADOR RESISTENCIAS",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "A1-2Q3",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "G"}, {"op": "E", "val": "16"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "mult": null,
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "G"}, {"op": "E", "val": "16"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "mult": null,
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "TRANSFORMADOR RESISTENCIAS",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "A1-2T1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "TRA"}, {"op": "E", "val": "2,5KVA"}, {"op": "P", "val": "TENSION CONTROL"}, {"op": "Q", "val": "TENSION ALIMENTACION"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "marca": "GENERICO",
+              "mult": null,
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "TRA"}, {"op": "E", "val": "2,5KVA"}, {"op": "P", "val": "TENSION CONTROL"}, {"op": "Q", "val": "TENSION ALIMENTACION"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "MURRELEKTRONIK",
+              "mult": null,
+              "item": "A1-2T1-UL",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "GUARDAMOTOR DISTRIBUCION",
+      "reglas": [
+{
+          "pregunta": "DISTRIBUCION TRANSFORMADORES",
+          "accion": "pone",
+          "item": "A1-2Q4",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "G"}, {"op": "E", "val": "32"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "mult": null,
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "G"}, {"op": "E", "val": "32"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "mult": null,
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "ILUMINACION TABLERO",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "A1-6H#",
+          "pregunta_mult": "NUMERO DE LAMPARAS",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "IL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "marca": "GENERICO",
+              "mult": "#",
+              "bornera": {"fase": 1, "neutro": 1, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "IL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "RITTAL",
+              "mult": "#",
+              "item": "",
+              "bornera": {"fase": 1, "neutro": 1, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER ILUMINACION- VENTILADORES",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "A1-6F1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "10"}, {"op": "K", "val": "1"}, {"op": "J", "val": ""}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "10"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "ABB",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "SWITCH ILUMINACION",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "A1-6S#",
+          "pregunta_mult": "NUMERO DE LAMPARAS",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "IP"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "marca": "GENERICO",
+              "mult": "#",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "IP"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "RITTAL",
+              "mult": "#",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "EXTRACTOR TABLERO",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "A1-6M#",
+          "pregunta_mult": "NUMERO DE VENTILADORES TABLERO",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "VE"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "marca": "GENERICO",
+              "mult": "#",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "IP"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "RITTAL",
+              "mult": "#",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "TERMOSTATO",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "A1-6B1",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "GENERICO",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "TE"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "TE"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "RITTAL",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "PROTECTOR DE FASE",
+      "reglas": [
+{
+          "pregunta": "MONITOR DE FASE",
+          "accion": "pone",
+          "item": "A1-18B1",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "GENERICO",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "PF"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "PF"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "SCHNEIDER",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER PROTECTOR DE FASE",
+      "reglas": [
+{
+          "pregunta": "MONITOR DE FASE",
+          "accion": "pone",
+          "item": "A1-18FA1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "3"}, {"op": "J", "val": ""}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "3"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER BOBINA CONTACTOR DE MANDO",
+      "reglas": [
+{
+          "pregunta": "MONITOR DE FASE",
+          "accion": "pone",
+          "item": "A1-18FA2",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "2"}, {"op": "K", "val": "1"}, {"op": "J", "val": ""}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "2"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "PROTECCION TRAFO CONTROL",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "A1-20Q1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "G"}, {"op": "E", "val": "16"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 2, "neutro": 1, "tierra": 1}
+            },
+{
+              "tokens": [{"op": "A", "val": "G"}, {"op": "E", "val": "16"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 2, "neutro": 1, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "TRANSFORMADOR CONTROL",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "A1-20T1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "TRA"}, {"op": "E", "val": "2,5KVA"}, {"op": "P", "val": "TENSION CONTROL"}, {"op": "Q", "val": "TENSION ALIMENTACION"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "marca": "GENERICO",
+              "mult": null,
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "TRA"}, {"op": "E", "val": "2,5KVA"}, {"op": "P", "val": "TENSION CONTROL"}, {"op": "Q", "val": "TENSION ALIMENTACION"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "MURRELEKTRONIK",
+              "mult": null,
+              "item": "A1-20T1-UL",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER PILOTOS BAJA",
+      "reglas": [
+{
+          "pregunta": "LLEVA COMPRESORES DE LT",
+          "accion": "pone",
+          "item": "A1-20FA1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "2"}, {"op": "K", "val": "1"}, {"op": "J", "val": ""}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "2"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER PILOTOS MEDIA",
+      "reglas": [
+{
+          "pregunta": "LLEVA COMPRESORES DE MT",
+          "accion": "pone",
+          "item": "A1-20FA2",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "2"}, {"op": "K", "val": "1"}, {"op": "J", "val": ""}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "2"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER FUENTE 24V DC",
+      "reglas": [
+{
+          "pregunta": "FUENTE 24VDC",
+          "accion": "pone",
+          "item": "A1-22F1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "10"}, {"op": "K", "val": "1"}, {"op": "J", "val": ""}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 1, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "10"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 0, "neutro": 1, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "FUENTE 24V DC ",
+      "reglas": [
+{
+          "pregunta": "FUENTE 24VDC",
+          "accion": "pone",
+          "item": "A1-22G1",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "GENERICO",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "FU"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "FU"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "GENERICO",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "UPS 24V DC ",
+      "reglas": [
+{
+          "pregunta": "FUENTE 24VDC",
+          "accion": "pone",
+          "item": "A1-22G2",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "GENERICO",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "UPS"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "UPS"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "GENERICO",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "PROTECCION TRAFO CONTROL ACEITE 24VAC",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "A1-23Q1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "G"}, {"op": "E", "val": "2,5"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 3, "tierra": 1}
+            },
+{
+              "tokens": [{"op": "A", "val": "G"}, {"op": "E", "val": "2,5"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 0, "neutro": 3, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "TRANSFORMADOR ACEITE",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "A1-23T1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "TRA"}, {"op": "E", "val": "400VA"}, {"op": "Q", "val": "TENSION ALIMENTACION"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "marca": "GENERICO",
+              "mult": null,
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "TRA"}, {"op": "E", "val": "400VA"}, {"op": "Q", "val": "TENSION ALIMENTACION"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "MURRELEKTRONIK",
+              "mult": null,
+              "item": "A1-23T1-UL",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER ACEITE COMPRESORES",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "A1-23F1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "10"}, {"op": "K", "val": "1"}, {"op": "J", "val": ""}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "10"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER ACEITE COMPRESORES",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "A1-23F2",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "10"}, {"op": "K", "val": "1"}, {"op": "J", "val": ""}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "10"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER ALARMA",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "A1-30FA1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "1"}, {"op": "J", "val": ""}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 1, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 0, "neutro": 1, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "RELEVO ALARMA",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "A1-30K#",
+          "pregunta_mult": "SALIDAS PARA ALARMAS ",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "2"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "mult": "#",
+              "bornera": {"fase": 4, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "mult": "#",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "2"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "mult": "#",
+              "item": "",
+              "bornera": {"fase": 4, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "mult": "#",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "MAIN SWITCH",
+      "reglas": [
+{
+          "pregunta": "MAIN SWITCH",
+          "accion": "pone",
+          "item": "A1-31",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 2, "neutro": 0, "tierra": 0}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 2, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER SUCCION MT",
+      "reglas": [
+{
+          "pregunta": "LLEVA COMPRESORES DE MT",
+          "accion": "pone",
+          "item": "B0-2FA1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "1"}, {"op": "J", "val": ""}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 8, "neutro": 1, "tierra": 3}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 8, "neutro": 1, "tierra": 3}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "CONTACTOR DE SUCCION MT",
+      "reglas": [
+{
+          "pregunta": "LLEVA COMPRESORES DE MT",
+          "accion": "pone",
+          "item": "B0-2K1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "CA"}, {"op": "N", "val": "3"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 10, "neutro": 1, "tierra": 1}
+            },
+{
+              "tokens": [{"op": "A", "val": "CA"}, {"op": "N", "val": "3"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 8, "neutro": 1, "tierra": 3}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER RESISTENCIA CARTER MT",
+      "reglas": [
+{
+          "pregunta": "LLEVA COMPRESORES DE MT",
+          "accion": "pone",
+          "item": "B1-4F1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "1"}, {"op": "J", "val": ""}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "TEMPORIZADOR SUCCION MEDIA",
+      "reglas": [
+{
+          "pregunta": "BACK UP",
+          "accion": "pone",
+          "item": "B0-3K1",
+          "marca": "SIEMENS",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "TEMP"}, {"op": "E", "val": "3"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 10, "neutro": 1, "tierra": 1}
+            },
+{
+              "tokens": [{"op": "A", "val": "TEMP"}, {"op": "E", "val": "3"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "SIEMENS",
+              "bornera": {"fase": 10, "neutro": 1, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "B0-4",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "B0-4",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 10, "neutro": 1, "tierra": 1}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 10, "neutro": 1, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "B0-5",
+      "reglas": [
+{
+          "pregunta": "BACK UP",
+          "accion": "pone",
+          "item": "B0-5",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 5, "neutro": 0, "tierra": 1}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 5, "neutro": 0, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "B0-6",
+      "reglas": [
+{
+          "pregunta": "INYECCION DE LIQUIDO MT",
+          "accion": "pone",
+          "item": "B0-6",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 2, "neutro": 0, "tierra": 1}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 2, "neutro": 0, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "B0-6",
+      "reglas": [
+{
+          "pregunta": "INYECCION DE GAS CALIENTE MT",
+          "accion": "pone",
+          "item": "B0-6",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 2, "neutro": 0, "tierra": 1}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 2, "neutro": 0, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "B0-8",
+      "reglas": [
+{
+          "pregunta": "VALVULA 8Y1 3VIAS DESCARGA/SUCCION MT",
+          "accion": "pone",
+          "item": "B0-8",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 4, "neutro": 0, "tierra": 1}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 4, "neutro": 0, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "B0-8",
+      "reglas": [
+{
+          "pregunta": "VALVULA SUCCION MT ACEITE 8Y2",
+          "accion": "pone",
+          "item": "B0-8",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 3, "neutro": 0, "tierra": 1}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 3, "neutro": 0, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER RESISTENCIA SEPARADOR SUC MT",
+      "reglas": [
+{
+          "pregunta": "ACUMULADOR SUCCION MT",
+          "accion": "pone",
+          "item": "B0-30F1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "1"}, {"op": "J", "val": ""}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 12, "neutro": 1, "tierra": 1}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER SUCCION LT",
+      "reglas": [
+{
+          "pregunta": "LLEVA COMPRESORES DE LT",
+          "accion": "pone",
+          "item": "G0-2FA1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "1"}, {"op": "J", "val": ""}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 10, "neutro": 1, "tierra": 3}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 10, "neutro": 1, "tierra": 3}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "CONTACTOR DE SUCCION LT",
+      "reglas": [
+{
+          "pregunta": "LLEVA COMPRESORES DE LT",
+          "accion": "pone",
+          "item": "G0-2K1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "CA"}, {"op": "N", "val": "3"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 10, "neutro": 1, "tierra": 1}
+            },
+{
+              "tokens": [{"op": "A", "val": "CA"}, {"op": "N", "val": "3"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 10, "neutro": 1, "tierra": 3}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER RESISTENCIA CARTER LT",
+      "reglas": [
+{
+          "pregunta": "LLEVA COMPRESORES DE LT",
+          "accion": "pone",
+          "item": "G1-4F1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "1"}, {"op": "J", "val": ""}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 1, "neutro": 1, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 3, "neutro": 1, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "TEMPORIZADOR SUCCION BAJA",
+      "reglas": [
+{
+          "pregunta": "BACK UP",
+          "accion": "pone",
+          "item": "G0-3K1",
+          "marca": "SIEMENS",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "TEMP"}, {"op": "E", "val": "3"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 10, "neutro": 1, "tierra": 1}
+            },
+{
+              "tokens": [{"op": "A", "val": "TEMP"}, {"op": "E", "val": "3"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "SIEMENS",
+              "bornera": {"fase": 10, "neutro": 1, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "G0-4",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "G0-4",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 2, "neutro": 0, "tierra": 1}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 2, "neutro": 0, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "G0-5",
+      "reglas": [
+{
+          "pregunta": "BACK UP",
+          "accion": "pone",
+          "item": "G0-5",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 2, "neutro": 0, "tierra": 1}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 2, "neutro": 0, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "G0-6",
+      "reglas": [
+{
+          "pregunta": "INYECCION DE LIQUIDO LT",
+          "accion": "pone",
+          "item": "G0-6",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 2, "neutro": 0, "tierra": 1}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 2, "neutro": 0, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "G0-6",
+      "reglas": [
+{
+          "pregunta": "INYECCION DE GAS CALIENTE LT",
+          "accion": "pone",
+          "item": "G0-6",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 2, "neutro": 0, "tierra": 1}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 2, "neutro": 0, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "G0-8",
+      "reglas": [
+{
+          "pregunta": "VALVULA SUCCION LT ACEITE 8Y2",
+          "accion": "pone",
+          "item": "G0-8",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 2, "neutro": 0, "tierra": 0}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 2, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER RESISTENCIA SEPARADOR SUC LT",
+      "reglas": [
+{
+          "pregunta": "ACUMULADOR SUCCION LT",
+          "accion": "pone",
+          "item": "G0-30F1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "1"}, {"op": "J", "val": ""}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 10, "neutro": 1, "tierra": 1}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 10, "neutro": 1, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "RELEVO BAJA FUNCIONANDO",
+      "reglas": [
+{
+          "pregunta": "DESUPERHEATER",
+          "accion": "pone",
+          "item": "G0-6K1",
+          "pregunta_mult": "SALIDAS PARA ALARMAS ",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "2"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "mult": "#",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "mult": "#",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "2"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "mult": "#",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "mult": "#",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "GUARDAMOTOR DESUPERHEATER",
+      "reglas": [
+{
+          "pregunta": "DESUPERHEATER",
+          "accion": "pone",
+          "item": "G0-14Q1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "G"}, {"op": "E", "val": "12"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "mult": null,
+              "bornera": {"fase": 9, "neutro": 1, "tierra": 1}
+            },
+{
+              "tokens": [{"op": "A", "val": "G"}, {"op": "E", "val": "12"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "mult": null,
+              "item": "",
+              "bornera": {"fase": 9, "neutro": 1, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "CONTACTOR DESUPERHEATER",
+      "reglas": [
+{
+          "pregunta": "DESUPERHEATER",
+          "accion": "pone",
+          "item": "G0-14Q2",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "C"}, {"op": "N", "val": "12"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "C"}, {"op": "N", "val": "12"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "G0-14",
+      "reglas": [
+{
+          "pregunta": "VALVULA DE BYPASS DESUPERHEATER",
+          "accion": "pone",
+          "item": "G0-14",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 3, "neutro": 0, "tierra": 0}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 3, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER CONTROL DE ACEITE",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "L1-2FA1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "2"}, {"op": "K", "val": "1"}, {"op": "J", "val": ""}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 9, "neutro": 1, "tierra": 1}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "2"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "ABB",
+              "bornera": {"fase": 9, "neutro": 1, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "L1-6",
+      "reglas": [
+{
+          "pregunta": "CONTROL (PORCENTAJE) DE ACEITE",
+          "accion": "pone",
+          "item": "L1-6",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 4, "neutro": 1, "tierra": 1}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 4, "neutro": 1, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER RECUPERADOR DE CALOR",
+      "reglas": [
+{
+          "pregunta": "RECUPERADOR DE CALOR GLICOL",
+          "accion": "pone",
+          "item": "M1-4FA1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "2"}, {"op": "K", "val": "1"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 12, "neutro": 1, "tierra": 1}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "2"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "ABB",
+              "bornera": {"fase": 12, "neutro": 1, "tierra": 1}
+            }
+          ],
+          "nombre": "BREAKER RECUPERADOR DE CALOR"
+        }
+      ]
+    },
+    
+{
+      "id": "RELEVO VALVULA RECUPERADORA DE CALOR",
+      "reglas": [
+{
+          "pregunta": "RECUPERADOR DE CALOR GLICOL",
+          "accion": "pone",
+          "item": "M1-4K1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "2"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "2"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "GUARDAMOTOR GASCOOLER",
+      "reglas": [
+{
+          "pregunta": "GUARDAMOTOR GASCOOLER",
+          "accion": "pone",
+          "item": "P1-#Q1",
+          "pregunta_mult": "CANTIDAD PROTECCION GASCOOLER ",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "G"}, {"op": "E", "val": "32"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "mult": "#",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "G"}, {"op": "E", "val": "32"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "mult": "#",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },   
+    {
+      "id": "BREAKER GASCOOLER",
+      "reglas": [
+{
+          "pregunta": "BREAKER GASCOOLER",
+          "accion": "pone",
+          "item": "P1-#F1",
+          "pregunta_mult": "CANTIDAD PROTECCION GASCOOLER ",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "32"}, {"op": "K", "val": "3"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "mult": "#",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "32"}, {"op": "K", "val": "3"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "mult": "#",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    }, 
+   {
+      "id": "BREAKER CONTROL GASCOOLER",
+      "reglas": [
+{
+          "pregunta": "LLEVA GASCOOLER",
+          "accion": "pone",
+          "item": "P1-#FA#",
+          "pregunta_mult": "CANTIDAD PROTECCION GASCOOLER ",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "2"}, {"op": "K", "val": "1"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "mult": "#",
+              "bornera": {"fase": 7, "neutro": 1, "tierra": 1}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "2"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "mult": "#",
+              "item": "",
+              "bornera": {"fase": 7, "neutro": 1, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },
+
+
+    {
+      "id": "P1-6",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "P1-6",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 4, "neutro": 0, "tierra": 0}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 4, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "P1-7",
+      "reglas": [
+{
+          "pregunta": "BACK UP",
+          "accion": "pone",
+          "item": "P1-7",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 4, "neutro": 0, "tierra": 0}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 4, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+ {
+      "id": "R1-2",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "R1-2",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 6, "neutro": 0, "tierra": 1}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 6, "neutro": 0, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },   
+ {
+      "id": "R1-3",
+      "reglas": [
+{
+          "pregunta": "BACK UP",
+          "accion": "pone",
+          "item": "R1-3",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 3, "neutro": 0, "tierra": 0}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 3, "neutro": 0, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },  
+ {
+      "id": "R1-4",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "R1-4",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 4, "neutro": 0, "tierra": 0}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 4, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    }, 
+ {
+      "id": "R1-6",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "R1-6",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 4, "neutro": 0, "tierra": 1}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 4, "neutro": 0, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    }, 
+{
+      "id": "S1-2",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "S1-2",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 3, "neutro": 0, "tierra": 0}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 3, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },       
+{
+      "id": "S1-3",
+      "reglas": [
+{
+          "pregunta": "BACK UP",
+          "accion": "pone",
+          "item": "S1-3",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 3, "neutro": 0, "tierra": 0}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 3, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },   
+{
+      "id": "S1-4",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "S1-4",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 4, "neutro": 0, "tierra": 0}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 4, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    }, 
+{
+      "id": "S1-6",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "S1-6",
+          "accion_no": "borra",
+          "alternativas": [
+{
+              "bornera": {"fase": 4, "neutro": 0, "tierra": 0}
+            },
+{
+              "norma": "UL",
+              "marca": "",
+              "bornera": {"fase": 4, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER ACUMULADOR DE LIQUIDO",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "S2-2FA1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "2"}, {"op": "K", "val": "1"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 4, "neutro": 0, "tierra": 1}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "2"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "ABB",
+              "bornera": {"fase": 4, "neutro": 0, "tierra": 1}
+            }
+          ]
+        }
+      ]
+    },         
+{
+      "id": "RELEVO ACUMULADOR DE LIQUIDO",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "S2-2K1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "2"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "2"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "RELEVO MAXIMO NIVEL DE LIQUIDO",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "S2-2K2",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "2"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 7, "neutro": 0, "tierra": 1}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "2"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 7, "neutro": 0, "tierra": 1}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },    
+    {
+      "id": "GUARDAMOTOR UNIDAD RESPALDO",
+      "reglas": [
+{
+          "pregunta": "UNIDAD DE RESPALDO BOTELLA DE LIQUIDO",
+          "accion": "pone",
+          "item": "S10-4Q1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "G"}, {"op": "E", "val": "10"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "mult": "#",
+              "bornera": {"fase": 2, "neutro": 0, "tierra": 1}
+            },
+{
+              "tokens": [{"op": "A", "val": "G"}, {"op": "E", "val": "10"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "mult": "#",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "TRANSFORMADOR UNIDAD RESPALDO",
+      "reglas": [
+{
+          "pregunta": "UNIDAD DE RESPALDO BOTELLA DE LIQUIDO",
+          "accion": "pone",
+          "item": "S10-4T1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "TRA"}, {"op": "E", "val": "1,5KVA"}, {"op": "P", "val": "TENSION CONTROL"}, {"op": "Q", "val": "TENSION ALIMENTACION"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "marca": "GENERICO",
+              "mult": null,
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "TRA"}, {"op": "E", "val": "1,5KVA"}, {"op": "P", "val": "TENSION CONTROL"}, {"op": "Q", "val": "TENSION ALIMENTACION"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "MURRELEKTRONIK",
+              "mult": null,
+              "item": "S10-4T1-UL",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER AKSM 800",
+      "reglas": [
+{
+          "pregunta": "AKSM 800",
+          "accion": "pone",
+          "item": "Z1-8FA1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "4"}, {"op": "K", "val": "1"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 1, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "4"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "ABB",
+              "bornera": {"fase": 0, "neutro": 1, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER 782AB",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "Z1-1FA1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "4"}, {"op": "K", "val": "1"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 1, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "4"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "ABB",
+              "bornera": {"fase": 0, "neutro": 1, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },    
+{
+      "id": "ALIMENTACION DEL CONTROL CON UPS",
+      "reglas": [
+{
+          "pregunta": "ALIMENTACION DEL CONTROL CON UPS",
+          "accion": "pone",
+          "item": "Z0-1FA1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "1"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 4, "neutro": 1, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "ABB",
+              "bornera": {"fase": 4, "neutro": 1, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },  
+{
+      "id": "BREAKER BACK UP",
+      "reglas": [
+{
+          "pregunta": "SIEMPRE",
+          "accion": "pone",
+          "item": "Z1-7FA1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "4"}, {"op": "K", "val": "1"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 1, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "4"}, {"op": "K", "val": "1"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "ABB",
+              "bornera": {"fase": 0, "neutro": 1, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    }, 
+{
+      "id": "TEMPORIZADOR MASTER",
+      "reglas": [
+{
+          "pregunta": "BACK UP ",
+          "accion": "pone",
+          "item": "Z1-7K1",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "SIEMENS",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "TEMP"}, {"op": "E", "val": "3"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+
+{
+              "tokens": [{"op": "A", "val": "TEMP"}, {"op": "E", "val": "3"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "SIEMENS",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "CONTACTOR BACK UP",
+      "reglas": [
+{
+          "pregunta": "BACK UP ",
+          "accion": "pone",
+          "item": "Z1-7Q1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "CA" }, {"op": "N", "val": "2"}, {"op": "P", "val": "TENSION CONTROL:"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+
+{
+              "tokens": [{"op": "A", "val": "CA" }, {"op": "N", "val": "2"}, {"op": "P", "val": "TENSION CONTROL:"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },    
+{
+      "id": "RELEVO CAMBIO SUCCION MT BACKUP",
+      "reglas": [
+{
+          "pregunta": "BACK UP ",
+          "accion": "pone",
+          "item": "Z1-7K2",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "4"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "4"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "RELEVO CAMBIO SUCCION LT BACKUP",
+      "reglas": [
+{
+          "pregunta": "BACK UP ",
+          "accion": "pone",
+          "item": "Z1-7K3",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "4"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "4"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "RELEVO CAMBIO GASCOOLER BACKUP",
+      "reglas": [
+{
+          "pregunta": "BACK UP ",
+          "accion": "pone",
+          "item": "Z1-7K4",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "4"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "4"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "RELEVO CAMBIO HP BACKUP",
+      "reglas": [
+{
+          "pregunta": "BACK UP ",
+          "accion": "pone",
+          "item": "Z1-7K5",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "4"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "4"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "RELEVO CAMBIO HP2 BACKUP",
+      "reglas": [
+{
+          "pregunta": "BACK UP ",
+          "accion": "pone",
+          "item": "Z1-7K6",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "4"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "4"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+
+{
+      "id": "RELEVO CAMBIO RP BACKUP",
+      "reglas": [
+{
+          "pregunta": "BACK UP ",
+          "accion": "pone",
+          "item": "Z1-7K7",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "4"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "4"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "RELEVO CAMBIO RP2 BACKUP",
+      "reglas": [
+{
+          "pregunta": "BACK UP ",
+          "accion": "pone",
+          "item": "Z1-7K8",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "4"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "4"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "TEMPORIZADOR IM LIVE RELE",
+      "reglas": [
+{
+          "pregunta": "BACK UP ",
+          "accion": "pone",
+          "item": "Z1-7K10",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "SIEMENS",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "TEMP"}, {"op": "E", "val": "3"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+
+{
+              "tokens": [{"op": "A", "val": "TEMP"}, {"op": "E", "val": "3"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "SIEMENS",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "TEMPORIZADOR DELAY PARA APAGAR MASTER",
+      "reglas": [
+{
+          "pregunta": "BACK UP ",
+          "accion": "pone",
+          "item": "Z1-7K11",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "SIEMENS",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "TEMP"}, {"op": "E", "val": "3"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+
+{
+              "tokens": [{"op": "A", "val": "TEMP"}, {"op": "E", "val": "3"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "SIEMENS",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "RELEVO CAMBIO SEÑAL FALLA BACKUP",
+      "reglas": [
+{
+          "pregunta": "BACK UP ",
+          "accion": "pone",
+          "item": "Z1-7K9",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "2"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "R"}, {"op": "N", "val": "2"}, {"op": "P", "val": "TENSION CONTROL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "RB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },    
+{
+      "id": "PULSADOR RESET FALLA ",
+      "reglas": [
+{
+          "pregunta": "BACK UP ",
+          "accion": "pone",
+          "item": "Z1-7S1",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "GENERICO",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "PU"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+
+{
+              "tokens": [{"op": "A", "val": "PU"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "GENERICO",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "PULSADOR FORZA FALLA  ",
+      "reglas": [
+{
+          "pregunta": "BACK UP ",
+          "accion": "pone",
+          "item": "Z1-7S2",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "GENERICO",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "PU"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+
+{
+              "tokens": [{"op": "A", "val": "PU"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "GENERICO",
+              "item": "",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },            
+{
+      "id": "BREAKER MEDIDOR DE ENERGIA RACK",
+      "reglas": [
+{
+          "pregunta": "MEDIDOR DE ENERIGIA RACK",
+          "accion": "pone",
+          "item": "A1-19FA1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "3"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 1, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "3"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "ABB",
+              "bornera": {"fase": 0, "neutro": 1, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "ANALIZADOR DE REDES",
+      "reglas": [
+{
+          "pregunta": "MEDIDOR DE ENERIGIA RACK",
+          "accion": "pone",
+          "item": "A1-19B1",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "SCHNEIDER",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "AR"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "AR"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "SCHNEIDER",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "TRANSFORMADOR DE CORRIENTE 1",
+      "reglas": [
+{
+          "pregunta": "MEDIDOR DE ENERIGIA RACK",
+          "accion": "pone",
+          "item": "A1-19T1",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "SCHNEIDER",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "TC"},{"op": "E", "val": "100"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "TC"},{"op": "E", "val": "100"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "SCHNEIDER",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "TRANSFORMADOR DE CORRIENTE 2",
+      "reglas": [
+{
+          "pregunta": "MEDIDOR DE ENERIGIA RACK",
+          "accion": "pone",
+          "item": "A1-19T2",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "SCHNEIDER",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "TC"},{"op": "E", "val": "100"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "TC"},{"op": "E", "val": "100"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "SCHNEIDER",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "TRANSFORMADOR DE CORRIENTE 3",
+      "reglas": [
+{
+          "pregunta": "MEDIDOR DE ENERIGIA RACK",
+          "accion": "pone",
+          "item": "A1-19T3",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "SCHNEIDER",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "TC"},{"op": "E", "val": "100"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "TC"},{"op": "E", "val": "100"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "SCHNEIDER",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BREAKER MEDIDOR DE ENERGIA GACOOLER",
+      "reglas": [
+{
+          "pregunta": "MEDIDOR DE ENERGIA GASCOOLER",
+          "accion": "pone",
+          "item": "P0-1FA1",
+          "accion_no": "borra",
+          "item_no": "",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "3"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 1, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "B"}, {"op": "D", "val": "6"}, {"op": "K", "val": "3"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "ABB",
+              "bornera": {"fase": 0, "neutro": 1, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "ANALIZADOR DE REDES",
+      "reglas": [
+{
+          "pregunta": "MEDIDOR DE ENERGIA GASCOOLER",
+          "accion": "pone",
+          "item": "P0-1B1",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "SCHNEIDER",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "AR"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "AR"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "SCHNEIDER",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "TRANSFORMADOR DE CORRIENTE 1",
+      "reglas": [
+{
+          "pregunta": "MEDIDOR DE ENERGIA GASCOOLER",
+          "accion": "pone",
+          "item": "P0-1T1",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "SCHNEIDER",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "TC"},{"op": "E", "val": "55"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "TC"},{"op": "E", "val": "55"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "SCHNEIDER",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "TRANSFORMADOR DE CORRIENTE 2",
+      "reglas": [
+{
+          "pregunta": "MEDIDOR DE ENERGIA GASCOOLER",
+          "accion": "pone",
+          "item": "P0-1T2",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "SCHNEIDER",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "TC"},{"op": "E", "val": "55"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "TC"},{"op": "E", "val": "55"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "SCHNEIDER",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "TRANSFORMADOR DE CORRIENTE 3",
+      "reglas": [
+{
+          "pregunta": "MEDIDOR DE ENERGIA GASCOOLER",
+          "accion": "pone",
+          "item": "P0-1T3",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "SCHNEIDER",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "TC"},{"op": "E", "val": "55"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "TC"},{"op": "E", "val": "55"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "SCHNEIDER",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "ROUTER TENDA",
+      "reglas": [
+{
+          "pregunta": "AKSM 800",
+          "accion": "pone",
+          "item": "Y1-2U1",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "GENERICO",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "ROU"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "ROU"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "GENERICO",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "SV RILINE60 SOPORTE DE BARRAS",
+      "reglas": [
+{
+          "pregunta": "SISTEMA RILINE RITTAL",
+          "accion": "pone",
+          "item": "RI-SB",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "RITTAL",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "SVSB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "SVSB"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "RITTAL",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "SV RILINE60 BANDEJA BASE SECCION ",
+      "reglas": [
+{
+          "pregunta": "SISTEMA RILINE RITTAL",
+          "accion": "pone",
+          "item": "RI-BB",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "RITTAL",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "SVBB"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "SVBB"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "RITTAL",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "SV RILINE60 CUBIERTA FINA 9340070 ",
+      "reglas": [
+{
+          "pregunta": "SISTEMA RILINE RITTAL",
+          "accion": "pone",
+          "item": "RI-CF",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "RITTAL",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "SVCF"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "SVCF"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "RITTAL",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "SV ADAPTADOR CONEX 800A-690 9342280",
+      "reglas": [
+{
+          "pregunta": "SISTEMA RILINE RITTAL",
+          "accion": "pone",
+          "item": "RI-FC",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "RITTAL",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "SVFC"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "SVFC"}, {"op": "J", "val": "UL"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "RITTAL",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    },
+{
+      "id": "BARRA COBRE P/TAB BARRA NAL001 30X10XMTR",
+      "reglas": [
+{
+          "pregunta": "SISTEMA RILINE RITTAL",
+          "accion": "pone",
+          "item": "RI-BC",
+          "accion_no": "borra",
+          "item_no": "",
+          "marca": "RITTAL",
+          "alternativas": [
+{
+              "tokens": [{"op": "A", "val": "SVBC"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            },
+{
+              "tokens": [{"op": "A", "val": "SVBC"}],
+              "permitidos": ["B", "C", "F", "G", "H", "I", "L"],
+              "norma": "UL",
+              "marca": "RITTAL",
+              "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+            }
+          ]
+        }
+      ]
+    }
+
+  ]
+}

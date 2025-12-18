@@ -3,9 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 
-import pandas as pd
-
-from .util_excel import letter_to_index as col, cell, to_int
+import json
 
 # Interfaz pública
 __all__ = ["borneras_compresores_totales"]
@@ -72,30 +70,48 @@ def borneras_compresores_totales(
     step2_state: Optional[Dict[str, Dict[str, object]]] = None,
 ) -> Tuple[int, int, int]:
     """
-    Suma AX/AY/AZ de 'OPCIONES CO2' por tipo BA (V/P/D) y los multiplica por
+    Suma AX/AY/AZ (borneras) por tipo BA (V/P/D) desde `opciones_co2_compresores.json` y los multiplica por
     la cantidad de compresores de cada tipo (derivada de 'tables' o 'step2_state').
 
     Retorna: (fase_total, neutro_total, tierra_total)
     """
     book = Path(basedatos_path)
-    df_ops = pd.read_excel(book, sheet_name="OPCIONES CO2", header=None, dtype=str)
+    rules_path = book.parent / "opciones_co2_compresores.json"
+    if not rules_path.exists():
+        raise RuntimeError(f"No encontré `{rules_path.as_posix()}` para calcular borneras de compresores.")
 
-    ax = col("AX")
-    ay = col("AY")
-    az = col("AZ")
-    ba = col("BA")
+    try:
+        raw = json.loads(rules_path.read_text(encoding="utf-8"))
+    except Exception as e:
+        raise RuntimeError(f"No pude leer `{rules_path.name}`. Detalle: {e}")
 
-    # 1) Sumas base por tipo en OPCIONES CO2
+    arr = raw.get("arranques") if isinstance(raw, dict) else None
+    if not isinstance(arr, dict):
+        raise RuntimeError(f"Formato inválido en `{rules_path.name}`: falta `arranques`.")
+
+    def _to_i(v) -> int:
+        try:
+            if v is None:
+                return 0
+            s = str(v).strip().replace(",", ".")
+            if s == "":
+                return 0
+            return int(float(s))
+        except Exception:
+            return 0
+
+    # 1) Sumas base por tipo usando `bornera` del JSON.
     sums_by_type: Dict[str, Tuple[int, int, int]] = {"V": (0, 0, 0), "P": (0, 0, 0), "D": (0, 0, 0)}
-    for i in range(1, df_ops.shape[0]):  # incluye fila 2
-        tcode = (cell(df_ops, i, ba) or "").strip().upper()[:1]
-        if tcode not in sums_by_type:
-            continue
-        f0, n0, t0 = sums_by_type[tcode]
-        f = to_int(cell(df_ops, i, ax))
-        n = to_int(cell(df_ops, i, ay))
-        t = to_int(cell(df_ops, i, az))
-        sums_by_type[tcode] = (f0 + f, n0 + n, t0 + t)
+    for tcode in ("V", "P", "D"):
+        for r in arr.get(tcode, []) or []:
+            if not isinstance(r, dict):
+                continue
+            b = r.get("bornera") if isinstance(r.get("bornera"), dict) else {}
+            f = _to_i(b.get("fase"))
+            n = _to_i(b.get("neutro"))
+            t = _to_i(b.get("tierra"))
+            f0, n0, t0 = sums_by_type[tcode]
+            sums_by_type[tcode] = (f0 + f, n0 + n, t0 + t)
 
     # 2) Conteo de compresores por tipo
     if tables is not None:
@@ -124,4 +140,3 @@ def borneras_compresores_totales(
     )
 
     return tot_f, tot_n, tot_t
-

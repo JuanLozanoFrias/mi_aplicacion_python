@@ -1,0 +1,16 @@
+{
+  "proyecto": "SUPERMERCADOR BOOM SAS",
+  "fecha": "20251125",
+  "ramales": [
+    {
+      "ramal": 1,
+      "equipo": "AUTOSERVICIO PYXIS",
+      "uso": "LACTEOS",
+      "medida": "1.38",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "CAJ4511",
+      "niveles": 0
+    }
+  ]
+}

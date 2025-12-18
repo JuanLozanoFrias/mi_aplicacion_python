@@ -4,6 +4,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Dict, Any
 
+import pandas as pd
+
 from .step4_compresores import build_compresores_tables
 from .step4_elementos_fijos import cargar_elementos_fijos
 from .step4_borneras import borneras_compresores_totales
@@ -40,6 +42,19 @@ def _get_first(globs: Dict[str, Any], *keys: str, default: str = "") -> str:
         if k in globs and globs[k] not in (None, ""):
             return str(globs[k])
     return default
+
+
+def _to_float_safe(s: Any) -> float:
+    """
+    Convierte strings del tipo "42.0 A" o "42,5" en float.
+    Si no puede parsear, retorna 0.0.
+    """
+    txt = "" if s is None else str(s).strip().replace(",", ".")
+    m = re.search(r"[-+]?\d+(?:\.\d+)?", txt)
+    try:
+        return float(m.group(0)) if m else 0.0
+    except Exception:
+        return 0.0
 
 
 class Step4Engine:
@@ -84,6 +99,106 @@ class Step4Engine:
         if not self.ctx.norma_ap:
             ul_flag = self.ctx.step3_state.get("UL", self.ctx.step3_state.get("UL/IEC", "NO"))
             self.ctx.norma_ap = "UL" if ul_flag == "SI" else "IEC"
+
+    # ==============================================================
+    # Corriente total del sistema (compresores) + breaker totalizador
+    # ==============================================================
+    def _calc_corriente_total(self, step2_state: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        Toma todas las corrientes de los compresores del Paso 2, identifica la mayor,
+        aplica el ajuste 1.25 sobre la mayor y suma el resto.
+        Retorna dict con detalle y breaker seleccionado (si se encuentra).
+        """
+        comp_list: list[tuple[str, float, str]] = []
+        for comp_key, st in (step2_state or {}).items():
+            if not isinstance(st, dict):
+                continue
+            cur_val = st.get("corriente") or st.get("amps") or st.get("corriente nominal")
+            amps = _to_float_safe(cur_val)
+            if amps > 0:
+                modelo = str(st.get("modelo") or st.get("model") or "").strip()
+                comp_list.append((str(comp_key), amps, modelo))
+
+        if not comp_list:
+            return {"found": False, "detalle": {}, "breaker": {"found": False}, "comp_detalles": []}
+
+        # ordenar por key natural para visual
+        comp_list.sort(key=lambda x: x[0].upper())
+        # mayor
+        comp_key_max, max_i, _modelo_max = max(comp_list, key=lambda x: x[1])
+        suma_rest = sum(a for _, a, _ in comp_list) - max_i
+        ajuste = max_i * 0.25  # 25 % extra al mayor
+        total = suma_rest + max_i + ajuste
+
+        comp_detalles = []
+        for k, a, modelo in comp_list:
+            comp_detalles.append({
+                "comp_key": k,
+                "modelo": modelo,
+                "amps": a,
+                "ajustado": k == comp_key_max,
+            })
+
+        breaker = self._pick_breaker_total(total, self.ctx.norma_ap or "IEC")
+
+        return {
+            "found": True,
+            "detalle": {
+                "mayor": max_i,
+                "ajuste_mayor": ajuste,
+                "suma_restantes": suma_rest,
+                "total": total,
+                "suma_simple": sum(a for _, a, _ in comp_list),
+            },
+            "breaker": breaker,
+            "comp_detalles": comp_detalles,
+        }
+
+    def _pick_breaker_total(self, i_total: float, norma: str) -> Dict[str, Any]:
+        """
+        Busca en la hoja ABB (familia TT) el breaker igual o superior a i_total.
+        Si norma == UL filtra modelos que contengan 'UL' en la columna de modelo.
+        """
+        try:
+            df = pd.read_excel(self.book, sheet_name="ABB", header=None)
+        except Exception:
+            return {"found": False, "motivo": "No pude leer hoja ABB"}
+
+        df_tt = df[df[0] == "TT"].copy()
+        if df_tt.empty:
+            return {"found": False, "motivo": "No hay familia TT en ABB"}
+
+        def _cur(x):
+            try:
+                return float(x)
+            except Exception:
+                return None
+
+        df_tt["AMP"] = df_tt[3].apply(_cur)
+        df_tt = df_tt[df_tt["AMP"].notnull()]
+
+        norma = (norma or "IEC").upper()
+        if norma == "UL":
+            df_tt = df_tt[df_tt[2].astype(str).str.contains("UL", case=False, na=False)]
+        else:
+            df_tt = df_tt[~df_tt[2].astype(str).str.contains("UL", case=False, na=False)]
+
+        if df_tt.empty:
+            return {"found": False, "motivo": "No hay registros TT para la norma seleccionada"}
+
+        df_tt = df_tt.sort_values("AMP")
+        cand = df_tt[df_tt["AMP"] >= i_total]
+        if cand.empty:
+            return {"found": False, "motivo": "No se encontró breaker >= corriente", "i_total": i_total}
+
+        row = cand.iloc[0]
+        return {
+            "found": True,
+            "codigo": str(row.get(1) or ""),
+            "modelo": str(row.get(2) or ""),
+            "amp": float(row.get("AMP") or 0),
+            "norma": norma,
+        }
 
     # ===== NUEVO: inyección de fila(s) para PUENTE =====
     def _inject_puente_rows(self, tables, step2_state: Dict[str, Dict[str, str]]) -> None:
@@ -162,5 +277,5 @@ class Step4Engine:
             "borneras_compresores": borneras_comp,
             "borneras_otros": borneras_otros,
             "borneras_total": borneras_total,
+            "corriente_total": self._calc_corriente_total(step2_state),
         }
-

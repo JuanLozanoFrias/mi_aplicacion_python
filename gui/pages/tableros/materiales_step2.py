@@ -7,10 +7,10 @@ from typing import Dict, List, Optional, Tuple
 import unicodedata
 
 import pandas as pd
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QFrame,
-    QLabel, QLineEdit, QComboBox, QScrollArea, QCompleter,
+    QLabel, QLineEdit, QComboBox, QCompleter,
     QRadioButton, QButtonGroup
 )
 
@@ -52,6 +52,8 @@ class Step2Panel(QWidget):
     Guarda/restaura la selecciÃ³n del variador (bolita) y no la pierde al navegar.
     """
 
+    changed = Signal()
+
     def __init__(self) -> None:
         super().__init__()
         self._sheet_cache_comp: Dict[str, Optional[pd.DataFrame]] = {}
@@ -67,13 +69,15 @@ class Step2Panel(QWidget):
         self._cb_refrig: Optional[QComboBox] = None
         self._cb_marca_var: Optional[QComboBox] = None
 
-        # UI base
-        root = QVBoxLayout(self); root.setContentsMargins(0, 0, 0, 0); root.setSpacing(8)
-        self.scroll = QScrollArea(); self.scroll.setWidgetResizable(True)
+        # UI base (sin scroll interno; el contenedor superior ya scrollea)
+        root = QVBoxLayout(self)
+        root.setContentsMargins(0, 0, 0, 0)
+        root.setSpacing(8)
         self.host = QFrame()
-        self.host_layout = QVBoxLayout(self.host); self.host_layout.setContentsMargins(0,0,0,0); self.host_layout.setSpacing(10)
-        self.scroll.setWidget(self.host)
-        root.addWidget(self.scroll, 1)
+        self.host_layout = QVBoxLayout(self.host)
+        self.host_layout.setContentsMargins(0, 0, 0, 0)
+        self.host_layout.setSpacing(10)
+        root.addWidget(self.host, 1)
 
     # ---------- API pÃºblica ----------
     def set_globals(self, tipo_comp: QComboBox, t_alim: QComboBox, refrig: QComboBox, marca_var: QComboBox) -> None:
@@ -247,11 +251,18 @@ class Step2Panel(QWidget):
             "QLineEdit:focus{border:1px solid #5b8bea;}"
             "QLineEdit::selection{background:#e6efff;color:#0f172a;}"
         )
+        # Estilo simple y centrado, con fondo transparente cuando está apagado
         radio_style = (
-            "QRadioButton{color:#0f172a;}"
-            "QRadioButton::indicator{width:18px;height:18px;border-radius:9px;"
-            "border:2px solid #5b8bea;background:#ffffff;}"
-            "QRadioButton::indicator:checked{background:#4cc9ff;border-color:#4cc9ff;}"
+            "QRadioButton{color:#0f172a;background:transparent;padding:0;margin:0;}"
+            "QRadioButton:focus{outline:0;}"
+            "QRadioButton::indicator{width:14px;height:14px;border-radius:7px;"
+            "border:0;background:transparent;subcontrol-position:center;margin:0;padding:0;}"
+            "QRadioButton::indicator:unchecked{border:0;background:transparent;}"
+            "QRadioButton::indicator:checked{border:0;background:qradialgradient(cx:0.5, cy:0.5, fx:0.5, fy:0.5, radius:0.9, stop:0 #1ecbff, stop:1 #0b6cff);border-radius:7px;}"
+            "QRadioButton::indicator:hover{border:0;background:transparent;}"
+            "QRadioButton::indicator:checked:hover{border:0;background:qradialgradient(cx:0.5, cy:0.5, fx:0.5, fy:0.5, radius:0.9, stop:0 #22d7ff, stop:1 #0b5de0);}"
+            "QRadioButton::indicator:disabled{border:0;background:transparent;}"
+            "QRadioButton::indicator:checked:disabled{border:0;background:#9adfff;}"
         )
 
         for i, name in enumerate(names, start=1):
@@ -304,12 +315,14 @@ class Step2Panel(QWidget):
             v1_layout = QHBoxLayout()
             v1_layout.setSpacing(6)
             rb_v1 = QRadioButton()
+            rb_v1.setFocusPolicy(Qt.NoFocus)
             rb_v1.setEnabled(False)
             rb_v1.setStyleSheet(radio_style)
             v1_lbl = QLabel(EMPTY_CELL)
             v1_lbl.setStyleSheet("color:#0f172a;font-weight:600;padding-left:4px;")
             v1_w = QFrame()
             v1_w.setLayout(v1_layout)
+            v1_w.setStyleSheet("background:transparent;")
             v1_layout.addWidget(rb_v1)
             v1_layout.addWidget(v1_lbl, 1)
             grid.addWidget(v1_w, i, 4)
@@ -317,12 +330,14 @@ class Step2Panel(QWidget):
             v2_layout = QHBoxLayout()
             v2_layout.setSpacing(6)
             rb_v2 = QRadioButton()
+            rb_v2.setFocusPolicy(Qt.NoFocus)
             rb_v2.setEnabled(False)
             rb_v2.setStyleSheet(radio_style)
             v2_lbl = QLabel(EMPTY_CELL)
             v2_lbl.setStyleSheet("color:#0f172a;font-weight:600;padding-left:4px;")
             v2_w = QFrame()
             v2_w.setLayout(v2_layout)
+            v2_w.setStyleSheet("background:transparent;")
             v2_layout.addWidget(rb_v2)
             v2_layout.addWidget(v2_lbl, 1)
             grid.addWidget(v2_w, i, 5)
@@ -401,11 +416,11 @@ class Step2Panel(QWidget):
                     cmb.lineEdit().clear()
                 self._update_corriente_for(n)
 
-            cb_modelo.lineEdit().editingFinished.connect(_ensure_valid_and_current)
-            cb_modelo.currentTextChanged.connect(lambda _=None, n=name: self._update_corriente_for(n))
-            cb_arranque.currentIndexChanged.connect(lambda _=None, n=name: self._on_arranque_changed(n))
-            rb_v1.toggled.connect(lambda _=None, n=name: self._on_var_selection_changed(n))
-            rb_v2.toggled.connect(lambda _=None, n=name: self._on_var_selection_changed(n))
+            cb_modelo.lineEdit().editingFinished.connect(_ensure_valid_and_current); self.changed.emit()
+            cb_modelo.currentTextChanged.connect(lambda _=None, n=name: (self._update_corriente_for(n), self.changed.emit()))
+            cb_arranque.currentIndexChanged.connect(lambda _=None, n=name: (self._on_arranque_changed(n), self.changed.emit()))
+            rb_v1.toggled.connect(lambda _=None, n=name: (self._on_var_selection_changed(n), self.changed.emit()))
+            rb_v2.toggled.connect(lambda _=None, n=name: (self._on_var_selection_changed(n), self.changed.emit()))
 
             self._step2_widgets[name] = {
                 "modelo": cb_modelo,
@@ -817,4 +832,3 @@ class Step2Panel(QWidget):
             if txt.lower() in cb.itemText(j).lower():
                 cb.setCurrentIndex(j); return
         cb.addItem(txt); cb.setCurrentIndex(cb.count() - 1)
-

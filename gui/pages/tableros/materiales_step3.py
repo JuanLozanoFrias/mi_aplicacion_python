@@ -1,38 +1,88 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Dict, List, Tuple
-
-import pandas as pd
+from PySide6.QtCore import Signal
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QGridLayout, QFrame, QLabel, QComboBox,
-    QScrollArea, QHBoxLayout, QRadioButton, QButtonGroup, QSpinBox
+    QHBoxLayout, QButtonGroup, QSpinBox, QPushButton
 )
 
 
 def _norm(s: str) -> str:
-    t = (s or "").strip().upper()
-    return t.translate(str.maketrans("ÁÉÍÓÚÜÑ", "AEIOUUN"))
+    return (s or "").strip().upper()
+class YesNoToggle(QFrame):
+    """Boton doble SI/NO con estilo similar al modulo de carga electrica."""
+
+    def __init__(self, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        lay = QHBoxLayout(self)
+        lay.setContentsMargins(0, 0, 0, 0)
+        lay.setSpacing(6)
+
+        self.btn_si = QPushButton("SI")
+        self.btn_no = QPushButton("NO")
+        for b in (self.btn_si, self.btn_no):
+            b.setCheckable(True)
+            b.setCursor(Qt.PointingHandCursor)
+            b.setMinimumWidth(52)
+
+        self.group = QButtonGroup(self)
+        self.group.setExclusive(True)
+        self.group.addButton(self.btn_si)
+        self.group.addButton(self.btn_no)
+
+        self.btn_si.clicked.connect(lambda: self._set(True))
+        self.btn_no.clicked.connect(lambda: self._set(False))
+
+        lay.addWidget(self.btn_si)
+        lay.addWidget(self.btn_no)
+        lay.addStretch(1)
+
+        self._set(False)
+
+    def _refresh(self) -> None:
+        active = "background:#5b8bea;color:#fff;font-weight:700;border:none;border-radius:8px;padding:6px 10px;"
+        inactive = "background:#eef3ff;color:#0f172a;font-weight:600;border:1px solid #b9d1ff;border-radius:8px;padding:6px 10px;"
+        self.btn_si.setStyleSheet(active if self.btn_si.isChecked() else inactive)
+        self.btn_no.setStyleSheet(active if self.btn_no.isChecked() else inactive)
+
+    def _set(self, val: bool) -> None:
+        self.btn_si.setChecked(bool(val))
+        self.btn_no.setChecked(not bool(val))
+        self._refresh()
+
+    def set_value(self, val) -> None:
+        s = str(val).strip().upper()
+        if s in {"SI", "S?", "TRUE", "1", "YES"}:
+            self._set(True)
+        elif s in {"NO", "FALSE", "0"}:
+            self._set(False)
+        else:
+            self._set(False)
+
+    def value(self) -> str:
+        return "SI" if self.btn_si.isChecked() else ("NO" if self.btn_no.isChecked() else "")
 
 
 class Step3OptionsPanel(QWidget):
     """
-    PASO 3 — OPCIONES CO2 (dos columnas).
-    Lee hoja 'OPCIONES CO2' y genera:
+    PASO 3 - OPCIONES CO2 (dos columnas).
+    Lee archivo `data/preguntas_opciones_co2.json` (cache) y genera:
       - radio (SI/NO)       -> 2 RadioButtons
       - spin ('#' en hoja)  -> QSpinBox 0..5
       - combo               -> QComboBox
     """
+
+    changed = Signal()
     def __init__(self) -> None:
         super().__init__()
 
         self._inputs: Dict[str, Dict[str, object]] = {}
-        self._loaded: bool = False  # ← para no reconstruir al volver
-
-        # ----- contenedor con scroll -----
-        self._scroll = QScrollArea()
-        self._scroll.setWidgetResizable(True)
+        self._loaded: bool = False  # para no reconstruir al volver
+        self._pending_all_yes: bool = True
 
         host = QFrame()
         host.setStyleSheet("QFrame{background:#ffffff;border:1px solid #d7e3f8;border-radius:12px;}")
@@ -63,15 +113,24 @@ class Step3OptionsPanel(QWidget):
         self._gridCols.setColumnStretch(0, 1); self._gridCols.setColumnStretch(1, 1)
 
         host_layout.addWidget(self._panel, 1)
-        self._scroll.setWidget(host)
 
         root = QVBoxLayout(self)
         root.setContentsMargins(0, 0, 0, 0)
-        root.addWidget(self._scroll, 1)
+        root.addWidget(host, 1)
 
     # ---------- API pública ----------
     def is_loaded(self) -> bool:
         return self._loaded
+
+    def clear_all(self) -> None:
+        """
+        Limpia controles y marca para reconstruir en la siguiente carga.
+        Deja pendiente el 'todo en SI' para el arranque inicial.
+        """
+        self._clear_columns()
+        self._loaded = False
+        self._pending_all_yes = True
+        self.update()
 
     def load_options(self, initial_state: Dict[str, str] | None = None, force: bool = False) -> None:
         """
@@ -85,7 +144,7 @@ class Step3OptionsPanel(QWidget):
                 except Exception: pass
             return
 
-        preguntas = self._read_from_excel()
+        preguntas = self._read_from_cache()
         self._rebuild_form(preguntas)
         self._loaded = True
 
@@ -98,9 +157,8 @@ class Step3OptionsPanel(QWidget):
         for q, meta in self._inputs.items():
             typ = meta.get("type")
             if typ == "radio":
-                rb_si: QRadioButton = meta["rb_si"]  # type: ignore
-                rb_no: QRadioButton = meta["rb_no"]  # type: ignore
-                out[q] = "SI" if rb_si.isChecked() else ("NO" if rb_no.isChecked() else "")
+                toggle: YesNoToggle = meta["toggle"]  # type: ignore
+                out[q] = toggle.value()
             elif typ == "spin":
                 sp: QSpinBox = meta["spin"]  # type: ignore
                 out[q] = str(sp.value())
@@ -121,14 +179,13 @@ class Step3OptionsPanel(QWidget):
             _, meta = pair
             typ = meta.get("type")
             if typ == "radio":
-                val = _norm(str(raw))
-                rb_si: QRadioButton = meta["rb_si"]  # type: ignore
-                rb_no: QRadioButton = meta["rb_no"]  # type: ignore
-                if val in ("SI", "SÍ", "TRUE", "1"): rb_si.setChecked(True)
-                elif val in ("NO", "FALSE", "0"): rb_no.setChecked(True)
+                toggle: YesNoToggle = meta["toggle"]  # type: ignore
+                toggle.set_value(raw)
             elif typ == "spin":
-                try: n = int(str(raw).strip() or "0")
-                except Exception: n = 0
+                try:
+                    n = int(str(raw).strip() or "0")
+                except Exception:
+                    n = 0
                 sp: QSpinBox = meta["spin"]  # type: ignore
                 sp.setValue(max(sp.minimum(), min(sp.maximum(), n)))
             else:
@@ -144,49 +201,68 @@ class Step3OptionsPanel(QWidget):
                 if i >= 0: cb.setCurrentIndex(i)
 
     # ---------- lectura Excel ----------
-    def _read_from_excel(self) -> List[Tuple[str, List[str], str]]:
-        book = Path(__file__).resolve().parents[3] / "data" / "basedatos.xlsx"
-        items: List[Tuple[str, List[str], str]] = []
+    # ---------- Reset helpers ----------
+    def set_all_yes(self) -> None:
+        """
+        Coloca todos los toggles SI/NO en "SI".
+        Si a?n no est? cargado, marca la acci?n para aplicarla tras load_options.
+        """
+        if not self._loaded or not self._inputs:
+            self._pending_all_yes = True
+            return
+        changed_any = False
+        for meta in self._inputs.values():
+            if meta.get("type") == "radio":
+                toggle: YesNoToggle = meta.get("toggle")  # type: ignore
+                if toggle is None:
+                    continue
+                prev = toggle.value()
+                toggle.set_value("SI")
+                changed_any = changed_any or (prev != toggle.value())
+        if changed_any:
+            try:
+                self.changed.emit()
+            except Exception:
+                pass
+
+    def _read_from_cache(self) -> List[Tuple[str, List[str], str]]:
+        """
+        Lee preguntas desde `data/preguntas_opciones_co2.json`.
+
+        Formato esperado:
+            {"version":1,"items":[{"pregunta":"...","tipo":"radio|spin|combo","opciones":[...]}]}
+        """
+        cache_path = Path(__file__).resolve().parents[3] / "data" / "preguntas_opciones_co2.json"
         try:
-            df = pd.read_excel(book, sheet_name="OPCIONES CO2", header=None, dtype=object)
+            payload = json.loads(cache_path.read_text(encoding="utf-8"))
+            items_in = payload.get("items", []) if isinstance(payload, dict) else []
         except Exception:
-            return [("No encontré la hoja 'OPCIONES CO2' en basedatos.xlsx", [""], "combo")]
+            return [(f"No encontré `preguntas_opciones_co2.json` en {cache_path.parent}", [""], "combo")]
 
-        for i in range(len(df.index)):
-            q = self._cell(df, i, 0)
-            if not q: continue
-            b = self._cell(df, i, 1); c = self._cell(df, i, 2)
+        items: List[Tuple[str, List[str], str]] = []
+        for it in items_in:
+            if not isinstance(it, dict):
+                continue
+            q = str(it.get("pregunta") or "").strip()
+            if not q:
+                continue
+            tipo = str(it.get("tipo") or "").strip().lower()
+            opciones = it.get("opciones", [])
 
-            if ("#" in b) or ("#" in c):
-                items.append((q, [str(k) for k in range(6)], "spin")); continue
-
-            raw: List[str] = []
-            for s in (b, c):
-                if not s: continue
-                raw += [p.strip() for p in str(s).replace("|", ",").replace("/", ",").split(",") if p.strip()]
-
-            if not raw:
-                items.append((q, ["SI", "NO"], "radio")); continue
-
-            seen, opts = set(), []
-            for x in raw:
-                up = x.upper()
-                if up not in seen:
-                    seen.add(up); opts.append(x)
-            up_opts = [o.upper() for o in opts]
-            if up_opts in (["SI", "NO"], ["NO", "SI"]):
+            if tipo == "radio":
                 items.append((q, ["SI", "NO"], "radio"))
-            else:
-                items.append((q, opts, "combo"))
-        if not items:
-            items = [("La hoja 'OPCIONES CO2' está vacía", [""], "combo")]
-        return items
+                continue
+            if tipo == "spin":
+                items.append((q, [str(x) for x in (opciones or [0, 1, 2, 3, 4, 5])], "spin"))
+                continue
 
-    @staticmethod
-    def _cell(df: pd.DataFrame, r: int, c: int) -> str:
-        if r >= len(df.index) or c >= df.shape[1]: return ""
-        v = df.iat[r, c]
-        return "" if pd.isna(v) else str(v).strip()
+            # combo
+            opts = [str(x).strip() for x in (opciones or []) if str(x).strip()]
+            items.append((q, opts, "combo"))
+
+        if not items:
+            items = [("`preguntas_opciones_co2.json` está vacío", [""], "combo")]
+        return items
 
     # ---------- UI ----------
     def _clear_columns(self) -> None:
@@ -196,6 +272,7 @@ class Step3OptionsPanel(QWidget):
                 w = item.widget()
                 if w: w.deleteLater()
         self._inputs.clear()
+        self._pending_all_yes = False
 
     def _rebuild_form(self, preguntas: List[Tuple[str, List[str], str]]) -> None:
         self._clear_columns()
@@ -205,6 +282,9 @@ class Step3OptionsPanel(QWidget):
             (self._colL_layout if to_left else self._colR_layout).addWidget(row)
             to_left = not to_left
         self._colL_layout.addStretch(1); self._colR_layout.addStretch(1)
+        if self._pending_all_yes:
+            self.set_all_yes()
+            self._pending_all_yes = False
 
     def _build_row(self, pregunta: str, opts: List[str], typ: str) -> QWidget:
         row = QFrame()
@@ -218,30 +298,22 @@ class Step3OptionsPanel(QWidget):
         lab.setMinimumWidth(240); lab.setMaximumWidth(360)
         h.addWidget(lab, 0, Qt.AlignVCenter)
 
-        radio_style = (
-            "QRadioButton{color:#0f172a;font-weight:600;}"
-            "QRadioButton::indicator{width:18px;height:18px;border-radius:9px;"
-            "border:2px solid #5b8bea;background:#ffffff;}"
-            "QRadioButton::indicator:checked{background:#4cc9ff;border-color:#4cc9ff;}"
-        )
-
         if typ == "radio":
-            rb_si = QRadioButton("SI"); rb_no = QRadioButton("NO")
-            for rb in (rb_si, rb_no): rb.setStyleSheet(radio_style)
-            grp = QButtonGroup(row); grp.addButton(rb_si); grp.addButton(rb_no)
-            wrap = QFrame(); hw = QHBoxLayout(wrap); hw.setContentsMargins(0,0,0,0); hw.setSpacing(12)
-            hw.addWidget(rb_si); hw.addWidget(rb_no); hw.addStretch(1)
-            h.addWidget(wrap, 1)
-            self._inputs[pregunta] = {"type":"radio","rb_si":rb_si,"rb_no":rb_no,"group":grp}
+            toggle = YesNoToggle()
+            toggle.btn_si.clicked.connect(lambda: self.changed.emit())
+            toggle.btn_no.clicked.connect(lambda: self.changed.emit())
+            h.addWidget(toggle, 1)
+            self._inputs[pregunta] = {"type":"radio","toggle":toggle}
         elif typ == "spin":
             sp = QSpinBox(); sp.setRange(0,5); sp.setFixedWidth(90)
             sp.setStyleSheet("QSpinBox{background:#ffffff;color:#0f172a;border:1px solid #c8d4eb;border-radius:8px;padding:4px 6px;}")
             h.addWidget(sp, 0, Qt.AlignLeft)
+            sp.valueChanged.connect(lambda *_: self.changed.emit())
             self._inputs[pregunta] = {"type":"spin","spin":sp}
         else:
             cb = QComboBox(); cb.addItem(""); cb.addItems([str(o) for o in opts]); cb.setMaximumWidth(240)
             cb.setStyleSheet("QComboBox{background:#ffffff;color:#0f172a;border:1px solid #c8d4eb;border-radius:8px;padding:6px 8px;}")
             h.addWidget(cb, 0, Qt.AlignLeft)
+            cb.currentIndexChanged.connect(lambda *_: self.changed.emit())
             self._inputs[pregunta] = {"type":"combo","combo":cb}
         return row
-

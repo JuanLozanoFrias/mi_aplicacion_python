@@ -1,0 +1,357 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "pregunta": "RELE DE APERTURA",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "UL",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "DISTRIBUCION TRANSFORMADORES",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "NUMERO DE LAMPARAS",
+      "tipo": "spin",
+      "opciones": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "pregunta": "NUMERO DE VENTILADORES TABLERO",
+      "tipo": "spin",
+      "opciones": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "pregunta": "MONITOR DE FASE",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "FUENTE 24VDC",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "SALIDAS PARA ALARMAS",
+      "tipo": "spin",
+      "opciones": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "pregunta": "MAIN SWITCH",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "LLEVA COMPRESORES DE MT",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "INYECCION DE LIQUIDO MT",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "INYECCION DE GAS CALIENTE MT",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "VALVULA 8Y1 3VIAS DESCARGA/SUCCION MT",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "VALVULA SUCCION MT ACEITE 8Y2",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "ACUMULADOR SUCCION MT",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "VIGIREX",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "CABLE APANTALLADO VARIADORES",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "SELECTOR INTERNO O EXTERNO",
+      "tipo": "combo",
+      "opciones": [
+        "INTERNO",
+        "EXTERNO"
+      ]
+    },
+    {
+      "pregunta": "PILOTO FUNCIONANDO",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "LLEVA COMPRESORES DE LT",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "INYECCION DE LIQUIDO LT",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "INYECCION DE GAS CALIENTE LT",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "VALVULA SUCCION LT ACEITE 8Y2",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "DESUPERHEATER",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "VALVULA DE BYPASS DESUPERHEATER",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "ACUMULADOR SUCCION LT",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "CONTROL (PORCENTAJE) DE ACEITE",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "RECUPERADOR DE CALOR GLICOL",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "GUARDAMOTOR GASCOOLER",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "BREAKER GASCOOLER",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "CANTIDAD PROTECCION GASCOOLER",
+      "tipo": "spin",
+      "opciones": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "pregunta": "GASCOOLER BYPASS",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "CONTROL (PORCENTAJE) BOTELLA LIQUIDO",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "UNIDAD DE RESPALDO BOTELLA DE LIQUIDO",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "AKSM 800",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "782 CON ROUTER",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "ALIMENTACION DEL CONTROL CON UPS",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "TENSION DE SALIDA UPS PARA CONTROLADORES",
+      "tipo": "combo",
+      "opciones": [
+        "120",
+        "220"
+      ]
+    },
+    {
+      "pregunta": "MEDIDOR DE ENERIGIA RACK",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "MEDIDOR DE ENERGIA GASCOOLER",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "BACK UP",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    },
+    {
+      "pregunta": "SISTEMA RILINE RITTAL",
+      "tipo": "radio",
+      "opciones": [
+        "SI",
+        "NO"
+      ]
+    }
+  ]
+}

@@ -481,12 +481,17 @@ class MaterialesCore:
             if cell_val == "*":
                 continue
 
-            if up_sel == "TENSION CONTROL:":
+            if up_sel in ("TENSION CONTROL", "TENSION CONTROL:", "TENSION C"):
+                if not cell_val and t_ctl:
+                    # Si la celda está vacía, no descartamos la fila
+                    continue
                 if self.only_digits(cell_val) == self.only_digits(t_ctl):
                     continue
                 return False
 
-            if up_sel == "TENSION ALIMENTACION:":
+            if up_sel in ("TENSION ALIMENTACION", "TENSION ALIMENTACION:", "TENSION ALI"):
+                if not cell_val and t_alim:
+                    continue
                 if self.only_digits(cell_val) == self.only_digits(t_alim):
                     continue
                 return False

@@ -7,17 +7,18 @@ from pathlib import Path
 from typing import Dict, List, Optional, Any
 
 import pandas as pd
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QFrame,
-    QLabel, QLineEdit, QComboBox, QPushButton, QStackedWidget,
-    QFileDialog, QMessageBox
+    QLabel, QLineEdit, QComboBox, QPushButton,
+    QFileDialog, QMessageBox, QScrollArea
 )
 
 # Subpaneles
 from .materiales_step2 import Step2Panel
 from .materiales_step3 import Step3OptionsPanel
 from .materiales_step4 import MaterialesStep4Page  # ← unificado
+from .biblioteca_proyectos import BibliotecaProyectosDialog
 
 # Loader de “programación” (.ecalc.json)
 from logic.programacion_loader import load_programacion_snapshot
@@ -42,44 +43,77 @@ class MaterialesPage(QWidget):
         self._df_master: Optional[pd.DataFrame] = None
         self._loaded_step2_state: Optional[Dict[str, Dict[str, str]]] = None
         self._loaded_step3_state: Optional[Dict[str, Any]] = None
+        self._co2_loaded: bool = False
+        self._refresh_timer = QTimer(self)
+        self._refresh_timer.setSingleShot(True)
+        self._refresh_timer.timeout.connect(self._refresh_all)
+        self._summary_only: bool = False
+        self._summary_pending: bool = False
         self._build_ui()
 
     # --------------------------------------------------------------------- UI
     def _build_ui(self) -> None:
         root = QVBoxLayout(self)
-        root.setContentsMargins(40, 40, 40, 40)
-        root.setSpacing(20)
+        root.setContentsMargins(12, 12, 12, 12)
+        root.setSpacing(10)
 
-        self.step_stack = QStackedWidget()
-        root.addWidget(self.step_stack, 1)
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        root.addWidget(scroll)
 
-        # ========================= PASO 1 =========================
+        container = QWidget()
+        scroll.setWidget(container)
+        cl = QVBoxLayout(container)
+        cl.setContentsMargins(0, 0, 0, 0)
+        cl.setSpacing(12)
+
+        # =========================  =========================
         p1 = QFrame()
         p1.setStyleSheet("background:#ffffff;border:1px solid #e2e8f5;border-radius:12px;")
         p1l = QVBoxLayout(p1)
         p1l.setContentsMargins(24, 20, 24, 20)
         p1l.setSpacing(16)
 
+        primary_qss = (
+            "QPushButton{"
+            "background:qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 #1e3aef, stop:1 #14c9f5);"
+            "color:#ffffff;font-weight:700;border:none;border-radius:10px;padding:10px 18px;"
+            "}"
+            "QPushButton:hover{"
+            "background:qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 #2749ff, stop:1 #29d6fa);"
+            "}"
+        )
+        self._primary_qss = primary_qss
         # Barra superior
         tools = QHBoxLayout(); tools.setSpacing(10)
-        self.btn_load = QPushButton("CARGAR INFORMACIÓN DEL PROYECTO")
+        self.btn_export = QPushButton("EXPORTAR PROYECTO")
+        self.btn_load   = QPushButton("CARGAR PROYECTO")
+        self.btn_legend = QPushButton("CARGAR LEGEND")
+        self.btn_library = QPushButton("BIBLIOTECA")
+        for b in (self.btn_export, self.btn_load, self.btn_legend, self.btn_library):
+            b.setStyleSheet(primary_qss)
         self.btn_new  = QPushButton("PROYECTO NUEVO")
-        ghost_qss = """
-            QPushButton{
-                background:transparent;color:#0f62fe;border:1px solid #b9d1ff;
-                border-radius:8px;padding:8px 12px;font-weight:700;
-            }
-            QPushButton:hover{ background:#e7f0ff; color:#0f3d91; }
-        """
-        self.btn_load.setStyleSheet(ghost_qss)
-        self.btn_new.setStyleSheet(ghost_qss)
+        danger_qss = (
+            "QPushButton{background:#fee2e2;color:#991b1b;font-weight:700;"
+            "border-radius:6px;padding:6px 10px;border:none;}"
+            "QPushButton:hover{background:#fecaca;}"
+        )
+        self._danger_qss = danger_qss
+        self.btn_new.setStyleSheet(danger_qss)
+        self.btn_export.clicked.connect(self._on_export_project)
         self.btn_load.clicked.connect(self._on_load_project)
+        self.btn_legend.clicked.connect(self._on_load_legend)
+        self.btn_library.clicked.connect(self._on_open_library)
         self.btn_new.clicked.connect(self._on_new_project)
-        tools.addWidget(self.btn_load); tools.addWidget(self.btn_new); tools.addStretch(1)
+        tools.addWidget(self.btn_export)
+        tools.addWidget(self.btn_load)
+        tools.addWidget(self.btn_legend)
+        tools.addWidget(self.btn_library)
+        tools.addStretch(1)
+        tools.addWidget(self.btn_new)
         p1l.addLayout(tools)
 
-        # Título
-        title = QLabel("CÁLCULO DE MATERIALES (TABLEROS ELÉCTRICOS)")
+        title = QLabel("TABLEROS ELÉCTRICOS")
         title.setStyleSheet("font-size:22px;font-weight:800;color:#0f172a;")
         title.setAlignment(Qt.AlignCenter)
         p1l.addWidget(title)
@@ -106,11 +140,11 @@ class MaterialesPage(QWidget):
         # Controles
         self.resp = QComboBox(); self.resp.addItems(["", "JUAN DAVID LOZANO"])
         self.t_alim = QComboBox(); self.t_alim.addItems(["", "220", "460"])
-        self.refrig = QComboBox(); self.refrig.addItems(["", "R744", "R290", "R507", "R404"])
+        self.refrig = QComboBox(); self.refrig.addItems(["", "R744", "R449", "R290", "R507", "R404"])
         self.t_ctl  = QComboBox(); self.t_ctl.addItems(["", "120", "220"])
         self.norma_ap = QComboBox(); self.norma_ap.addItems(["", "UL", "IEC"])
         self.tipo_comp = QComboBox(); self.tipo_comp.addItems(
-            ["", "BITZER", "COPELAND", "TECUMSEH", "FRASCOLD", "DORIN", "OTRO"]
+            ["", "BITZER", "DORIN", "COPELAND"]
         )
 
         self.n_comp_media = QLineEdit(); self.n_comp_paral = QLineEdit(); self.n_comp_baja = QLineEdit()
@@ -118,10 +152,10 @@ class MaterialesPage(QWidget):
             le.setPlaceholderText("0")
 
         self.marca_elem = QComboBox(); self.marca_elem.addItems(
-            ["", "ABB", "SIEMENS", "SCHNEIDER", "LS", "WEG", "CHINT", "DELIXY", "RITTAL", "MURRELEKTRONIK", "GENERICO"]
+            ["", "ABB", "CHINT"]
         )
         self.marca_var  = QComboBox(); self.marca_var.addItems(
-            ["", "NO", "ABB", "DANFOSS", "SCHNEIDER", "YASKAWA", "DELTA", "CHINT", "DELIXY"]
+            ["", "NO", "SCHNEIDER", "DANFOSS"]
         )
 
         def add_pair(row: int, right: bool, text: str, widget: QWidget) -> None:
@@ -133,17 +167,17 @@ class MaterialesPage(QWidget):
 
         left_pairs = [
             ("CIUDAD:", self.city),
-            ("TENSIÓN ALIMENTACIÓN:", self.t_alim),
-            ("TENSIÓN DE CONTROL:", self.t_ctl),
+            ("TENSION ALIMENTACION:", self.t_alim),
+            ("TENSION DE CONTROL:", self.t_ctl),
             ("TIPO DE COMPRESORES (MARCA):", self.tipo_comp),
-            ("Nº COMPRESORES MEDIA:", self.n_comp_media),
-            ("Nº COMPRESORES BAJA:", self.n_comp_baja),
+            ("N COMPRESORES MEDIA:", self.n_comp_media),
+            ("N COMPRESORES BAJA:", self.n_comp_baja),
         ]
         right_pairs = [
             ("RESPONSABLE:", self.resp),
             ("REFRIGERANTE:", self.refrig),
             ("NORMA APLICABLE:", self.norma_ap),
-            ("Nº COMPRESORES PARALELO:", self.n_comp_paral),
+            ("N COMPRESORES PARALELO:", self.n_comp_paral),
             ("MARCA DE ELEMENTOS:", self.marca_elem),
             ("MARCA VARIADORES:", self.marca_var),
         ]
@@ -158,82 +192,65 @@ class MaterialesPage(QWidget):
         g.setColumnStretch(3, 1)
         p1l.addLayout(g)
 
-        # Navegación Paso 1
+        # Acción del formulario inicial
         bottom = QHBoxLayout(); bottom.addStretch(1)
-        self.btn_next_p1 = QPushButton("SIGUIENTE ▶")
-        self.btn_next_p1.setStyleSheet("""
-            QPushButton{background:#5b8bea;color:#fff;font-weight:700;border:none;border-radius:8px;padding:10px 18px;}
-            QPushButton:hover{ background:#6c9cf0; }
-        """)
+        self.btn_next_p1 = QPushButton("ACTUALIZAR CONFIGURACION")
+        self.btn_next_p1.setStyleSheet(primary_qss)
         self.btn_next_p1.clicked.connect(self._on_next_from_form)
         bottom.addWidget(self.btn_next_p1, 0, Qt.AlignRight)
         p1l.addLayout(bottom)
 
-        self.step_stack.addWidget(p1)  # index 0
-
-        if DEV_AUTOFILL:
-            self._dev_prefill_form()
+        cl.addWidget(p1)
 
         # ========================= PASO 2 =========================
-        p2 = QFrame(); p2.setStyleSheet("background:#ffffff;border:1px solid #e2e8f5;border-radius:12px;")
-        p2l = QVBoxLayout(p2); p2l.setContentsMargins(24, 20, 24, 20); p2l.setSpacing(12)
+        self.p2_frame = QFrame(); self.p2_frame.setStyleSheet("background:#ffffff;border:1px solid #e2e8f5;border-radius:12px;")
+        p2l = QVBoxLayout(self.p2_frame); p2l.setContentsMargins(24, 20, 24, 20); p2l.setSpacing(12)
 
-        t2 = QLabel("PASO 2 - CONFIGURACION DE COMPRESORES")
+        t2 = QLabel("CONFIGURACION DE COMPRESORES")
         t2.setStyleSheet("font-size:20px;font-weight:700;color:#0f172a;")
         p2l.addWidget(t2)
 
         self.step2_panel = Step2Panel()
         # Conecta combos globales para que Step2Panel pueda leerlos/escucharlos
         self.step2_panel.set_globals(self.tipo_comp, self.t_alim, self.refrig, self.marca_var)
+        try:
+            self.step2_panel.changed.connect(self._schedule_refresh)
+        except Exception:
+            pass
         p2l.addWidget(self.step2_panel, 1)
 
         nav2 = QHBoxLayout()
-        self.btn_prev2 = QPushButton("◀ ATRÁS")
-        self.btn_next2 = QPushButton("SIGUIENTE ▶")
-        for b in (self.btn_prev2, self.btn_next2):
-            b.setStyleSheet("""
-                QPushButton{background:#5b8bea;color:#fff;font-weight:700;border:none;border-radius:8px;padding:10px 18px;}
-                QPushButton:hover{ background:#6c9cf0; }
-            """)
-        self.btn_prev2.clicked.connect(lambda: self.step_stack.setCurrentIndex(0))
-        self.btn_next2.clicked.connect(self._on_next_from_calc)
-        nav2.addWidget(self.btn_prev2); nav2.addStretch(1); nav2.addWidget(self.btn_next2)
+        nav2.addStretch(1)  # se recalcula automáticamente
         p2l.addLayout(nav2)
 
-        self.step_stack.addWidget(p2)  # index 1
+        cl.addWidget(self.p2_frame)
 
         # ========================= PASO 3 =========================
-        p3 = QFrame(); p3.setStyleSheet("background:#ffffff;border:1px solid #e2e8f5;border-radius:12px;")
-        p3l = QVBoxLayout(p3); p3l.setContentsMargins(24, 20, 24, 20); p3l.setSpacing(12)
+        self.p3_frame = QFrame(); self.p3_frame.setStyleSheet("background:#ffffff;border:1px solid #e2e8f5;border-radius:12px;")
+        p3l = QVBoxLayout(self.p3_frame); p3l.setContentsMargins(24, 20, 24, 20); p3l.setSpacing(12)
 
-        t3 = QLabel("PASO 3 - OPCIONES CO2")
+        t3 = QLabel("OPCIONES CO2")
         t3.setStyleSheet("font-size:20px;font-weight:700;color:#0f172a;")
         p3l.addWidget(t3)
 
         self.step3_panel = Step3OptionsPanel()
+        try:
+            self.step3_panel.changed.connect(self._schedule_summary_only)
+        except Exception:
+            pass
         p3l.addWidget(self.step3_panel, 1)
 
         nav3 = QHBoxLayout()
-        self.btn_prev3 = QPushButton("◀ ATRÁS")
-        self.btn_to_step4 = QPushButton("RESUMEN ▶")  # va al Paso 4
-        for b in (self.btn_prev3, self.btn_to_step4):
-            b.setStyleSheet("""
-                QPushButton{background:#5b8bea;color:#fff;font-weight:700;border:none;border-radius:8px;padding:10px 18px;}
-                QPushButton:hover{ background:#6c9cf0; }
-            """)
-        self.btn_prev3.clicked.connect(lambda: self.step_stack.setCurrentIndex(1))
-        self.btn_to_step4.clicked.connect(self._go_to_step4)
-        nav3.addWidget(self.btn_prev3); nav3.addStretch(1); nav3.addWidget(self.btn_to_step4)
+        nav3.addStretch(1)  # se recalcula automáticamente
         p3l.addLayout(nav3)
 
-        self.step_stack.addWidget(p3)  # index 2
+        cl.addWidget(self.p3_frame)
 
         # ========================= PASO 4 =========================
-        p4 = QFrame(); p4.setStyleSheet("background:#ffffff;border:1px solid #e2e8f5;border-radius:12px;")
-        p4l = QVBoxLayout(p4); p4l.setContentsMargins(24, 20, 24, 20); p4l.setSpacing(12)
+        self.p4_frame = QFrame(); self.p4_frame.setStyleSheet("background:#ffffff;border:1px solid #e2e8f5;border-radius:12px;")
+        p4l = QVBoxLayout(self.p4_frame); p4l.setContentsMargins(24, 20, 24, 20); p4l.setSpacing(12)
 
-        t4 = QLabel("PASO 4 - RESUMEN")
-        t4.setStyleSheet("font-size:20px;font-weight:700;color:#0f172a;")
+        t4 = QLabel("RESUMEN Y EXPORTACION")
         p4l.addWidget(t4)
 
         # Paso 4 unificado
@@ -243,18 +260,14 @@ class MaterialesPage(QWidget):
         )
         p4l.addWidget(self.page4, 1)
 
-        nav4 = QHBoxLayout()
-        self.btn_prev4 = QPushButton("◀ ATRÁS")
-        for b in (self.btn_prev4,):
-            b.setStyleSheet("""
-                QPushButton{background:#5b8bea;color:#fff;font-weight:700;border:none;border-radius:8px;padding:10px 18px;}
-                QPushButton:hover{ background:#6c9cf0; }
-            """)
-        self.btn_prev4.clicked.connect(lambda: self.step_stack.setCurrentIndex(2))
-        nav4.addWidget(self.btn_prev4); nav4.addStretch(1)
-        p4l.addLayout(nav4)
+        cl.addWidget(self.p4_frame)
+        cl.addStretch(1)
 
-        self.step_stack.addWidget(p4)  # index 3
+        # Ocultar secciones hasta que haya datos
+        self._toggle_sections(False)
+
+        if DEV_AUTOFILL:
+            self._dev_prefill_form()
 
         # Cambios globales → refrescar Step2Panel
         self.t_alim.currentIndexChanged.connect(self.step2_panel.refresh_all)
@@ -270,6 +283,7 @@ class MaterialesPage(QWidget):
     def _on_next_from_form(self) -> None:
         if not self._validate_required():
             return
+        self._toggle_sections(True)
 
         nb = self._to_int(self.n_comp_baja.text())
         nm = self._to_int(self.n_comp_media.text())
@@ -315,14 +329,22 @@ class MaterialesPage(QWidget):
             except Exception:
                 pass
 
-        self.step_stack.setCurrentIndex(1)
+        # Encadenar opciones CO2 y resumen en la misma vista
+        self._on_next_from_calc()
 
     def _on_next_from_calc(self) -> None:
         _ = self.step2_panel.export_state()
         # Cargar opciones una sola vez y, si venimos con snapshot, aplicarlas
         if hasattr(self.step3_panel, "load_options"):
+            already = False
             try:
-                self.step3_panel.load_options(initial_state=self._loaded_step3_state, force=False)
+                already = bool(self.step3_panel.is_loaded())
+            except Exception:
+                already = False
+            try:
+                init_state = self._loaded_step3_state
+                force_flag = True if init_state else (not already)
+                self.step3_panel.load_options(initial_state=init_state, force=force_flag)
             except TypeError:
                 # Compat con versiones que no aceptan initial_state/force
                 self.step3_panel.load_options()
@@ -332,7 +354,44 @@ class MaterialesPage(QWidget):
                     except Exception:
                         pass
         self._loaded_step3_state = None
-        self.step_stack.setCurrentIndex(2)
+        self._co2_loaded = True
+        self._go_to_step4()
+
+    def _schedule_refresh(self) -> None:
+        # Espera breve para agrupar cambios de UI y evitar recalcular en cada tecla
+        self._refresh_timer.start(250)
+
+    def _schedule_summary_only(self) -> None:
+        """
+        Recalcula el Paso 4 cuando cambian opciones del Paso 3 (SI/NO, spin o combos),
+        sin que el usuario tenga que volver a pulsar "ACTUALIZAR CONFIGURACION".
+
+        Se agenda con 0ms para que sea inmediato pero sin bloquear el click.
+        """
+        if not self._co2_loaded:
+            return
+        if self._summary_pending:
+            return
+        self._summary_pending = True
+        QTimer.singleShot(0, self._refresh_summary_only)
+
+    def _refresh_summary_only(self) -> None:
+        self._summary_pending = False
+        try:
+            if hasattr(self, "page4") and self.page4 is not None:
+                self.page4.reload_and_render()
+        except Exception:
+            pass
+
+    def _refresh_all(self) -> None:
+        # Recalcula evitando reconstruir CO2 si ya está cargado
+        try:
+            if self._co2_loaded:
+                self.page4.reload_and_render()
+            else:
+                self._on_next_from_calc()
+        except Exception:
+            pass
 
     def _go_to_step4(self) -> None:
         try:
@@ -340,7 +399,6 @@ class MaterialesPage(QWidget):
             self.page4.reload_and_render()
         except Exception as e:
             print(f"[Paso4] error renderizando: {e}")
-        self.step_stack.setCurrentIndex(3)
 
     # ------------------------------------------------------ Validación
     def _validate_required(self) -> bool:
@@ -369,9 +427,52 @@ class MaterialesPage(QWidget):
         self.step2_panel.clear()
         self._loaded_step2_state = None
         self._loaded_step3_state = None
-        self.step_stack.setCurrentIndex(0)
+        self._co2_loaded = False
+        try:
+            if hasattr(self.step3_panel, "clear_all"):
+                self.step3_panel.clear_all()
+        except Exception:
+            pass
+        # Reset del resumen (Paso 4) para que no quede basura visual
+        try:
+            if hasattr(self, "page4") and self.page4 is not None:
+                self.page4.reload_and_render()
+        except Exception:
+            pass
         if DEV_AUTOFILL:
             self._dev_prefill_form()
+        self._toggle_sections(False)
+
+    def _on_export_project(self) -> None:
+        """
+        Exporta usando la lógica del Paso 4 (Excel + programación).
+        """
+        try:
+            if hasattr(self, "page4") and self.page4 is not None:
+                self.page4.export_project()
+            else:
+                QMessageBox.information(self, "Exportar", "El resumen todavía no está disponible.")
+        except Exception as e:
+            QMessageBox.critical(self, "Exportar", f"No se pudo exportar el proyecto:\n{e}")
+
+    def _on_load_legend(self) -> None:
+        # Placeholder para futura carga de legend en Tableros
+        QMessageBox.information(self, "Cargar legend", "Esta función estará disponible próximamente.")
+
+    def _on_open_library(self) -> None:
+        """
+        Abre la biblioteca local de proyectos (snapshots .ecalc.json)
+        guardados en `data/proyectos/tableros/`.
+        """
+        lib_dir = Path(__file__).resolve().parents[3] / "data" / "proyectos" / "tableros"
+        dlg = BibliotecaProyectosDialog(
+            parent=self,
+            library_dir=lib_dir,
+            on_load=lambda p: self._load_project_file(str(p)),
+            primary_qss=getattr(self, "_primary_qss", ""),
+            danger_qss=getattr(self, "_danger_qss", ""),
+        )
+        dlg.exec()
 
     def _on_load_project(self) -> None:
         fname, _ = QFileDialog.getOpenFileName(
@@ -405,21 +506,38 @@ class MaterialesPage(QWidget):
                 self._set_combo(self.marca_var,  (self._get_any(globs, ["marca_variadores", "marca_var"]) or "").upper())
 
                 # Estimar cantidades desde step2 (prefijos B y M/G)
-                nb = sum(1 for k in (step2 or {}) if str(k).upper().startswith("B"))
-                nm_M = sum(1 for k in (step2 or {}) if str(k).upper().startswith("M"))
-                nm_G = sum(1 for k in (step2 or {}) if str(k).upper().startswith("G"))
-                nm = nm_M if nm_M else nm_G
+                keys_up = [str(k).upper() for k in (step2 or {})]
+                # Convención interna: G# = baja, B#/M# = media
+                nb = sum(1 for k in keys_up if k.startswith("G"))
+                nm = sum(1 for k in keys_up if k.startswith(("B", "M")))
+                npar_calc = sum(1 for k in keys_up if k.startswith(("F", "P")))
+
                 self.n_comp_baja.setText(str(nb))
                 self.n_comp_media.setText(str(nm))
-                npar = self._get_any(globs, ["n_comp_paralelo", "n paralelos", "paralelo", "comp paralelos"])
-                if npar:
-                    self.n_comp_paral.setText(self._digits(npar))
+
+                npar_glob = self._get_any(globs, ["n_comp_paralelo", "n paralelos", "paralelo", "comp paralelos"])
+                npar_txt = self._digits(npar_glob) if npar_glob else ""
+                # si del archivo viene 0 pero del step2 se puede calcular, usa el calculado
+                if npar_calc:
+                    self.n_comp_paral.setText(str(npar_calc))
+                elif npar_txt:
+                    self.n_comp_paral.setText(npar_txt)
 
                 # Guardamos estados para aplicarlos más adelante
                 self._loaded_step2_state = step2
                 self._loaded_step3_state = globs.get("step3_state", {}) if isinstance(globs, dict) else {}
+                try:
+                    # No forzar SI/NO si cargamos desde archivo
+                    if hasattr(self.step3_panel, "_pending_all_yes"):
+                        self.step3_panel._pending_all_yes = False  # type: ignore
+                except Exception:
+                    pass
 
-                self._info("✅ Programación cargada. Pulsa ‘Siguiente’ para continuar.")
+                try:
+                    self._on_next_from_form()
+                except Exception:
+                    pass
+                self._info("Programación cargada y aplicada automáticamente.")
                 return
 
             # --------- Compat: JSON simple o Excel de key/valor ---------
@@ -441,21 +559,100 @@ class MaterialesPage(QWidget):
             self.city.setText(data.get("CIUDAD", ""))
             self._set_combo(self.resp, data.get("RESPONSABLE", ""))
 
-            self._set_combo(self.t_alim, data.get("TENSION ALIMENTACION", data.get("TENSIÓN ALIMENTACIÓN", "")))
+            ("TENSION ALIMENTACION:", self.t_alim),
             self._set_combo(self.refrig, data.get("REFRIGERANTE", ""))
-            self._set_combo(self.t_ctl, data.get("TENSION CONTROL", data.get("TENSIÓN DE CONTROL", "")))
+            ("TENSION DE CONTROL:", self.t_ctl),
             self._set_combo(self.norma_ap, (data.get("NORMA APLICABLE", "") or "").upper())
             self._set_combo(self.tipo_comp, (data.get("TIPO DE COMPRESORES", data.get("TIPO COMPRESORES", "")) or "").upper())
 
             self._set_combo(self.marca_elem, (data.get("MARCA DE ELEMENTOS", data.get("MARCA ELEMENTOS", "")) or "").upper())
             self._set_combo(self.marca_var,  (data.get("MARCA VARIADORES", data.get("MARCA DE VARIADORES", "")) or "").upper())
 
-            self.n_comp_media.setText(self._only_int(data.get("NUMERO DE COMPRESORES MEDIA", data.get("Nº COMPRESORES MEDIA", ""))))
-            self.n_comp_paral.setText(self._only_int(data.get("NUMERO DE COMPRESORES PARALELO", data.get("Nº COMPRESORES PARALELO", ""))))
-            self.n_comp_baja.setText(self._only_int(data.get("NUMERO DE COMPRESORES BAJA", data.get("Nº COMPRESORES BAJA", ""))))
+            ("N COMPRESORES MEDIA:", self.n_comp_media),
+            ("N COMPRESORES PARALELO:", self.n_comp_paral),
+            ("N COMPRESORES BAJA:", self.n_comp_baja),
+
+            try:
+                self._on_next_from_form()
+            except Exception:
+                pass
 
         except Exception as e:
             self._warn(f"No pude leer el archivo.\n\nDetalle: {e}")
+
+    def _load_project_file(self, fname: str) -> None:
+        """
+        Carga un snapshot `.ecalc.json` (sin abrir diálogos) y lo aplica al UI.
+        Usado por la Biblioteca local.
+        """
+        if not fname:
+            return
+        if not str(fname).lower().endswith(".ecalc.json"):
+            self._warn("La biblioteca solo soporta archivos .ecalc.json.")
+            return
+
+        try:
+            step2, globs = load_programacion_snapshot(fname)
+
+            # Limpiar primero
+            self._on_new_project()
+
+            # Campos del Paso 1 desde globs
+            self.proj.setText(self._get_any(globs, ["nombre_proyecto", "proyecto", "project_name"]))
+            self.city.setText(self._get_any(globs, ["ciudad", "city"]))
+
+            self._set_combo(self.resp, self._get_any(globs, ["responsable"]))
+            self._set_combo(self.t_alim, self._digits(self._get_any(globs, ["t_alim", "tension_alimentacion"])))
+            self._set_combo(self.t_ctl,  self._digits(self._get_any(globs, ["t_ctl", "tension_control"])))
+            self._set_combo(self.refrig, self._get_any(globs, ["refrigerante"]))
+            self._set_combo(self.norma_ap, (self._get_any(globs, ["norma_ap", "norma aplicable"]) or "").upper())
+            self._set_combo(self.tipo_comp, (self._get_any(globs, ["tipo_compresor", "tipo_compresores", "marca_compresor"]) or "").upper())
+            self._set_combo(self.marca_elem, (self._get_any(globs, ["marca_elem", "marca_elementos"]) or "").upper())
+            self._set_combo(self.marca_var,  (self._get_any(globs, ["marca_variadores", "marca_var"]) or "").upper())
+
+            # Estimar cantidades desde step2 (prefijos B y M/G)
+            keys_up = [str(k).upper() for k in (step2 or {})]
+            # Convención interna: G# = baja, B#/M# = media
+            nb = sum(1 for k in keys_up if k.startswith("G"))
+            nm = sum(1 for k in keys_up if k.startswith(("B", "M")))
+            npar_calc = sum(1 for k in keys_up if k.startswith(("F", "P")))
+
+            self.n_comp_baja.setText(str(nb))
+            self.n_comp_media.setText(str(nm))
+
+            npar_glob = self._get_any(globs, ["n_comp_paralelo", "n paralelos", "paralelo", "comp paralelos"])
+            npar_txt = self._digits(npar_glob) if npar_glob else ""
+            if npar_calc:
+                self.n_comp_paral.setText(str(npar_calc))
+            elif npar_txt:
+                self.n_comp_paral.setText(npar_txt)
+
+            # Guardamos estados para aplicarlos más adelante
+            self._loaded_step2_state = step2
+            self._loaded_step3_state = globs.get("step3_state", {}) if isinstance(globs, dict) else {}
+            try:
+                # No forzar SI/NO si cargamos desde archivo
+                if hasattr(self.step3_panel, "_pending_all_yes"):
+                    self.step3_panel._pending_all_yes = False  # type: ignore
+            except Exception:
+                pass
+
+            try:
+                self._on_next_from_form()
+            except Exception:
+                pass
+
+            self._info("Programación cargada y aplicada automáticamente.")
+        except Exception as e:
+            self._warn(f"No pude leer el archivo.\n\nDetalle: {e}")
+
+    def _toggle_sections(self, visible: bool) -> None:
+        """
+        Muestra/oculta las secciones de detalle (p2, p3, p4) para dejar la interfaz limpia.
+        """
+        for fr in (getattr(self, "p2_frame", None), getattr(self, "p3_frame", None), getattr(self, "p4_frame", None)):
+            if fr is not None:
+                fr.setVisible(bool(visible))
 
     # ---------------------------------------------------- Catálogo modelos
     def _get_modelos_r744_por_hoja(self, marca: str) -> List[str]:
@@ -729,4 +926,3 @@ class MaterialesPage(QWidget):
         self.n_comp_baja.setText("2")
         self._set_combo(self.marca_elem, "ABB")
         self._set_combo(self.marca_var, "SCHNEIDER")
-

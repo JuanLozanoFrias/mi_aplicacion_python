@@ -1,0 +1,288 @@
+{
+  "version": 1,
+  "arranques": {
+    "V": [
+      {
+        "item": "2Q1",
+        "nombre": "BREAKER POTENCIA COMPRESOR",
+        "be": "(BREAKER CALCULADO)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 6, "neutro": 0, "tierra": 0}
+      },
+      {
+        "item": "2U1",
+        "nombre": "VARIADOR DE VELOCIDAD",
+        "be": "(VARIADOR CALCULADO)=A,Q",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+      },
+      {
+        "item": "6FA1",
+        "nombre": "BREAKER CADENA DE CONTROL",
+        "be": "MARCA DE ELEMENTOS:A(B)D(2)K(1)J(\"UL\")=B,C,F,G,H,I,L",
+        "bornera": {"fase": 25, "neutro": 3, "tierra": 2}
+      },
+      {
+        "item": "6S1",
+        "nombre": "PULSADOR FALLA",
+        "be": "MARCA DE ELEMENTOS:A(PU)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0},
+        "cond": {"label": "UL", "B": "SCHNEIDER", "C": "GENERICO"}
+      },
+      {
+        "item": "6K1",
+        "nombre": "RELEVO ACEITE",
+        "be": "MARCA DE ELEMENTOS:A(R)N(2)P(\"TENSION CONTROL:\")=B,C,F,G,H,I,L // MARCA DE ELEMENTOS:A(RB)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+      },
+      {
+        "item": "6K2",
+        "nombre": "RELEVO CADENA",
+        "be": "MARCA DE ELEMENTOS:A(R)N(2)P(\"TENSION CONTROL:\")=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+      },
+      {
+        "item": "6K3",
+        "nombre": "RELEVO ACEITE",
+        "be": "MARCA DE ELEMENTOS:A(R)N(2)P(\"TENSION CONTROL:\")=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0},
+        "cond": {"label": "BACK UP", "B": "*PONE", "C": "*BORRA"}
+      },
+      {
+        "item": "6K4",
+        "nombre": "RELEVO CADENA",
+        "be": "MARCA DE ELEMENTOS:A(R)N(2)P(\"TENSION CONTROL:\")=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0},
+        "cond": {"label": "BACK UP", "B": "*PONE", "C": "*BORRA"}
+      },
+      {
+        "item": "7S1",
+        "nombre": "SELECTOR DE MANDO",
+        "be": "MARCA DE ELEMENTOS:A(S)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0},
+        "cond": {"label": "SELECTOR INTERNO O EXTERNO", "B": "ABB", "C": "GENERICO"}
+      },
+      {
+        "item": "7K1",
+        "nombre": "CONTACTOR DE ARRANQUE",
+        "be": "MARCA DE ELEMENTOS:A(CA)N(2)P(\"TENSION CONTROL:\")=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+      },
+      {
+        "item": "12H1",
+        "nombre": "PILOTO FUNCIONANDO",
+        "be": "MARCA DE ELEMENTOS:A(PI)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0},
+        "cond": {"label": "UL", "B": "SCHNEIDER", "C": "GENERICO"}
+      },
+      {
+        "item": "",
+        "nombre": "ADAPTADOR BREAKER PRINCIPAL",
+        "be": "MARCA DE ELEMENTOS:A(ADP)D(@BREAKER_A)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0},
+        "cond": {"label": "UL", "B": "RITTAL", "C": "RITTAL"}
+      }
+    ],
+    "P": [
+      {
+        "item": "2Q1",
+        "nombre": "GUARDAMOTOR POTENCIA COMPRESOR",
+        "be": "(GUARDAMOTOR CALCULADO)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+      },
+      {
+        "item": "2Q2",
+        "nombre": "GUARDAMOTOR POTENCIA COMPRESOR",
+        "be": "(GUARDAMOTOR CALCULADO)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+      },
+      {
+        "item": "6FA1",
+        "nombre": "BREAKER CADENA DE CONTROL",
+        "be": "MARCA DE ELEMENTOS:A(B)D(2)K(1)J(\"UL\")=B,C,F,G,H,I,L",
+        "bornera": {"fase": 26, "neutro": 3, "tierra": 1}
+      },
+      {
+        "item": "6S1",
+        "nombre": "PULSADOR FALLA",
+        "be": "MARCA DE ELEMENTOS:A(PU)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0},
+        "cond": {"label": "UL", "B": "SCHNEIDER", "C": "GENERICO"}
+      },
+      {
+        "item": "6K1",
+        "nombre": "RELEVO ACEITE",
+        "be": "MARCA DE ELEMENTOS:A(R)N(2)P(\"TENSION CONTROL:\")=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+      },
+      {
+        "item": "6K2",
+        "nombre": "RELEVO CADENA",
+        "be": "MARCA DE ELEMENTOS:A(R)N(2)P(\"TENSION CONTROL:\")=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+      },
+      {
+        "item": "6K3",
+        "nombre": "RELEVO ACEITE",
+        "be": "MARCA DE ELEMENTOS:A(R)N(2)P(\"TENSION CONTROL:\")=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0},
+        "cond": {"label": "BACK UP", "B": "*PONE", "C": "*BORRA"}
+      },
+      {
+        "item": "6K4",
+        "nombre": "RELEVO CADENA",
+        "be": "MARCA DE ELEMENTOS:A(R)N(2)P(\"TENSION CONTROL:\")=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0},
+        "cond": {"label": "BACK UP", "B": "*PONE", "C": "*BORRA"}
+      },
+      {
+        "item": "7S1",
+        "nombre": "SELECTOR DE MANDO",
+        "be": "MARCA DE ELEMENTOS:A(S)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0},
+        "cond": {"label": "SELECTOR INTERNO O EXTERNO", "B": "ABB", "C": "GENERICO"}
+      },
+      {
+        "item": "7Q1",
+        "nombre": "CONTACTOR DE POTENCIA",
+        "be": "(CONTACTOR CALCULADO)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+      },
+      {
+        "item": "7Q2",
+        "nombre": "CONTACTOR DE POTENCIA",
+        "be": "(CONTACTOR CALCULADO)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+      },
+      {
+        "item": "12H1",
+        "nombre": "PILOTO FUNCIONANDO",
+        "be": "MARCA DE ELEMENTOS:A(PI)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0},
+        "cond": {"label": "UL", "B": "SCHNEIDER", "C": "GENERICO"}
+      },
+      {
+        "item": "",
+        "nombre": "ADAPTADOR GUARDAMOTOR",
+        "be": "MARCA DE ELEMENTOS:A(ADP)D(@GM_A)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0},
+        "cond": {"label": "UL", "B": "RITTAL", "C": "RITTAL"}
+      },
+      {
+        "item": "",
+        "nombre": "ADAPTADOR GUARDAMOTOR",
+        "be": "MARCA DE ELEMENTOS:A(ADP)D(@GM_A)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0},
+        "cond": {"label": "UL", "B": "RITTAL", "C": "RITTAL"}
+      },
+      {
+        "item": "7Q2",
+        "nombre": "CONTACTO AUXILIAR ABIERTO CONTACTOR",
+        "be": "MARCA DE ELEMENTOS:A(CA)N(1)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+      },
+      {
+        "item": "7Q2",
+        "nombre": "CONTACTO AUXILIAR ABIERTO CONTACTOR",
+        "be": "MARCA DE ELEMENTOS:A(CA)N(1)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+      },
+      {
+        "item": "7Q1",
+        "nombre": "CONTACTO AUXILIAR ABIERTO CONTACTOR",
+        "be": "MARCA DE ELEMENTOS:A(CA)N(1)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+      },
+      {
+        "item": "7Q1",
+        "nombre": "CONTACTO AUXILIAR CERRADO CONTACTOR",
+        "be": "MARCA DE ELEMENTOS:A(CA)N(0)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+      },
+      {
+        "item": "2Q1",
+        "nombre": "CONTACTO AUXILIAR GUARDAMOTOR",
+        "be": "MARCA DE ELEMENTOS:A(CA)N(8)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+      },
+      {
+        "item": "2Q2",
+        "nombre": "CONTACTO AUXILIAR GUARDAMOTOR",
+        "be": "MARCA DE ELEMENTOS:A(CA)N(8)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+      }
+    ],
+    "D": [
+      {
+        "item": "2Q1",
+        "nombre": "GUARDAMOTOR POTENCIA COMPRESOR",
+        "be": "(GUARDAMOTOR CALCULADO)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+      },
+      {
+        "item": "6FA1",
+        "nombre": "BREAKER CADENA DE CONTROL",
+        "be": "MARCA DE ELEMENTOS:A(B)D(2)K(1)J(\"UL\")=B,C,F,G,H,I,L",
+        "bornera": {"fase": 26, "neutro": 3, "tierra": 1}
+      },
+      {
+        "item": "6S1",
+        "nombre": "PULSADOR FALLA",
+        "be": "MARCA DE ELEMENTOS:A(PU)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0},
+        "cond": {"label": "UL", "B": "SCHNEIDER", "C": "GENERICO"}
+      },
+      {
+        "item": "6K1",
+        "nombre": "RELEVO ACEITE",
+        "be": "MARCA DE ELEMENTOS:A(R)N(2)P(\"TENSION CONTROL:\")=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+      },
+      {
+        "item": "6K2",
+        "nombre": "RELEVO CADENA",
+        "be": "MARCA DE ELEMENTOS:A(R)N(2)P(\"TENSION CONTROL:\")=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+      },
+      {
+        "item": "6K3",
+        "nombre": "RELEVO ACEITE",
+        "be": "MARCA DE ELEMENTOS:A(R)N(2)P(\"TENSION CONTROL:\")=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0},
+        "cond": {"label": "BACK UP", "B": "*PONE", "C": "*BORRA"}
+      },
+      {
+        "item": "6K4",
+        "nombre": "RELEVO CADENA",
+        "be": "MARCA DE ELEMENTOS:A(R)N(2)P(\"TENSION CONTROL:\")=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0},
+        "cond": {"label": "BACK UP", "B": "*PONE", "C": "*BORRA"}
+      },
+      {
+        "item": "7S1",
+        "nombre": "SELECTOR DE MANDO",
+        "be": "MARCA DE ELEMENTOS:A(S)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0},
+        "cond": {"label": "SELECTOR INTERNO O EXTERNO", "B": "ABB", "C": "GENERICO"}
+      },
+      {
+        "item": "7Q1",
+        "nombre": "CONTACTOR DE POTENCIA",
+        "be": "(CONTACTOR CALCULADO)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0}
+      },
+      {
+        "item": "12H1",
+        "nombre": "PILOTO FUNCIONANDO",
+        "be": "MARCA DE ELEMENTOS:A(PI)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0},
+        "cond": {"label": "UL", "B": "SCHNEIDER", "C": "GENERICO"}
+      },
+      {
+        "item": "",
+        "nombre": "ADAPTADOR GUARDAMOTOR",
+        "be": "MARCA DE ELEMENTOS:A(ADP)D(@GM_A)=B,C,F,G,H,I,L",
+        "bornera": {"fase": 0, "neutro": 0, "tierra": 0},
+        "cond": {"label": "UL", "B": "RITTAL", "C": "RITTAL"}
+      }
+    ]
+  }
+}

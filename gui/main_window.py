@@ -12,6 +12,7 @@ from PySide6.QtSvgWidgets import QSvgWidget
 from gui.pages.carga_page import CargaPage
 from gui.pages.materiales_page import MaterialesPage
 from gui.pages.carga_electrica.carga_electrica_page import CargaElectricaPage
+from gui.pages.creditos_page import CreditosPage
 
 
 class ElectroCalcApp(QMainWindow):
@@ -177,7 +178,7 @@ QListWidget::item:selected:hover {
 }
 """
         self.nav.setStyleSheet(nav_qss)
-        for txt in ["CARGAS TERMICAS", "TABLEROS ELECTRICOS", "CARGA ELECTRICA"]:
+        for txt in ["CARGAS TERMICAS", "TABLEROS ELECTRICOS", "CARGA ELECTRICA", "CREDITOS"]:
             self.nav.addItem(QListWidgetItem(txt))
         side_layout.addWidget(self.nav, stretch=1)
         root.addWidget(side)
@@ -195,6 +196,7 @@ QListWidget::item:selected:hover {
         self.stack.addWidget(CargaPage())
         self.stack.addWidget(MaterialesPage())
         self.stack.addWidget(CargaElectricaPage())
+        self.stack.addWidget(CreditosPage())
         main_layout.addWidget(self.stack, 1)
         root.addWidget(main, 1)
         self.nav.currentRowChanged.connect(self.stack.setCurrentIndex)
@@ -277,7 +279,6 @@ QListWidget::item:selected:hover {
         p_layout.addWidget(logo_frame, alignment=Qt.AlignHCenter)
         p_layout.addStretch()
         return profile
-
 
 
 

@@ -1,0 +1,296 @@
+{
+  "proyecto": "ZZ",
+  "fecha": "20251127",
+  "ramales": [
+    {
+      "ramal": 1,
+      "equipo": "AUTOARGOS CON PUERTAS",
+      "uso": "DELI",
+      "medida": "2.5",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR13",
+      "niveles": 0
+    },
+    {
+      "ramal": 2,
+      "equipo": "AUTOSERVICIO ARGOS",
+      "uso": "FRUVER",
+      "medida": "2.5",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR23",
+      "niveles": 0
+    },
+    {
+      "ramal": 3,
+      "equipo": "AUTOSERVICIO ARGOS",
+      "uso": "FRUVER",
+      "medida": "2.5",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR23",
+      "niveles": 0
+    },
+    {
+      "ramal": 4,
+      "equipo": "AUTOSERVICIO ARGOS",
+      "uso": "FRUVER",
+      "medida": "2.5",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR23",
+      "niveles": 0
+    },
+    {
+      "ramal": 5,
+      "equipo": "AUTOSERVICIO ARGOS",
+      "uso": "FRUVER",
+      "medida": "2.5",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR23",
+      "niveles": 0
+    },
+    {
+      "ramal": 6,
+      "equipo": "AUTOARGOS CON PUERTAS",
+      "uso": "LACTEOS",
+      "medida": "2.5",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR13",
+      "niveles": 0
+    },
+    {
+      "ramal": 7,
+      "equipo": "AUTOARGOS CON PUERTAS",
+      "uso": "LACTEOS",
+      "medida": "3.75",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR23",
+      "niveles": 0
+    },
+    {
+      "ramal": 8,
+      "equipo": "AUTOARGOS CON PUERTAS",
+      "uso": "LACTEOS",
+      "medida": "3.75",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR23",
+      "niveles": 0
+    },
+    {
+      "ramal": 9,
+      "equipo": "AUTOARGOS CON PUERTAS",
+      "uso": "LACTEOS",
+      "medida": "2.5",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR13",
+      "niveles": 0
+    },
+    {
+      "ramal": 10,
+      "equipo": "MULTIPUERTA CONGELACIÓN",
+      "uso": "CC",
+      "medida": "3P",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR23",
+      "niveles": 0
+    },
+    {
+      "ramal": 11,
+      "equipo": "MULTIPUERTA CONGELACIÓN",
+      "uso": "CC",
+      "medida": "3P",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR23",
+      "niveles": 0
+    },
+    {
+      "ramal": 12,
+      "equipo": "AUTOARGOS CON PUERTAS",
+      "uso": "CARNE",
+      "medida": "3.75",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR23",
+      "niveles": 0
+    },
+    {
+      "ramal": 13,
+      "equipo": "VITRINA FENIX",
+      "uso": "CARNE",
+      "medida": "2.5",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR13",
+      "niveles": 0
+    },
+    {
+      "ramal": 14,
+      "equipo": "VITRINA FENIX",
+      "uso": "CERDO",
+      "medida": "2.5",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR13",
+      "niveles": 0
+    },
+    {
+      "ramal": 15,
+      "equipo": "VITRINA FENIX",
+      "uso": "POLLO FRIZADO",
+      "medida": "1.25",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR09",
+      "niveles": 0
+    },
+    {
+      "ramal": 16,
+      "equipo": "VITRINA FENIX",
+      "uso": "POLLO FRIZADO",
+      "medida": "1.25",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR09",
+      "niveles": 0
+    },
+    {
+      "ramal": 17,
+      "equipo": "AUTOARGOS CON PUERTAS",
+      "uso": "BEBIDAS",
+      "medida": "2.5",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR13",
+      "niveles": 0
+    },
+    {
+      "ramal": 18,
+      "equipo": "AUTOARGOS CON PUERTAS",
+      "uso": "BEBIDAS",
+      "medida": "2.5",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR13",
+      "niveles": 0
+    },
+    {
+      "ramal": 19,
+      "equipo": "AUTOARGOS CON PUERTAS",
+      "uso": "BEBIDAS",
+      "medida": "0.95",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR13",
+      "niveles": 0
+    },
+    {
+      "ramal": 20,
+      "equipo": "AUTOARGOS CON PUERTAS",
+      "uso": "BEBIDAS",
+      "medida": "2.5",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR13",
+      "niveles": 0
+    },
+    {
+      "ramal": 21,
+      "equipo": "AUTOARGOS CON PUERTAS",
+      "uso": "BEBIDAS",
+      "medida": "2.5",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR13",
+      "niveles": 0
+    },
+    {
+      "ramal": 22,
+      "equipo": "CUARTO CONSERVACIÓN",
+      "uso": "POLLO",
+      "medida": "WED-250",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR23",
+      "niveles": 0
+    },
+    {
+      "ramal": 23,
+      "equipo": "CUARTO CONSERVACIÓN",
+      "uso": "CARNE",
+      "medida": "WED-250",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR23",
+      "niveles": 0
+    },
+    {
+      "ramal": 24,
+      "equipo": "CUARTO CONSERVACIÓN",
+      "uso": "Proceso",
+      "medida": "WED-125",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR09",
+      "niveles": 0
+    },
+    {
+      "ramal": 25,
+      "equipo": "CUARTO CONSERVACIÓN",
+      "uso": "PASILLO",
+      "medida": "WED-250",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR13",
+      "niveles": 0
+    },
+    {
+      "ramal": 26,
+      "equipo": "CUARTO CONSERVACIÓN",
+      "uso": "FRUVER",
+      "medida": "WED-380",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR23",
+      "niveles": 0
+    },
+    {
+      "ramal": 27,
+      "equipo": "CUARTO CONSERVACIÓN",
+      "uso": "LACTEOS",
+      "medida": "WEF-1130",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HPR23",
+      "niveles": 0
+    },
+    {
+      "ramal": 28,
+      "equipo": "CUARTO CONSERVACIÓN",
+      "uso": "CC",
+      "medida": "WEF-1680",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HEX380CC",
+      "niveles": 0
+    },
+    {
+      "ramal": 29,
+      "equipo": "CUARTO CONSERVACIÓN",
+      "uso": "CC",
+      "medida": "WEF-1680",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HEX380CC",
+      "niveles": 0
+    }
+  ]
+}

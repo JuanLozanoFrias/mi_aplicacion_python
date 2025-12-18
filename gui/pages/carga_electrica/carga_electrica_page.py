@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import json
+import shutil
 from datetime import datetime
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
@@ -20,6 +21,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QKeySequence, QShortcut, QPainter, QFont, QColor
 
 from logic.carga_electrica.cuadro_cargas import recalcular, ResultadoRamal, SeleccionRamal, CargaFase
+from .biblioteca_carga import BibliotecaCargaDialog
 
 # Lista fija de usos (tomada de la columna H de DATOS, pero embebida para no depender del Excel).
 USOS_DEFAULT = [
@@ -207,6 +209,16 @@ class CargaElectricaPage(QWidget):
         s = re.sub(r"[^A-Z0-9]+", "_", s).strip("_")
         return s or "PROYECTO"
 
+    @staticmethod
+    def _unique_path(p: Path) -> Path:
+        if not p.exists():
+            return p
+        for i in range(2, 10_000):
+            cand = p.with_name(f"{p.stem}_{i}{p.suffix}")
+            if not cand.exists():
+                return cand
+        return p
+
     def _apply_column_widths(self) -> None:
         hdr = self.sel_table.horizontalHeader()
         hdr.setSectionResizeMode(QHeaderView.ResizeToContents)
@@ -267,20 +279,34 @@ class CargaElectricaPage(QWidget):
         card_layout.setContentsMargins(16, 16, 16, 16)
         card_layout.setSpacing(10)
 
+        primary_qss = (
+            "QPushButton{"
+            "background:qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 #1e3aef, stop:1 #14c9f5);"
+            "color:#ffffff;font-weight:700;border:none;border-radius:10px;padding:10px 18px;"
+            "}"
+            "QPushButton:hover{"
+            "background:qlineargradient(x1:0,y1:0,x2:1,y2:0,stop:0 #2749ff, stop:1 #29d6fa);"
+            "}"
+        )
+        danger_qss = (
+            "QPushButton{background:#fee2e2;color:#991b1b;font-weight:700;"
+            "border-radius:6px;padding:6px 10px;border:none;}"
+            "QPushButton:hover{background:#fecaca;}"
+        )
+
         top_actions = QHBoxLayout()
         top_actions.setSpacing(8)
-        self.btn_export = QPushButton("EXPORTAR PROYECTO")
-        self.btn_export.clicked.connect(self._export_project)
-        self.btn_import = QPushButton("CARGAR PROYECTO")
-        self.btn_import.clicked.connect(self._import_project)
-        self.btn_legend = QPushButton("CARGAR LEGEND")
-        self.btn_legend.clicked.connect(self._load_legend)
+        self.btn_export = QPushButton("EXPORTAR PROYECTO"); self.btn_export.setStyleSheet(primary_qss); self.btn_export.clicked.connect(self._export_project)
+        self.btn_import = QPushButton("CARGAR PROYECTO");  self.btn_import.setStyleSheet(primary_qss);  self.btn_import.clicked.connect(self._import_project)
+        self.btn_legend = QPushButton("CARGAR LEGEND");    self.btn_legend.setStyleSheet(primary_qss);  self.btn_legend.clicked.connect(self._load_legend)
+        self.btn_library = QPushButton("BIBLIOTECA");       self.btn_library.setStyleSheet(primary_qss); self.btn_library.clicked.connect(self._open_library)
         top_actions.addWidget(self.btn_export)
         top_actions.addWidget(self.btn_import)
         top_actions.addWidget(self.btn_legend)
+        top_actions.addWidget(self.btn_library)
         top_actions.addStretch(1)
         self.btn_reset = QPushButton("NUEVO PROYECTO")
-        self.btn_reset.setStyleSheet("QPushButton{background:#fee2e2;color:#991b1b;font-weight:700;border-radius:6px;padding:6px 10px;} QPushButton:hover{background:#fecaca;}")
+        self.btn_reset.setStyleSheet(danger_qss)
         self.btn_reset.clicked.connect(self._reset_project)
         top_actions.addWidget(self.btn_reset)
         card_layout.addLayout(top_actions)
@@ -1161,8 +1187,23 @@ class CargaElectricaPage(QWidget):
                 })
             with open(json_out, "w", encoding="utf-8") as fh:
                 json.dump(data, fh, ensure_ascii=False, indent=2)
+
+            # Copia interna del JSON en data/proyectos/carga_electrica
+            lib_dir = Path(__file__).resolve().parents[3] / "data" / "proyectos" / "carga_electrica"
+            lib_dir.mkdir(parents=True, exist_ok=True)
+            lib_json = self._unique_path(lib_dir / json_out.name)
+            try:
+                shutil.copy2(json_out, lib_json)
+            except Exception:
+                try:
+                    with open(lib_json, "w", encoding="utf-8") as fh:
+                        json.dump(data, fh, ensure_ascii=False, indent=2)
+                except Exception:
+                    lib_json = None
+
             self.status.setText(f"Exportado: {excel_out.name} y {json_out.name}")
-            QMessageBox.information(self, "Exportado", f"Archivos guardados:\n{excel_out}\n{json_out}")
+            extra = f"\nCopia interna: {lib_json}" if lib_json else ""
+            QMessageBox.information(self, "Exportado", f"Archivos guardados:\n{excel_out}\n{json_out}{extra}")
         except Exception as e:
             self.status.setText(f"Error al exportar: {e}")
             QMessageBox.critical(self, "Error", str(e))
@@ -1170,6 +1211,15 @@ class CargaElectricaPage(QWidget):
     def _import_project(self) -> None:
         base_dir = Path(r"C:\Users\ingmontajes4\Documents\PC-JUAN LOZANO 22032022\WESTON\JUAN LOZANO\CUADRO DE CARGAS")
         path, _ = QFileDialog.getOpenFileName(self, "Cargar proyecto", str(base_dir), "JSON (*.json)")
+        if not path:
+            return
+        self._load_project_file(path)
+
+    def _load_project_file(self, path: str) -> None:
+        """
+        Carga un proyecto .json y lo aplica a la tabla (sin diálogos).
+        Usado por el botón "CARGAR PROYECTO" y por la biblioteca local.
+        """
         if not path:
             return
         try:
@@ -2045,3 +2095,17 @@ class CargaElectricaPage(QWidget):
             self._recompute_summary()
         except Exception:
             pass
+
+    def _open_library(self) -> None:
+        """
+        Abre biblioteca local (data/proyectos/carga_electrica/) para cargar/duplicar/borrar proyectos .json.
+        """
+        lib_dir = Path(__file__).resolve().parents[3] / "data" / "proyectos" / "carga_electrica"
+        dlg = BibliotecaCargaDialog(
+            parent=self,
+            library_dir=lib_dir,
+            on_load=lambda p: self._load_project_file(str(p)),
+            primary_qss=self.btn_export.styleSheet(),
+            danger_qss=self.btn_reset.styleSheet(),
+        )
+        dlg.exec()

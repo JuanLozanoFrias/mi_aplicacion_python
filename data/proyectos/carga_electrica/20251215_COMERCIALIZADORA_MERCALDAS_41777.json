@@ -1,0 +1,26 @@
+{
+  "proyecto": "COMERCIALIZADORA MERCALDAS 41777",
+  "fecha": "20251215",
+  "analisis_economico": false,
+  "eco_params": {
+    "costo_kwh": 900.0,
+    "horas_anuales": 8760.0,
+    "aumento_carga": 1.0,
+    "aumento_energia": 3.0,
+    "tasa_descuento": 5.0,
+    "vida_economica": 20.0
+  },
+  "ramales": [
+    {
+      "ramal": 1,
+      "equipo": "VITRINA FENIX",
+      "uso": "CARNE",
+      "medida": "2.2",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HEX 80",
+      "niveles": 1,
+      "distancia": 0.0
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "proyecto": "COMPAÑIA  DSIERRA 41633",
+  "fecha": "20251125",
+  "ramales": [
+    {
+      "ramal": 1,
+      "equipo": "VITRINA TAYRONA",
+      "uso": "CARNE",
+      "medida": "3.75",
+      "descongelamiento": "RESISTENCIAS",
+      "tiene_unidad": false,
+      "ref_unidad": "",
+      "niveles": 0
+    },
+    {
+      "ramal": 2,
+      "equipo": "VITRINA TAYRONA",
+      "uso": "CARNE",
+      "medida": "1.25",
+      "descongelamiento": "RESISTENCIAS",
+      "tiene_unidad": false,
+      "ref_unidad": "",
+      "niveles": 0
+    }
+  ]
+}

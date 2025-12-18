@@ -1,0 +1,136 @@
+{
+  "proyecto": "COMERCIALIZADORA MERCALDAS CAMPO HERMOSO 41286",
+  "fecha": "20251125",
+  "ramales": [
+    {
+      "ramal": 1,
+      "equipo": "VITRINA FENIX",
+      "uso": "CERDO",
+      "medida": "2.5",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HEX 80",
+      "niveles": 0
+    },
+    {
+      "ramal": 2,
+      "equipo": "AUTOSERVICIO ARGOS",
+      "uso": "C. FRIAS",
+      "medida": "1.9",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HEX 101",
+      "niveles": 4
+    },
+    {
+      "ramal": 3,
+      "equipo": "VITRINA FENIX",
+      "uso": "CARNE",
+      "medida": "3.75",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HEX 151",
+      "niveles": 0
+    },
+    {
+      "ramal": 4,
+      "equipo": "VITRINA FENIX",
+      "uso": "CERDO",
+      "medida": "2.5",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HEX 80",
+      "niveles": 0
+    },
+    {
+      "ramal": 5,
+      "equipo": "VITRINA FENIX",
+      "uso": "CARNE",
+      "medida": "2.5",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HEX 80",
+      "niveles": 0
+    },
+    {
+      "ramal": 6,
+      "equipo": "VITRINA FENIX",
+      "uso": "CARNE",
+      "medida": "2.5",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HEX 80",
+      "niveles": 0
+    },
+    {
+      "ramal": 7,
+      "equipo": "VITRINA FENIX",
+      "uso": "CERDO",
+      "medida": "2.85",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HEX 101",
+      "niveles": 0
+    },
+    {
+      "ramal": 8,
+      "equipo": "VITRINA FENIX",
+      "uso": "POLLO",
+      "medida": "3.75",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HEX 101",
+      "niveles": 0
+    },
+    {
+      "ramal": 9,
+      "equipo": "MULTIPUERTA CONGELACIÓN",
+      "uso": "CC",
+      "medida": "2P",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "MONOBLOCK",
+      "niveles": 0
+    },
+    {
+      "ramal": 10,
+      "equipo": "VITRINA FENIX",
+      "uso": "CERDO",
+      "medida": "2.85",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HEX 101",
+      "niveles": 0
+    },
+    {
+      "ramal": 11,
+      "equipo": "VITRINA FENIX",
+      "uso": "CERDO",
+      "medida": "2.85",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HEX 101",
+      "niveles": 0
+    },
+    {
+      "ramal": 12,
+      "equipo": "AUTOSERVICIO ARGOS",
+      "uso": "C. FRIAS",
+      "medida": "3.75",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HEX 151",
+      "niveles": 4
+    },
+    {
+      "ramal": 13,
+      "equipo": "VITRINA FENIX",
+      "uso": "CERDO",
+      "medida": "2.5",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HEX 80",
+      "niveles": 0
+    }
+  ]
+}

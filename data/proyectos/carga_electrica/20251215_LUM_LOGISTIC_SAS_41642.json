@@ -1,0 +1,48 @@
+{
+  "proyecto": "LUM LOGISTIC SAS 41642",
+  "fecha": "20251215",
+  "analisis_economico": false,
+  "eco_params": {
+    "costo_kwh": 900.0,
+    "horas_anuales": 8760.0,
+    "aumento_carga": 1.0,
+    "aumento_energia": 3.0,
+    "tasa_descuento": 5.0,
+    "vida_economica": 20.0
+  },
+  "ramales": [
+    {
+      "ramal": 1,
+      "equipo": "AUTOSERVICIO ARGOS",
+      "uso": "LACTEOS",
+      "medida": "3.75",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": false,
+      "ref_unidad": "",
+      "niveles": 0,
+      "distancia": 0.0
+    },
+    {
+      "ramal": 2,
+      "equipo": "AUTOSERVICIO ARGOS",
+      "uso": "LACTEOS",
+      "medida": "3.75",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": false,
+      "ref_unidad": "",
+      "niveles": 0,
+      "distancia": 0.0
+    },
+    {
+      "ramal": 3,
+      "equipo": "MULTIPUERTA CONGELACIÓN",
+      "uso": "CC",
+      "medida": "5P",
+      "descongelamiento": "RESISTENCIAS",
+      "tiene_unidad": false,
+      "ref_unidad": "",
+      "niveles": 0,
+      "distancia": 0.0
+    }
+  ]
+}

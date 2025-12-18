@@ -1,0 +1,59 @@
+{
+  "proyecto": "CARULLA GUAYACANES",
+  "fecha": "20251201",
+  "analisis_economico": false,
+  "eco_params": {
+    "costo_kwh": 900.0,
+    "horas_anuales": 8760.0,
+    "aumento_carga": 1.0,
+    "aumento_energia": 3.0,
+    "tasa_descuento": 5.0,
+    "vida_economica": 20.0
+  },
+  "ramales": [
+    {
+      "ramal": 1,
+      "equipo": "CUARTO CONSERVACIÓN",
+      "uso": "LACTEOS",
+      "medida": "WEF-1130",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": false,
+      "ref_unidad": "",
+      "niveles": 0,
+      "distancia": 0.0
+    },
+    {
+      "ramal": 2,
+      "equipo": "CUARTO CONSERVACIÓN",
+      "uso": "FRUVER",
+      "medida": "WED-250",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": false,
+      "ref_unidad": "",
+      "niveles": 0,
+      "distancia": 0.0
+    },
+    {
+      "ramal": 3,
+      "equipo": "CUARTO CONSERVACIÓN",
+      "uso": "CARNE",
+      "medida": "WED-500",
+      "descongelamiento": "RESISTENCIAS",
+      "tiene_unidad": false,
+      "ref_unidad": "",
+      "niveles": 0,
+      "distancia": 0.0
+    },
+    {
+      "ramal": 4,
+      "equipo": "CUARTO CONGELACIÓN",
+      "uso": "CC",
+      "medida": "WEF-1680",
+      "descongelamiento": "RESISTENCIAS",
+      "tiene_unidad": false,
+      "ref_unidad": "",
+      "niveles": 0,
+      "distancia": 0.0
+    }
+  ]
+}

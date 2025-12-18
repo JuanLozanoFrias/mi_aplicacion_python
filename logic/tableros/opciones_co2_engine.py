@@ -1,6 +1,7 @@
 ﻿# logic/opciones_co2_engine.py
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -20,7 +21,7 @@ class ResumenTable:
 class OpcionesCO2Engine:
     """
     Genera tablas del Paso 4 desde:
-      - Hoja 'OPCIONES CO2' (BE/BF/BG/BH)
+      - Archivo `opciones_co2_compresores.json` (derivado de BA…BH de la hoja 'OPCIONES CO2')
       - Estado del Paso 2 (step2)
       - Globals (marca_elem, norma_ap, t_ctl, t_alim, step3_state)
 
@@ -48,6 +49,8 @@ class OpcionesCO2Engine:
     def __init__(self, basedatos_path: Path):
         self._book = Path(basedatos_path)
         self._sheet_cache: Dict[str, Optional[pd.DataFrame]] = {}
+        self._rules_compresores_path = self._book.parent / "opciones_co2_compresores.json"
+        self._rules_by_arranque: Optional[Dict[str, List[Dict[str, object]]]] = None
 
         # Columnas en 'OPCIONES CO2'
         self.col_BA = self._col_letter_to_index("BA")  # Tipo arranque (V/D/P)
@@ -62,10 +65,7 @@ class OpcionesCO2Engine:
 
     # =============================== API ===============================
     def build(self, step2: Dict[str, Dict[str, str]], globs: Dict[str, object]) -> List[ResumenTable]:
-        try:
-            df_ops = pd.read_excel(self._book, sheet_name="OPCIONES CO2", header=None, dtype=str)
-        except Exception as e:
-            raise RuntimeError(f"No pude leer la hoja 'OPCIONES CO2'. Detalle: {e}")
+        rules_by_arranque = self._load_compresores_rules()
 
         marca_elem_global = (globs.get("marca_elem") or globs.get("marca_elementos") or "").strip()
         norma_ap = (globs.get("norma_ap") or "").strip().upper()
@@ -99,31 +99,29 @@ class OpcionesCO2Engine:
 
             rows_out: List[List[str]] = []
 
-            # Recorrer desde fila 2 (index 1)
-            for i in range(1, df_ops.shape[0]):  # desde fila 2 (0-based)
-                if (self._cell(df_ops, i, self.col_BA).upper() or "") != letter:
-                    continue
-
-                item_code  = self._cell(df_ops, i, self.col_BB).strip()
-                nombre_det = self._cell(df_ops, i, self.col_BD).strip()
-                be_raw     = self._cell(df_ops, i, self.col_BE)
+            rules = rules_by_arranque.get(letter, [])
+            for rule in rules:
+                item_code = (str(rule.get("item") or "")).strip()
+                nombre_det = (str(rule.get("nombre") or "")).strip()
+                be_raw = (str(rule.get("be") or "")).strip()
                 if not be_raw:
                     continue
 
-                # BG/BH según BF
+                # Directiva condicional por Paso 3 (B/C).
                 brand_override: Optional[str] = None
-                bf_label = (self._cell(df_ops, i, self.col_BF) or "").strip()
+                cond = rule.get("cond") if isinstance(rule, dict) else None
+                bf_label = (str(cond.get("label") or "")).strip() if isinstance(cond, dict) else ""
                 if bf_label:
-                    choose_B = self._step3_selected_B(step3_state, bf_label)  # True->BG ; False->BH
-                    directive_raw = self._cell(df_ops, i, self.col_BG if choose_B else self.col_BH)
+                    choose_B = self._step3_selected_B(step3_state, bf_label)  # True->B ; False->C
+                    directive_raw = str((cond.get("B") if choose_B else cond.get("C")) or "")
                     action, payload = self._parse_directive(directive_raw)
                     if action == "BORRA":
                         continue
-                    elif action == "BRAND":
+                    if action == "BRAND":
                         brand_override = payload  # sólo aplica a 'MARCA DE ELEMENTOS'
 
                 # Soportar múltiples comandos en BE (separador //)
-                commands = [p.strip() for p in (be_raw or "").split("//") if p.strip()]
+                commands = [p.strip() for p in be_raw.split("//") if p.strip()]
                 for cmd in commands:
                     for d in self._be_to_rows(
                         cmd,
@@ -151,6 +149,34 @@ class OpcionesCO2Engine:
                 ))
 
         return tables
+
+    def _load_compresores_rules(self) -> Dict[str, List[Dict[str, object]]]:
+        if self._rules_by_arranque is not None:
+            return self._rules_by_arranque
+
+        if not self._rules_compresores_path.exists():
+            raise RuntimeError(
+                f"No encontré `{self._rules_compresores_path.as_posix()}`; "
+                "este archivo reemplaza la lectura de `OPCIONES CO2` (BA…BH)."
+            )
+
+        try:
+            raw = json.loads(self._rules_compresores_path.read_text(encoding="utf-8"))
+        except Exception as e:
+            raise RuntimeError(f"No pude leer `{self._rules_compresores_path.name}`. Detalle: {e}")
+
+        arr = raw.get("arranques") if isinstance(raw, dict) else None
+        if not isinstance(arr, dict):
+            raise RuntimeError(f"Formato inválido en `{self._rules_compresores_path.name}`: falta `arranques`.")
+
+        out: Dict[str, List[Dict[str, object]]] = {"V": [], "P": [], "D": []}
+        for k in ("V", "P", "D"):
+            v = arr.get(k, [])
+            if isinstance(v, list):
+                out[k] = [r for r in v if isinstance(r, dict)]
+
+        self._rules_by_arranque = out
+        return out
 
     # ============================ BE resolver ============================
     def _be_to_rows(
@@ -677,4 +703,3 @@ class OpcionesCO2Engine:
                     vars_map["GM_A"] = self._only_digits(val)
 
         return vars_map
-
