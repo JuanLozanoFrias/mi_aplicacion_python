@@ -1,0 +1,63 @@
+{
+  "proyecto": "PRUEBA",
+  "factor_seguridad": 1.15,
+  "inputs": [
+    {
+      "cuarto": 1,
+      "largo_m": 4.0,
+      "ancho_m": 4.0,
+      "altura_m": 3.0,
+      "uso": "HELADOS",
+      "n_ev_txt": "AUTO (1-4)",
+      "familia": "AUTO"
+    },
+    {
+      "cuarto": 2,
+      "largo_m": 3.0,
+      "ancho_m": 3.0,
+      "altura_m": 3.0,
+      "uso": "LACTEOS",
+      "n_ev_txt": "AUTO (1-4)",
+      "familia": "AUTO"
+    },
+    {
+      "cuarto": 3,
+      "largo_m": 5.0,
+      "ancho_m": 3.0,
+      "altura_m": 3.0,
+      "uso": "PROCESO",
+      "n_ev_txt": "AUTO (1-4)",
+      "familia": "AUTO"
+    }
+  ],
+  "resultados": [
+    [
+      "CUARTO 1 - HELADOS",
+      "15.697",
+      "4,60",
+      "4",
+      "WEF-660 - FRONTAL",
+      "81,0"
+    ],
+    [
+      "CUARTO 2 - LACTEOS",
+      "9.315",
+      "2,73",
+      "2",
+      "WEF-660 - FRONTAL",
+      "77,9"
+    ],
+    [
+      "CUARTO 3 - PROCESO",
+      "12.305",
+      "3,61",
+      "2",
+      "WED 125 - DUAL - 6 FPI",
+      "67,5"
+    ]
+  ],
+  "totales": {
+    "btu_h": "37.317,50",
+    "kw": "10,94"
+  }
+}
