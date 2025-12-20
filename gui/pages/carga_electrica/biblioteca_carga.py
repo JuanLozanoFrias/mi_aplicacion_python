@@ -155,15 +155,11 @@ class BibliotecaCargaDialog(QDialog):
         self.btn_delete = QPushButton("ELIMINAR"); self.btn_delete.setStyleSheet(self._danger_qss)
         self.btn_delete.clicked.connect(self._delete_selected)
 
-        self.btn_close = QPushButton("CERRAR"); self.btn_close.setStyleSheet(self._primary_qss)
-        self.btn_close.clicked.connect(self.close)
-
         al.addWidget(self.btn_refresh)
         al.addStretch(1)
         al.addWidget(self.btn_load)
         al.addWidget(self.btn_dup)
         al.addWidget(self.btn_delete)
-        al.addWidget(self.btn_close)
         root.addWidget(actions)
 
         self.resize(820, 520)
@@ -269,4 +265,3 @@ class BibliotecaCargaDialog(QDialog):
             self._refresh()
         except Exception as e:
             QMessageBox.critical(self, "Biblioteca", f"No se pudo eliminar:\n{e}")
-

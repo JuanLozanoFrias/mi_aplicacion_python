@@ -178,8 +178,35 @@ QListWidget::item:selected:hover {
 }
 """
         self.nav.setStyleSheet(nav_qss)
-        for txt in ["CARGAS TERMICAS", "TABLEROS ELECTRICOS", "CARGA ELECTRICA", "CREDITOS"]:
-            self.nav.addItem(QListWidgetItem(txt))
+        self.stack = QStackedWidget()
+        self.pages = []
+        self._sections = {}
+
+        def add_nav_item(text: str, page: QWidget | None, *, header: bool = False, indent: bool = False, section: str | None = None):
+            prefix = "    " if indent else ""
+            item = QListWidgetItem(prefix + text)
+            if header:
+                item.setData(Qt.UserRole, None)
+                item.setData(Qt.UserRole + 1, "section")
+                item.setFlags(Qt.ItemIsEnabled)
+            else:
+                idx = len(self.pages) if page is not None else None
+                item.setData(Qt.UserRole, idx)
+                if section:
+                    self._sections.setdefault(section, []).append(self.nav.count())
+                if page is not None:
+                    self.stack.addWidget(page)
+                    self.pages.append(page)
+            self.nav.addItem(item)
+
+        add_nav_item("CARGAS TERMICAS", None, header=True)
+        add_nav_item("CUARTOS FRIOS", CargaPage(), indent=True, section="cargas")
+        add_nav_item("CUARTOS INDUSTRIALES", self._create_placeholder_page("CUARTOS INDUSTRIALES"), indent=True, section="cargas")
+        add_nav_item("LEGEND", self._create_placeholder_page("LEGEND"), indent=True, section="cargas")
+
+        add_nav_item("TABLEROS ELECTRICOS", MaterialesPage())
+        add_nav_item("CARGA ELECTRICA", CargaElectricaPage())
+        add_nav_item("CREDITOS", CreditosPage())
         side_layout.addWidget(self.nav, stretch=1)
         root.addWidget(side)
 
@@ -192,15 +219,21 @@ QListWidget::item:selected:hover {
 
         main_layout.addWidget(self._create_top_bar())
 
-        self.stack = QStackedWidget()
-        self.stack.addWidget(CargaPage())
-        self.stack.addWidget(MaterialesPage())
-        self.stack.addWidget(CargaElectricaPage())
-        self.stack.addWidget(CreditosPage())
         main_layout.addWidget(self.stack, 1)
         root.addWidget(main, 1)
-        self.nav.currentRowChanged.connect(self.stack.setCurrentIndex)
-        self.nav.setCurrentRow(0)
+        # ocultar submenus inicialmente
+        for sec_rows in self._sections.values():
+            for r in sec_rows:
+                self.nav.item(r).setHidden(True)
+
+        self.nav.currentRowChanged.connect(self._on_nav_changed)
+        self.nav.itemClicked.connect(self._on_nav_clicked)
+        # seleccionar primer elemento útil
+        for i in range(self.nav.count()):
+            idx = self.nav.item(i).data(Qt.UserRole)
+            if idx is not None:
+                self.nav.setCurrentRow(i)
+                break
 
     # ------------------------------------------------------------------
     #  Header superior
@@ -218,6 +251,30 @@ QListWidget::item:selected:hover {
         layout.addWidget(sub)
         layout.addStretch(1)
         return page
+
+    def _on_nav_changed(self, row: int):
+        item = self.nav.item(row)
+        if not item:
+            return
+        idx = item.data(Qt.UserRole)
+        if idx is None:
+            return
+        self.stack.setCurrentIndex(idx)
+
+    def _on_nav_clicked(self, item: QListWidgetItem):
+        # si es sección, toggle de submenus
+        if item.data(Qt.UserRole + 1) == "section":
+            sec = "cargas"  # único por ahora
+            rows = self._sections.get(sec, [])
+            if not rows:
+                return
+            any_visible = any(not self.nav.item(r).isHidden() for r in rows)
+            new_state = True if any_visible else False
+            for r in rows:
+                self.nav.item(r).setHidden(new_state)
+            if not new_state:
+                # al expandir, seleccionar el primero
+                self.nav.setCurrentRow(rows[0])
 
     def _create_top_bar(self) -> QWidget:
         top = QFrame()
@@ -279,6 +336,3 @@ QListWidget::item:selected:hover {
         p_layout.addWidget(logo_frame, alignment=Qt.AlignHCenter)
         p_layout.addStretch()
         return profile
-
-
-

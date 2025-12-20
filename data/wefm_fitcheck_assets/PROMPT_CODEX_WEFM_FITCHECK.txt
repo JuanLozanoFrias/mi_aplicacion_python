@@ -1,0 +1,52 @@
+OBJETIVO
+Actualizar la selección de evaporadores en la app de cálculo de cuartos fríos para:
+1) Incluir evaporadores frontales de 1/2 silueta (serie WEFM).
+2) Regla de selección: si ALTURA DEL CUARTO > 3.0 m, al seleccionar “FRONTAL” se debe usar WEFM; si ALTURA <= 3.0 m se debe usar WEF.
+3) Agregar validación de “cabida física” (fit check) usando dimensiones X,B,H (mm). Si el evaporador sugerido NO cabe, el motor debe:
+   - intentar con el siguiente modelo (más grande) que cumpla capacidad Y que sí quepa; o
+   - si ninguno cabe, devolver una alarma clara “NO CABE” con el detalle de dimensiones.
+
+DATOS (YA LISTOS PARA USAR)
+- data/evaporadores_dual_wed_btuhr.csv  (capacidad BTU/h vs Tevap °F)
+- data/evaporadores_frontal_wef_btuhr.csv
+- data/evaporadores_frontal_wefm_btuhr.csv
+- data/evaporadores_dimensiones_mm.csv  (X,B,H por modelo)
+- data/evaporadores_meta.json (reglas y límites de altura)
+
+REQUERIMIENTOS DE IMPLEMENTACIÓN
+A. Carga de datos
+- Cargar las 3 tablas de capacidad (WED, WEF, WEFM).
+- Cargar dimensiones desde evaporadores_dimensiones_mm.csv a un dict por modelo.
+
+B. Selección FRONTAL con regla de altura
+- Mantener UI “familia” = {FRONTAL, DUAL}.
+- Si familia==FRONTAL:
+    - si altura_m > 3.0 -> usar tabla WEFM
+    - si altura_m <= 3.0 -> usar tabla WEF
+- En el resultado, mostrar la serie usada (WEF o WEFM) y el modelo (ej: “WEFM-006”).
+
+C. Fit check (cabida)
+- Convertir L,W,H del cuarto a mm.
+- Para un evaporador con dims (X_mm,B_mm,H_mm), validar:
+   1) H_mm <= altura_cuarto_mm (si validate_height)
+   2) Debe existir una orientación que quepa:
+        - Orientación 1: X <= largo_mm y B <= ancho_mm
+        - Orientación 2: X <= ancho_mm y B <= largo_mm
+     (si allow_rotate=True, aceptar cualquiera).
+- Si NO cabe:
+   - agregar mensaje/alarma de “No cabe: requiere X=...,B=...,H=...; cuarto=...”
+   - seguir buscando el siguiente modelo que cumpla capacidad y sí quepa.
+
+D. Selección por capacidad (mantener lógica actual)
+- Mantener criterio de Excel: load_per_evap / 1.05 <= capacidad.
+- Mantener placeholder para cargas muy bajas, pero si el placeholder no cabe, saltar al siguiente que sí quepa.
+
+E. UX / mensajes
+- Si se cambió el modelo por fit check: avisar “Se cambió a X por restricciones físicas”.
+- Si ninguno cabe: “NO CABE” (resultado inválido) y listar 3 modelos candidatos más cercanos con sus dimensiones.
+
+PRUEBAS MÍNIMAS (agregar tests unitarios o casos en demo_cli)
+1) altura=2.9m, frontal -> usa WEF.
+2) altura=3.1m, frontal -> usa WEFM.
+3) cuarto 1.0m x 1.0m x 2.5m, frontal -> debe dar “NO CABE” o elegir el más pequeño que quepa (según dimensiones).
+4) rotación: cuarto 1.3m x 2.2m, evaporador X=2085mm, B=262mm -> solo cabe si X va por el lado de 2.2m.

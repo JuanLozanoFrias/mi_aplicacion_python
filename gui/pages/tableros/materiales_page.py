@@ -87,10 +87,9 @@ class MaterialesPage(QWidget):
         # Barra superior
         tools = QHBoxLayout(); tools.setSpacing(10)
         self.btn_export = QPushButton("EXPORTAR PROYECTO")
-        self.btn_load   = QPushButton("CARGAR PROYECTO")
         self.btn_legend = QPushButton("CARGAR LEGEND")
         self.btn_library = QPushButton("BIBLIOTECA")
-        for b in (self.btn_export, self.btn_load, self.btn_legend, self.btn_library):
+        for b in (self.btn_export, self.btn_legend, self.btn_library):
             b.setStyleSheet(primary_qss)
         self.btn_new  = QPushButton("PROYECTO NUEVO")
         danger_qss = (
@@ -101,12 +100,10 @@ class MaterialesPage(QWidget):
         self._danger_qss = danger_qss
         self.btn_new.setStyleSheet(danger_qss)
         self.btn_export.clicked.connect(self._on_export_project)
-        self.btn_load.clicked.connect(self._on_load_project)
         self.btn_legend.clicked.connect(self._on_load_legend)
         self.btn_library.clicked.connect(self._on_open_library)
         self.btn_new.clicked.connect(self._on_new_project)
         tools.addWidget(self.btn_export)
-        tools.addWidget(self.btn_load)
         tools.addWidget(self.btn_legend)
         tools.addWidget(self.btn_library)
         tools.addStretch(1)

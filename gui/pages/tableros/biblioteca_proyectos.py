@@ -7,6 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Callable, List, Optional
 
+import pandas as pd
 from PySide6.QtCore import Qt, QUrl
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import (
@@ -18,10 +19,21 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QMessageBox,
     QPushButton,
+    QFileDialog,
     QTableWidget,
     QTableWidgetItem,
     QVBoxLayout,
 )
+
+from logic.tableros.step4_engine import Step4Engine
+from logic.tableros.export_step4 import (
+    _ensure_item_col,
+    _inject_marca,
+    _collect_totales,
+    _load_inventario_map,
+    _build_brand_map,
+)
+from logic.programacion_loader import load_programacion_snapshot
 
 
 @dataclass(frozen=True)
@@ -128,7 +140,7 @@ class BibliotecaProyectosDialog(QDialog):
         self.table = QTableWidget(0, 5)
         self.table.setHorizontalHeaderLabels(["ARCHIVO", "PROYECTO", "CIUDAD", "NORMA", "MODIFICADO"])
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.table.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.table.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table.verticalHeader().setVisible(False)
         self.table.setAlternatingRowColors(True)
@@ -159,6 +171,10 @@ class BibliotecaProyectosDialog(QDialog):
         self.btn_load.setStyleSheet(self._primary_qss)
         self.btn_load.clicked.connect(self._load_selected)
 
+        self.btn_consol = QPushButton("CONSOLIDAR")
+        self.btn_consol.setStyleSheet(self._primary_qss)
+        self.btn_consol.clicked.connect(self._consolidate_selected)
+
         self.btn_dup = QPushButton("DUPLICAR")
         self.btn_dup.setStyleSheet(self._primary_qss)
         self.btn_dup.clicked.connect(self._duplicate_selected)
@@ -167,16 +183,12 @@ class BibliotecaProyectosDialog(QDialog):
         self.btn_delete.setStyleSheet(self._danger_qss)
         self.btn_delete.clicked.connect(self._delete_selected)
 
-        self.btn_close = QPushButton("CERRAR")
-        self.btn_close.setStyleSheet(self._primary_qss)
-        self.btn_close.clicked.connect(self.close)
-
         al.addWidget(self.btn_refresh)
         al.addStretch(1)
         al.addWidget(self.btn_load)
+        al.addWidget(self.btn_consol)
         al.addWidget(self.btn_dup)
         al.addWidget(self.btn_delete)
-        al.addWidget(self.btn_close)
         root.addWidget(actions)
 
         self.resize(980, 560)
@@ -190,6 +202,17 @@ class BibliotecaProyectosDialog(QDialog):
         if 0 <= row < len(self._entries):
             return self._entries[row]
         return None
+
+    def _selected_entries(self) -> List[_ProjectEntry]:
+        sel = self.table.selectionModel()
+        if sel is None or not sel.hasSelection():
+            return []
+        rows = [i.row() for i in sel.selectedRows()]
+        out = []
+        for r in rows:
+            if 0 <= r < len(self._entries):
+                out.append(self._entries[r])
+        return out
 
     def _refresh(self) -> None:
         self._library_dir.mkdir(parents=True, exist_ok=True)
@@ -296,3 +319,115 @@ class BibliotecaProyectosDialog(QDialog):
             self._refresh()
         except Exception as e:
             QMessageBox.critical(self, "Biblioteca", f"No se pudo eliminar:\n{e}")
+
+    # ----------------------------------------------------------- Consolidado
+    def _consolidate_selected(self) -> None:
+        entries = self._selected_entries()
+        if not entries:
+            QMessageBox.information(self, "Consolidar", "Selecciona uno o varios proyectos.")
+            return
+        try:
+            # usar Excel base por defecto (igual que en export)
+            base_dir = Path(__file__).resolve().parents[3] / "data"
+            candidates = [
+                base_dir / "BD_TABLEROS.xlsx",
+                base_dir / "basedatos.xlsx",
+                base_dir / "CUADRO DE CARGAS -INDIVIDUAL JUAN LOZANO.xlsx",
+            ]
+            basedatos = next((c for c in candidates if c.exists()), candidates[0])
+
+            engine = Step4Engine(basedatos)
+            brand_map = _build_brand_map(basedatos)
+            inv_map = _load_inventario_map(base_dir / "inventarios.xlsx")
+
+            all_rows = []
+            for e in entries:
+                step2, globs = load_programacion_snapshot(e.path)
+                res = engine.calcular(step2, globs)
+                tables = res.get("tables_compresores", []) or []
+                otros_rows = _ensure_item_col(res.get("otros_rows", []) or [])
+                marca_global = str(globs.get("marca_elem", "")).strip()
+                for t in tables:
+                    filas = _inject_marca(t.rows, marca_global, brand_map)
+                    all_rows.extend(filas)
+                if otros_rows:
+                    otros_fixed = _inject_marca(otros_rows, marca_global, brand_map)
+                    all_rows.extend(otros_fixed)
+
+            # totales consolidados
+            marca_global = "SIN MARCA"
+            tot_rows = _collect_totales(all_rows, marca_global)
+
+            # construir filas con inventario
+            rows_view = []
+            for r in tot_rows:
+                if len(r) < 10:
+                    continue
+                code = str(r[0])
+                qty = float(r[9]) if r[9] not in ("", None) else 0.0
+                inv = inv_map.get(code, {"disp": 0.0, "solic": 0.0})
+                disp = inv.get("disp", 0.0)
+                solic = inv.get("solic", 0.0)
+                stock = disp + solic
+                falt = max(qty - stock, 0.0)
+                rows_view.append(r[:10] + [disp, solic, stock, falt])
+
+            dlg = QDialog(self)
+            dlg.setWindowTitle("Consolidado de materiales")
+            lay = QVBoxLayout(dlg)
+            table = QTableWidget(0, 14)
+            headers = ["CÓDIGO", "MODELO", "NOMBRE", "DESCRIPCIÓN", "MARCA",
+                       "C 240 V (kA)", "C 480 V (kA)", "REFERENCIA", "TORQUE", "CANTIDAD",
+                       "DISPONIBLE", "SOLICITADO", "STOCK", "FALTANTE"]
+            table.setHorizontalHeaderLabels(headers)
+            table.setSelectionMode(QAbstractItemView.NoSelection)
+            table.verticalHeader().setVisible(False)
+            table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+            table.setAlternatingRowColors(True)
+            table.setRowCount(len(rows_view))
+            for i, rr in enumerate(rows_view):
+                for j, val in enumerate(rr):
+                    table.setItem(i, j, QTableWidgetItem(str(val)))
+            table.resizeColumnsToContents()
+            lay.addWidget(table)
+
+            def _export_rows() -> None:
+                path, _ = QFileDialog.getSaveFileName(
+                    self, "Guardar consolidado",
+                    str(self._library_dir / "consolidado_tableros.xlsx"),
+                    "Excel (*.xlsx)"
+                )
+                if not path:
+                    return
+                try:
+                    df = pd.DataFrame(rows_view, columns=[
+                        "CODIGO", "MODELO", "NOMBRE", "DESCRIPCION", "MARCA",
+                        "C240", "C480", "REFERENCIA", "TORQUE", "CANTIDAD",
+                        "DISPONIBLE", "SOLICITADO", "STOCK", "FALTANTE"
+                    ])
+                    meta = pd.DataFrame([{
+                        "ARCHIVO": e.file_name, "PROYECTO": e.project_name,
+                        "CIUDAD": e.city, "NORMA": e.norma, "MODIFICADO": e.updated_at
+                    } for e in entries])
+                    with pd.ExcelWriter(path, engine="openpyxl") as writer:
+                        df.to_excel(writer, sheet_name="CONSOLIDADO", index=False)
+                        meta.to_excel(writer, sheet_name="PROYECTOS", index=False)
+                    QMessageBox.information(self, "Exportar", f"Consolidado guardado en:\n{path}")
+                except Exception as e:
+                    QMessageBox.critical(self, "Exportar", f"No se pudo exportar:\n{e}")
+
+            buttons_row = QHBoxLayout()
+            btn_export = QPushButton("EXPORTAR CONSOLIDADO")
+            btn_export.setStyleSheet(self._primary_qss)
+            btn_export.clicked.connect(_export_rows)
+            buttons_row.addStretch(1)
+            buttons_row.addWidget(btn_export)
+            lay.addLayout(buttons_row)
+            dlg.resize(1100, 520)
+            dlg.exec()
+
+            # guardar data para export
+            self._last_consolidated_rows = rows_view
+            self._last_consolidated_projects = entries
+        except Exception as e:
+            QMessageBox.critical(self, "Consolidar", f"No se pudo consolidar:\n{e}")

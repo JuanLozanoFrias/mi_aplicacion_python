@@ -1,0 +1,32 @@
+{
+  "subfamilias": {
+    "WED": {
+      "familia": "dual",
+      "altura_max_m": 3.0,
+      "fpi": 6
+    },
+    "WEF": {
+      "familia": "frontal",
+      "altura_max_m": 3.0,
+      "fpi": 4
+    },
+    "WEFM": {
+      "familia": "frontal",
+      "altura_max_m": 8.0,
+      "fpi": 4,
+      "altura_min_m": 3.0000001
+    }
+  },
+  "reglas": {
+    "frontal_altura_umbral_m": 3.0,
+    "estrategia_frontal": {
+      "<=umbral": "WEF",
+      ">umbral": "WEFM"
+    },
+    "fitcheck": {
+      "clearance_mm": 0,
+      "allow_rotate": true,
+      "validate_height": true
+    }
+  }
+}
