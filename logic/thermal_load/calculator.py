@@ -238,7 +238,7 @@ class ThermalLoadCalculator:
             notes = f"default_inside_RH={inside_rh}"
 
         if outside_rh is None or outside_rh <= 0:
-            print("[INFIL] fallback: outside_RH missing -> sensible_only=True")
+            # log deshabilitado
             sensible_only = True
         else:
             try:
@@ -250,7 +250,7 @@ class ThermalLoadCalculator:
                 total_btuh = mass_flow_lb_da_per_h * (h_out - h_in)
                 latent_btuh = max(0.0, total_btuh - sensible_btuh)
             except Exception:
-                print("[INFIL] Error psicrometr?a; usando modo sensible")
+                # log deshabilitado
                 sensible_only = True
                 total_btuh = sensible_btuh
                 latent_btuh = 0.0
@@ -271,7 +271,7 @@ class ThermalLoadCalculator:
         sensible_btuh *= scale_hours
         latent_btuh *= scale_hours
 
-        print(f"[INFIL] ach_mode={mode} ach_24h={ach:.2f} cfm={cfm:.2f} sensible_only={sensible_only} notes={notes}")
+        # log deshabilitado
         return total_btuh, sensible_btuh, latent_btuh, ach, cfm, sensible_only, notes
 
     def _get_product_data(self, name: Optional[str]) -> Optional[Dict]:
@@ -284,7 +284,7 @@ class ThermalLoadCalculator:
         for key, val in self.foods.items():
             if key.lower() == target:
                 return val
-        print(f"[PRODUCT] no se encontró '{name}' en foods_thermal_properties")
+        # log deshabilitado
         return None
 
     def _compute_product_breakdown_btu_cycle(
@@ -317,7 +317,7 @@ class ThermalLoadCalculator:
             used_default_tf = True
         if used_default_tf:
             name = product.get("name") if isinstance(product, dict) else None
-            print(f"[PRODUCT] Punto de congelacion no definido para '{name or 'desconocido'}'; usando 0C")
+            # log deshabilitado
         composition = product.get("composition_pct") if product else {}
 
         def _pct(key: str, default: float = 0.0) -> float:
@@ -437,7 +437,7 @@ class ThermalLoadCalculator:
             cfm_used = 0.0
             infil_sensible_only = False
             infil_notes = "Desactivada por usuario"
-            print("[INFIL] infiltración desactivada por usuario -> 0")
+            # log deshabilitado
         else:
             infil_btuh, infil_sensible_btuh, infil_latent_btuh, ach_used, cfm_used, infil_sensible_only, infil_notes = self._infiltration_btuh(room, volume_ft3, Tint_C, run_hours, apply_use_factor=True)
 
@@ -458,7 +458,8 @@ class ThermalLoadCalculator:
         if room.product_mass_kg > 0 and room.product_cycle_h > 0:
             method = (room.product_method or "cp_latent").lower()
             if method != "cp_latent":
-                print(f"[PRODUCT] product_method={method} no implementado -> usando cp_latent")
+                # log deshabilitado
+                pass
             prod_data = self._get_product_data(room.product_name)
             ref_btu, cong_btu, post_btu, tf_c, water_frac, cp_above_kjkgk, cp_below_kjkgk = self._compute_product_breakdown_btu_cycle(
                 prod_data, Tin_prod, Tout_prod, room.product_mass_kg, room.product_packaging_multiplier
@@ -491,7 +492,7 @@ class ThermalLoadCalculator:
         total_btuh = comp.total_btuh * safety_factor
         total_kw = total_btuh / 3412.142
         total_tr = total_btuh / 12000.0
-        print(f"[SCALE] run_hours_supp affects trans/infil (scale={run_hours/24 if run_hours else 0}) factor_use={room.use_factor}")
+        # log deshabilitado
         return RoomResult(
             inputs=room,
             components=comp,

@@ -7119,646 +7119,216 @@ class IndustrialPage(QWidget):
 
 
     def _export_project(self):
-
-
-
-
-
-
-
-        if not hasattr(self, "_last_results"):
-
-
-
-
-
-
-
+        if not hasattr(self, "_last_results") or not hasattr(self, "_last_inputs"):
             QMessageBox.information(self, "Exportar", "Primero calcule el proyecto.")
-
-
-
-
-
-
-
             return
 
-
-
-
-
-
-
         proj = self.ed_project.text().strip().upper() or "PROYECTO"
-
-
-
         proj_safe = proj.replace(" ", "_")
 
-
-
-
-
-
-
         data = {
-
-
-
-
-
-
-
             "project_name": proj,
-
-
-
-
-
-
-
             "safety_factor": self.sp_sf.value(),
-
-
-
-
-
-
-
             "rooms": [asdict(r) for r in self._last_inputs],
-
-
-
-
-
-
-
             "results": [asdict(r) for r in self._last_results],
-
-
-
-
-
-
-
         }
 
-
-
-
-
-
-
         PROJECTS_DIR.mkdir(parents=True, exist_ok=True)
+        json_name = f"{datetime.now():%Y%m%d_%H%M%S}_{proj_safe}.json"
+        json_path = PROJECTS_DIR / json_name
+        with open(json_path, "w", encoding="utf-8") as fh:
+            json.dump(data, fh, ensure_ascii=False, indent=2)
 
-
-
-
-
-
-
-        fname = f"{datetime.now():%Y%m%d_%H%M%S}_{proj_safe}.json"
-
-
-
-
-
-
-
-        json_path = PROJECTS_DIR / fname
-
-
-
-
-
-
-
-        json.dump(data, open(json_path, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
-
-
-
-
-
-
-
-        # Excel
-
-
-
-
-
-
-
-        save_to, _ = QFileDialog.getSaveFileName(
-
-
-
-            self, "Guardar Excel", f"{datetime.now():%Y%m%d_%H%M%S}_{proj_safe}.xlsx", "Excel (*.xlsx)"
-
-
-
-        )
-
-
-
-
-
-
+        xls_default = f"{datetime.now():%Y%m%d_%H%M%S}_{proj_safe}.xlsx"
+        save_to, _ = QFileDialog.getSaveFileName(self, "Guardar Excel", xls_default, "Excel (*.xlsx)")
 
         if save_to:
-
-
-
-
-
-
-
             try:
-
-
-
                 from openpyxl import Workbook
-
-
-
+                from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
                 from openpyxl.utils import get_column_letter
 
-
-
-                from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
-
-
-
-
-
-
-
                 wb = Workbook()
-
-
-
                 ws = wb.active
-
-
-
                 ws.title = "RESULTADOS"
 
-
-
-
-
-
-
-                header_fill = PatternFill(start_color="FFDDEBF7", end_color="FFDDEBF7", fill_type="solid")
-
-
-
-                section_fill = PatternFill(start_color="FFF3F4F6", end_color="FFF3F4F6", fill_type="solid")
-
-
-
-                header_font = Font(bold=True)
-
-
-
                 title_font = Font(bold=True, size=14)
-
-
-
-                num_align = Alignment(horizontal="right")
-
-
-
-                text_align = Alignment(horizontal="left")
-
-
-
-                thin_border = Border(
-
-
-
+                header_font = Font(bold=True)
+                group_fill = PatternFill(start_color="FFE8F1FF", end_color="FFE8F1FF", fill_type="solid")
+                section_fill = PatternFill(start_color="FFF5F7FA", end_color="FFF5F7FA", fill_type="solid")
+                entry_fill = PatternFill(start_color="FFF9FBFD", end_color="FFF9FBFD", fill_type="solid")
+                border = Border(
                     left=Side(style="thin", color="FFCCCCCC"),
-
-
-
                     right=Side(style="thin", color="FFCCCCCC"),
-
-
-
                     top=Side(style="thin", color="FFCCCCCC"),
-
-
-
                     bottom=Side(style="thin", color="FFCCCCCC"),
-
-
-
                 )
-
-
-
-
-
-
-
-                row_idx = 1
-
-
-
-                ws.cell(row=row_idx, column=1, value="RESUMEN DEL PROYECTO").font = title_font
-
-
-
-                row_idx += 1
-
-
-
-                meta = [
-
-
-
-                    ("PROYECTO", proj),
-
-
-
-                    ("FECHA EXPORT", datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
-
-
-
-                    ("FACTOR SEGURIDAD", f"{self.sp_sf.value():.2f}"),
-
-
-
-                ]
-
-
-
-                for campo, valor in meta:
-
-
-
-                    ws.cell(row=row_idx, column=1, value=campo).font = header_font
-
-
-
-                    ws.cell(row=row_idx, column=1).alignment = text_align
-
-
-
-                    ws.cell(row=row_idx, column=1).border = thin_border
-
-
-
-                    ws.cell(row=row_idx, column=2, value=valor).border = thin_border
-
-
-
-                    row_idx += 1
-
-
-
-
-
-
-
-                row_idx += 1
-
-
-
-                ws.cell(row=row_idx, column=1, value="DETALLE POR CUARTO").font = title_font
-
-
-
-                row_idx += 1
-
-
-
-
-
-
-
-                for idx, r in enumerate(self._last_results):
-
-
-
-                    inputs = getattr(r, "inputs", None)
-
-
-
-                    name = getattr(inputs, "nombre", None) or f"CUARTO {idx+1}"
-
-
-
-                    perfil = getattr(r, "perfil_label", None) or getattr(inputs, "perfil_id", "")
-
-
-
-                    comp = getattr(r, "components", None)
-
-
-
-
-
-
-
-                    def _c(attr):
-
-
-
-                        return getattr(comp, attr, 0.0) if comp else 0.0
-
-
-
-
-
-
-
-                    # Sección título cuarto
-
-
-
-                    ws.cell(row=row_idx, column=1, value=f"{name} ({perfil})").font = Font(bold=True, size=12)
-
-
-
-                    row_idx += 1
-
-
-
-
-
-
-
-                    # Inputs
-
-
-
-                    inputs_rows = [
-
-
-
-                        ("PERFIL/USO", perfil),
-
-
-
-                        ("DIMENSIONES (m)", f"{getattr(inputs,'largo_m','')} x {getattr(inputs,'ancho_m','')} x {getattr(inputs,'altura_m','')}"),
-
-
-
-                        ("PUERTAS", getattr(inputs, "puertas", "")),
-
-
-
-                        ("TEMPERATURAS EXT (C)", f"Frente {getattr(inputs,'T_ext_front_C','')} / Atrás {getattr(inputs,'T_ext_back_C','')} / Izq {getattr(inputs,'T_ext_left_C','')} / Der {getattr(inputs,'T_ext_right_C','')} / Techo {getattr(inputs,'T_ext_roof_C','')} / Suelo {getattr(inputs,'ground_temp_C','')}"),
-
-
-
-                        ("T INT (C)", getattr(inputs, "T_internal_C", "")),
-
-
-
-                        ("FACTOR PARED", getattr(inputs, "wall_transfer_factor", "")),
-
-
-
-                        ("AISLAMIENTO", f"{getattr(inputs,'insulation_type','')} @ {getattr(inputs,'insulation_thickness_in','')} in"),
-
-
-
-                        ("T AIRE EXT (C)", getattr(inputs, "outside_air_temp_C", "")),
-
-
-
-                        ("RH EXT (%)", getattr(inputs, "outside_RH", "")),
-
-
-
-                        ("RH INT (%)", getattr(inputs, "inside_RH", "")),
-
-
-
-                        ("ACH OVERRIDE", getattr(inputs, "air_changes_24h_override", "")),
-
-
-
-                        ("INFILTRACION HABILITADA", getattr(inputs, "infiltration_enabled", "")),
-
-
-
-                        ("FACTOR USO", getattr(inputs, "use_factor", "")),
-
-
-
-                        ("RUN_HOURS_SUPP (h/día)", getattr(inputs, "run_hours_supp", "")),
-
-
-
-                        ("ILUMINACION (W / h/día)", f"{getattr(inputs,'lighting_W','')} / {getattr(inputs,'lighting_hours','')}"),
-
-
-
-                        ("MOTORES (W / h/día)", f"{getattr(inputs,'motors_W','')} / {getattr(inputs,'motors_hours','')}"),
-
-
-
-                        ("MONTACARGAS (HP / h/día)", f"{getattr(inputs,'forklift_hp','')} / {getattr(inputs,'forklift_hours','')}"),
-
-
-
-                        ("PERSONAS (cant / h/día / BTU/H)", f"{getattr(inputs,'people_count','')} / {getattr(inputs,'people_hours','')} / {getattr(inputs,'people_btuh','')}"),
-
-
-
-                        ("DESHIELO (W / cant / min / fracción)", f"{getattr(inputs,'defrost_W','')} / {getattr(inputs,'defrost_count','')} / {getattr(inputs,'defrost_duration_min','')} / {getattr(inputs,'defrost_fraction_to_room','')}"),
-
-
-
-                        ("PRODUCTO", getattr(inputs, "product_name", "")),
-
-
-
-                        ("KG", getattr(inputs, "product_mass_kg", "")),
-
-
-
-                        ("PROCESO Tin/Tout (C)", f"{getattr(inputs,'product_Tin_C','')} / {getattr(inputs,'product_Tout_C','')}"),
-
-
-
-                        ("CICLO (H)", getattr(inputs, "product_cycle_h", "")),
-
-
-
-                    ]
-
-
-
-                    ws.cell(row=row_idx, column=1, value="ENTRADAS").font = header_font
-
-
-
-                    ws.cell(row=row_idx, column=1).fill = section_fill
-
-
-
-                    row_idx += 1
-
-
-
-                    for campo, valor in inputs_rows:
-
-
-
-                        ws.cell(row=row_idx, column=1, value=campo).border = thin_border
-
-
-
-                        ws.cell(row=row_idx, column=1).alignment = text_align
-
-
-
-                        ws.cell(row=row_idx, column=2, value=valor).border = thin_border
-
-
-
-                        ws.cell(row=row_idx, column=2).alignment = num_align
-
-
-
-                        row_idx += 1
-
-
-
-
-
-
-
-                    row_idx += 1
-
-
-
-                    ws.cell(row=row_idx, column=1, value="RESULTADOS").font = header_font
-                    ws.cell(row=row_idx, column=1).fill = section_fill
-                    row_idx += 1
-                    headers = [
-                        "CUARTO",
-                        "USO",
-                        "BTU/H",
-                        "kW",
-                        "TR",
-                        "TRANSMISION",
-                        "INFILTRACION",
-                        "INF_SENSIBLE",
-                        "INF_LATENTE",
-                        "ILUMINACION",
-                        "MOTORES",
-                        "MONTACARGAS",
-                        "PERSONAS",
-                        "DESHIELO",
-                        "PRODUCTO/PROCESO",
-                        "INTERNAS (SUMA)",
-                    ]
-                    values = [
-                        name,
-                        perfil,
-                        getattr(r, "total_btuh", 0.0),
-                        getattr(r, "total_kw", 0.0),
-                        getattr(r, "total_tr", 0.0),
-                        _c("transmission_btuh"),
-                        _c("infiltration_btuh"),
-                        _c("infiltration_sensible_btuh"),
-                        _c("infiltration_latent_btuh"),
-                        _c("lighting_btuh"),
-                        _c("motors_btuh"),
-                        _c("forklift_btuh"),
-                        _c("people_btuh"),
-                        _c("defrost_btuh"),
-                        _c("product_btuh"),
-                        _c("internal_btuh"),
-                    ]
-                    for col, h in enumerate(headers, 1):
-                        cell = ws.cell(row=row_idx, column=col, value=h)
-                        cell.fill = header_fill
-                        cell.font = header_font
-                        cell.alignment = Alignment(horizontal="center")
-                        cell.border = thin_border
-                    row_idx += 1
-                    for col, v in enumerate(values, 1):
-                        cell = ws.cell(row=row_idx, column=col, value=v)
-                        cell.border = thin_border
-                        if col >= 3:
-                            cell.number_format = "#,##0.00"
-                            cell.alignment = num_align
+                align_left = Alignment(horizontal="left")
+                align_right = Alignment(horizontal="right")
+                align_center = Alignment(horizontal="center")
+
+                def write_kv_block(title, rows, start_row):
+                    r = start_row
+                    ws.cell(row=r, column=1, value=title).font = header_font
+                    ws.cell(row=r, column=1).fill = section_fill
+                    ws.merge_cells(start_row=r, start_column=1, end_row=r, end_column=2)
+                    r += 1
+                    for row in rows:
+                        if len(row) == 2:
+                            label, value = row
+                            fmt = None
                         else:
-                            cell.alignment = text_align
-                    row_idx += 2  # espacio entre cuartos
+                            label, value, fmt = row
+                        ws.cell(row=r, column=1, value=label).font = header_font
+                        ws.cell(row=r, column=1).alignment = align_left
+                        ws.cell(row=r, column=1).border = border
+                        ws.cell(row=r, column=1).fill = entry_fill
+                        cell = ws.cell(row=r, column=2, value=value)
+                        cell.border = border
+                        cell.fill = entry_fill
+                        cell.alignment = align_right if isinstance(value, (int, float)) else align_left
+                        if fmt:
+                            cell.number_format = fmt
+                        r += 1
+                    return r
 
+                ws.cell(row=1, column=1, value="RESUMEN DEL PROYECTO").font = title_font
+                ws.cell(row=1, column=1).alignment = align_left
 
+                meta_rows = [
+                    ("PROYECTO", proj, None),
+                    ("FECHA", datetime.now().strftime("%Y-%m-%d %H:%M:%S"), None),
+                    ("FACTOR SEGURIDAD", self.sp_sf.value(), "0.00"),
+                ]
+                next_row = write_kv_block("METADATOS", meta_rows, start_row=3) + 1
 
-                max_col = ws.max_column
+                for idx, result in enumerate(self._last_results):
+                    inputs = getattr(result, "inputs", None)
+                    name = getattr(inputs, "nombre", None) or f"CUARTO {idx+1}"
+                    perfil = getattr(result, "perfil_label", None) or getattr(inputs, "perfil_id", "")
 
+                    ws.cell(row=next_row, column=1, value=f"{name} ({perfil})").font = title_font
+                    ws.cell(row=next_row, column=1).fill = group_fill
+                    ws.merge_cells(start_row=next_row, start_column=1, end_row=next_row, end_column=4)
+                    next_row += 1
 
+                    ins = inputs
+                    gv = lambda attr, default=0: getattr(ins, attr, default)
+                    inputs_rows = [
+                        ("PERFIL/USO", gv("perfil_id", ""), None),
+                        ("LARGO (m)", gv("largo_m"), "0.00"),
+                        ("ANCHO (m)", gv("ancho_m"), "0.00"),
+                        ("ALTURA (m)", gv("altura_m"), "0.00"),
+                        ("PUERTAS", gv("puertas"), "0"),
+                        ("TI INT (C)", gv("T_internal_C"), "0.00"),
+                        ("T EXT FRENTE (C)", gv("T_ext_front_C"), "0.00"),
+                        ("T EXT ATRAS (C)", gv("T_ext_back_C"), "0.00"),
+                        ("T EXT DER (C)", gv("T_ext_right_C"), "0.00"),
+                        ("T EXT IZQ (C)", gv("T_ext_left_C"), "0.00"),
+                        ("T EXT TECHO (C)", gv("T_ext_roof_C"), "0.00"),
+                        ("TEMP SUELO (C)", gv("ground_temp_C"), "0.00"),
+                        ("FACTOR PARED", gv("wall_transfer_factor"), "0.00"),
+                        ("AISLAMIENTO TIPO", gv("insulation_type", ""), None),
+                        ("AISLAMIENTO ESP (in)", gv("insulation_thickness_in"), "0.00"),
+                        ("T EXT AIRE (C)", gv("outside_air_temp_C"), "0.00"),
+                        ("RH EXT (0-1)", gv("outside_RH"), "0.00"),
+                        ("RH INT (0-1)", gv("inside_RH"), "0.00"),
+                        ("ACH OVERRIDE", gv("air_changes_24h_override"), "0.00"),
+                        ("INFILTRACION HABILITADA", "SI" if gv("infiltration_enabled", True) else "NO", None),
+                        ("FACTOR USO", gv("use_factor", 1), "0.00"),
+                        ("HORAS EFECTIVAS (h/dia)", gv("run_hours_supp", 24), "0.00"),
+                        ("ILUMINACION W", gv("lighting_W"), "0.00"),
+                        ("ILUMINACION h/dia", gv("lighting_hours"), "0.00"),
+                        ("MOTORES W", gv("motors_W"), "0.00"),
+                        ("MOTORES h/dia", gv("motors_hours"), "0.00"),
+                        ("MONTACARGAS HP", gv("forklift_hp"), "0.00"),
+                        ("MONTACARGAS h/dia", gv("forklift_hours"), "0.00"),
+                        ("PERSONAS", gv("people_count"), "0.00"),
+                        ("PERSONAS h/dia", gv("people_hours"), "0.00"),
+                        ("PERSONAS BTU/H", gv("people_btuh"), "0.00"),
+                        ("DESHIELO W", gv("defrost_W"), "0.00"),
+                        ("DESHIELO CANT", gv("defrost_count"), "0"),
+                        ("DESHIELO MIN", gv("defrost_duration_min"), "0.00"),
+                        ("DESHIELO FRACCION", gv("defrost_fraction_to_room"), "0.00"),
+                        ("PRODUCTO", gv("product_name", "") or gv("perfil_id", ""), None),
+                        ("PACKAGING MULT", gv("product_packaging_multiplier", 1), "0.00"),
+                        ("PRODUCT METHOD", gv("product_method", ""), None),
+                        ("KG", gv("product_mass_kg"), "0.00"),
+                        ("TIN PROCESO (C)", gv("product_Tin_C"), "0.00"),
+                        ("TOUT PROCESO (C)", gv("product_Tout_C"), "0.00"),
+                        ("CICLO (h)", gv("product_cycle_h"), "0.00"),
+                    ]
 
-                for col_idx in range(1, max_col + 1):
+                    next_row = write_kv_block("ENTRADAS", inputs_rows, next_row) + 1
 
+                    comp = getattr(result, "components", None)
+                    total_btuh = getattr(result, "total_btuh", 0.0) or 0.0
+                    total_kw = getattr(result, "total_kw", 0.0) or 0.0
+                    rows_res = [
+                        ("TRANSMISIÓN", getattr(comp, "transmission_btuh", 0.0)),
+                        ("INFILTRACIÓN (TOTAL)", getattr(comp, "infiltration_btuh", 0.0)),
+                        ("INF SENSIBLE", getattr(comp, "infiltration_sensible_btuh", 0.0)),
+                        ("INF LATENTE", getattr(comp, "infiltration_latent_btuh", 0.0)),
+                        ("ILUMINACIÓN", getattr(comp, "lighting_btuh", 0.0)),
+                        ("MOTORES", getattr(comp, "motors_btuh", 0.0)),
+                        ("MONTACARGAS", getattr(comp, "forklift_btuh", 0.0)),
+                        ("PERSONAS", getattr(comp, "people_btuh", 0.0)),
+                        ("DESHIELO", getattr(comp, "defrost_btuh", 0.0)),
+                        ("PRODUCTO/PROCESO", getattr(comp, "product_btuh", 0.0)),
+                    ]
 
+                    ws.cell(row=next_row, column=1, value="RESULTADOS").font = header_font
+                    ws.cell(row=next_row, column=1).fill = section_fill
+                    ws.merge_cells(start_row=next_row, start_column=1, end_row=next_row, end_column=4)
+                    next_row += 1
 
+                    headers = ["COMPONENTE", "BTU/H", "kW", "% DEL TOTAL"]
+                    for c, h in enumerate(headers, start=1):
+                        cell = ws.cell(row=next_row, column=c, value=h)
+                        cell.font = header_font
+                        cell.fill = section_fill
+                        cell.alignment = align_center
+                        cell.border = border
+                    next_row += 1
+
+                    for label, btuh in rows_res:
+                        kw_val = btuh / 3412.142 if btuh else 0.0
+                        pct = (btuh / total_btuh) if total_btuh else 0.0
+                        row_vals = [label, btuh, kw_val, pct]
+                        fmts = [None, "#,##0.00", "#,##0.00", "0.00%"]
+                        for c, (val, fmt) in enumerate(zip(row_vals, fmts), start=1):
+                            cell = ws.cell(row=next_row, column=c, value=val)
+                            cell.border = border
+                            cell.alignment = align_left if c == 1 else align_right
+                            if fmt:
+                                cell.number_format = fmt
+                        next_row += 1
+
+                    for c, val in enumerate(["TOTAL CUARTO", total_btuh, total_kw, 1], start=1):
+                        cell = ws.cell(row=next_row, column=c, value=val)
+                        cell.font = header_font
+                        if c == 1:
+                            cell.fill = group_fill
+                        cell.border = border
+                        cell.alignment = align_left if c == 1 else align_right
+                        if c > 1:
+                            cell.number_format = "#,##0.00" if c < 4 else "0.00%"
+                    next_row += 2
+
+                for col in range(1, ws.max_column + 1):
                     max_len = 0
-
-
-
-                    for cell in ws[get_column_letter(col_idx)]:
-
-
-
-                        if cell.value:
-
-
-
-                            max_len = max(max_len, len(str(cell.value)))
-
-
-
-                    ws.column_dimensions[get_column_letter(col_idx)].width = min(max_len + 2, 35)
-
-
-
-
-
-
+                    for row in range(1, ws.max_row + 1):
+                        val = ws.cell(row=row, column=col).value
+                        if val is None:
+                            continue
+                        max_len = max(max_len, len(str(val)))
+                    ws.column_dimensions[get_column_letter(col)].width = max(12, min(40, max_len + 2))
 
                 wb.save(save_to)
-
-
-
-
-
-
-
             except Exception as e:
-
-
-
-
-
-
-
                 QMessageBox.critical(self, "Error Excel", str(e))
 
-
-
-
-
-
-
         QMessageBox.information(self, "Exportar", f"Guardado en biblioteca: {json_path}")
-
-
-
-
-
-
 
     def _open_library(self):
 
@@ -8076,11 +7646,8 @@ class IndustrialPage(QWidget):
 
 
 
-        # Log deshabilitado (panel removido); evitamos errores si se llama
-
-
-
-        print(text)
+        # Log deshabilitado (panel removido); evitamos salidas a consola
+        return
 
 
 
@@ -13569,5 +13136,3 @@ class IndustrialPage(QWidget):
 
 
             self._append_log(f"Manual calc error: {exc}")
-
-
