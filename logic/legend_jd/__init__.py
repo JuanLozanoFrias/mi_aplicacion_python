@@ -1,8 +1,7 @@
 """
-Legend JD integration.
+Legend JD integration (sin Excel).
 
-Provee servicios para leer el archivo Excel LEGEND jd.xlsm ubicado en
-data/LEGEND/. Esta capa de logica es independiente de la UI.
+Carga datos desde la carpeta data/LEGEND/ usando JSON opcionales.
 """
 
 from .service import LegendJDService  # noqa: F401
