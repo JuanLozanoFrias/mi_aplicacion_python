@@ -203,7 +203,7 @@ QListWidget::item:selected:hover {
         add_nav_item("CARGAS TERMICAS", None, header=True)
         add_nav_item("CUARTOS FRIOS", CargaPage(), indent=True, section="cargas")
         add_nav_item("CUARTOS INDUSTRIALES", IndustrialPage(), indent=True, section="cargas")
-        add_nav_item("LEGEND", self._create_placeholder_page("LEGEND"), indent=True, section="cargas")
+        add_nav_item("LEGEND", LegendPage(self), indent=True, section="cargas")
 
         add_nav_item("TABLEROS ELECTRICOS", MaterialesPage())
         add_nav_item("CARGA ELECTRICA", CargaElectricaPage())
