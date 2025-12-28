@@ -1,0 +1,137 @@
+{
+  "meta": {
+    "name": "thermal_load_additional_inputs",
+    "version": "1.0.0",
+    "created_utc": "2025-12-20T21:20:20Z",
+    "purpose": "Campos sugeridos para robustecer el cálculo de cargas térmicas (sin depender del Excel) y corregir sobre/infra-estimaciones típicas."
+  },
+  "fields": [
+    {
+      "key": "run_hours_supp",
+      "type": "number",
+      "units": "h/día",
+      "default": 20,
+      "min": 1,
+      "max": 24,
+      "ui_group": "Dimensionamiento",
+      "description": "Horas efectivas de operación usadas para convertir cargas suplementarias de Btu/24h a Btu/h. Debe usarse igual para Btuh y kW (corrige inconsistencia 20/22 del Excel)."
+    },
+    {
+      "key": "safety_factor",
+      "type": "number",
+      "units": "-",
+      "default": 1.1,
+      "min": 1.0,
+      "max": 1.5,
+      "ui_group": "Dimensionamiento",
+      "description": "Factor multiplicador final para margen (incertidumbre, ensuciamiento, expansión futura, etc.). Se aplica al total de capacidad."
+    },
+    {
+      "key": "ground_temp_C",
+      "type": "number",
+      "units": "°C",
+      "default": 13.0,
+      "min": -10,
+      "max": 35,
+      "ui_group": "Transmisión",
+      "description": "Temperatura efectiva del terreno bajo el piso. En el Excel el piso usa un ΔT fijo; aquí se calcula ΔT_piso=max(0, T_suelo - T_interna)."
+    },
+    {
+      "key": "motors_hours_per_day",
+      "type": "number",
+      "units": "h/día",
+      "default": 24,
+      "min": 0,
+      "max": 24,
+      "ui_group": "Cargas internas",
+      "description": "Horas reales de funcionamiento de los motores incluidos en 'motors_W' (ej. ventiladores evaporador, bombas, etc.). Evita sobreestimar si ciclan."
+    },
+    {
+      "key": "lighting_hours_per_day",
+      "type": "number",
+      "units": "h/día",
+      "default": 18,
+      "min": 0,
+      "max": 24,
+      "ui_group": "Cargas internas",
+      "description": "Horas de iluminación por día. El Excel asume 18 h/día."
+    },
+    {
+      "key": "forklift_hours_per_day",
+      "type": "number",
+      "units": "h/día",
+      "default": 2,
+      "min": 0,
+      "max": 24,
+      "ui_group": "Cargas internas",
+      "description": "Horas de uso del montacargas. En el Excel se aplica 24 h/día, lo que suele sobreestimar."
+    },
+    {
+      "key": "people_btu_per_h",
+      "type": "number",
+      "units": "Btu/h·persona",
+      "default": 1350,
+      "min": 200,
+      "max": 2000,
+      "ui_group": "Cargas internas",
+      "description": "Carga térmica por persona (sensible+latente aproximada). El Excel usa 1350."
+    },
+    {
+      "key": "defrost_heat_to_room_fraction",
+      "type": "number",
+      "units": "-",
+      "default": 1.0,
+      "min": 0.0,
+      "max": 1.0,
+      "ui_group": "Deshielo",
+      "description": "Fracción del calor de deshielo que efectivamente termina en el cuarto (0–1). Para deshielo eléctrico suele ser ~1."
+    },
+    {
+      "key": "product_packaging_multiplier",
+      "type": "number",
+      "units": "-",
+      "default": 1.05,
+      "min": 1.0,
+      "max": 1.3,
+      "ui_group": "Producto",
+      "description": "Multiplicador para cubrir empaque/pallets/cajas y producto adicional no modelado. Útil cuando el peso neto no incluye todo lo que entra caliente."
+    },
+    {
+      "key": "product_method",
+      "type": "enum",
+      "units": "-",
+      "default": "enthalpy",
+      "allowed": [
+        "enthalpy",
+        "cp_latent"
+      ],
+      "ui_group": "Producto",
+      "description": "Método de carga de producto: 'enthalpy' (similar a Hoja1) o 'cp_latent' (Cp+latente desde tabla de alimentos)."
+    },
+    {
+      "key": "infiltration_rh_handling",
+      "type": "enum",
+      "units": "-",
+      "default": "nearest_bin",
+      "allowed": [
+        "nearest_bin",
+        "linear_interpolation"
+      ],
+      "ui_group": "Infiltración",
+      "description": "Cómo manejar RH si no coincide con los bins de la tabla: usar el más cercano o interpolar linealmente."
+    },
+    {
+      "key": "infiltration_internal_temp_rounding_F",
+      "type": "enum",
+      "units": "-",
+      "default": "nearest_5F",
+      "allowed": [
+        "nearest_5F",
+        "floor_5F",
+        "ceil_5F"
+      ],
+      "ui_group": "Infiltración",
+      "description": "Regla de redondeo de T interna para consultar tabla de infiltración (la tabla está cada 5°F)."
+    }
+  ]
+}

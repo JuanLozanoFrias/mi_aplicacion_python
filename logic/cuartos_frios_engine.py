@@ -85,7 +85,9 @@ class ColdRoomEngine:
             self.evap_frontal = self._load_evaps(base / "evaporadores_frontal_btuhr.csv")
 
         # Fit-check y WEFM opcional
-        assets = Path("data/wefm_fitcheck_assets")
+        assets = Path("data/cuartos_frios/wefm_fitcheck_assets")
+        if not assets.exists():
+            assets = Path("data/wefm_fitcheck_assets")  # legacy ubicación
         self.evap_wefm = None
         self.evap_dims = None
         self.meta = None

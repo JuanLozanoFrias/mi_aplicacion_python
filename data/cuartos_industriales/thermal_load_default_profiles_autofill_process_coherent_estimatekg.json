@@ -1,0 +1,535 @@
+{
+  "meta": {
+    "name": "thermal_load_default_profiles",
+    "version": "1.5.0",
+    "created_utc": "2025-12-20T21:20:20Z",
+    "purpose": "Perfiles de valores por defecto para acelerar captura de datos y evitar sobreestimaciones comunes.",
+    "updated_utc": "2025-12-26T23:33:47Z",
+    "note": "Add coherent PROCESS autofill via kg_gate: kg==0 => storage (Tin=Ti, Tout=Ti); kg>0 => process (Tin=15, Tout=profile default).",
+    "note2": "Add kg_estimate per profile for 'Estimar kg' button in PROCESO tab."
+  },
+  "profiles": [
+    {
+      "id": "refrigeration_general",
+      "label": "Refrigeración general (0 a 5°C)",
+      "defaults": {
+        "run_hours_supp": 20,
+        "safety_factor": 1.1,
+        "ground_temp_C": 13.0,
+        "motors_hours_per_day": 24,
+        "lighting_hours_per_day": 18,
+        "forklift_hours_per_day": 2,
+        "people_btu_per_h": 1350,
+        "defrost_heat_to_room_fraction": 1.0,
+        "product_packaging_multiplier": 1.05,
+        "product_method": "enthalpy",
+        "infiltration_rh_handling": "nearest_bin",
+        "infiltration_internal_temp_rounding_F": "nearest_5F",
+        "internal_temp_C": 2.0
+      },
+      "notes": "Ajusta forklift_hours_per_day y recambios/24h según operación real de puertas.",
+      "autofill": {
+        "internals": {
+          "lighting_w_per_m2": 10.0,
+          "motors_w_per_m2": 15.0,
+          "forklift_hp": 0.0,
+          "people_per_100m2": 1.0,
+          "people_hours_per_day": 4.0
+        },
+        "rules": {
+          "compute_lighting_W": "lighting_W = area_m2 * lighting_w_per_m2",
+          "compute_motors_W": "motors_W = area_m2 * motors_w_per_m2",
+          "compute_people_n": "people_n = round(area_m2/100 * people_per_100m2)",
+          "forklift_hp_default": "forklift_hp = forklift_hp (const)",
+          "apply_only_when_zero": [
+            "lighting_W",
+            "motors_W",
+            "forklift_hp",
+            "people_n",
+            "people_hours_per_day"
+          ],
+          "clamp_people_n": {
+            "min": 0,
+            "max": 25
+          }
+        },
+        "process": {
+          "tin_default_C": 15.0,
+          "tout_mode": "tie",
+          "tout_default_C": null,
+          "cycle_hours_default": 24.0,
+          "kg_mode": "zero",
+          "kg_per_m3": 0.0,
+          "behavior": "kg_gate",
+          "tin_storage_mode": "tie",
+          "tout_storage_mode": "tie",
+          "tin_process_default_C": 15.0,
+          "tout_process_mode": "default",
+          "tout_process_default_C": 2.0,
+          "kg_apply_mode": "zero",
+          "kg_apply_per_m3": 0.0,
+          "hint": "Si kg=0 => almacenamiento (sin carga de producto): Tin=Ti, Tout=Ti. Si kg>0 => proceso: Tin=15°C, Tout=tout_process_default_C (editable).",
+          "kg_estimate": {
+            "enabled": true,
+            "density_kg_m3": 250.0,
+            "rotation_daily": 0.05,
+            "cap_fill_fraction": 1.0,
+            "round_to_kg": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "freezer_general",
+      "label": "Congelación (-25 a -15°C)",
+      "defaults": {
+        "run_hours_supp": 20,
+        "safety_factor": 1.15,
+        "ground_temp_C": 13.0,
+        "motors_hours_per_day": 24,
+        "lighting_hours_per_day": 18,
+        "forklift_hours_per_day": 1,
+        "people_btu_per_h": 1350,
+        "defrost_heat_to_room_fraction": 1.0,
+        "product_packaging_multiplier": 1.08,
+        "product_method": "enthalpy",
+        "infiltration_rh_handling": "nearest_bin",
+        "infiltration_internal_temp_rounding_F": "nearest_5F",
+        "internal_temp_C": -20.0
+      },
+      "notes": "En congelación suele ser más crítico controlar infiltración (cortinas/antecámara).",
+      "autofill": {
+        "internals": {
+          "lighting_w_per_m2": 8.0,
+          "motors_w_per_m2": 20.0,
+          "forklift_hp": 0.0,
+          "people_per_100m2": 0.5,
+          "people_hours_per_day": 3.0
+        },
+        "rules": {
+          "compute_lighting_W": "lighting_W = area_m2 * lighting_w_per_m2",
+          "compute_motors_W": "motors_W = area_m2 * motors_w_per_m2",
+          "compute_people_n": "people_n = round(area_m2/100 * people_per_100m2)",
+          "forklift_hp_default": "forklift_hp = forklift_hp (const)",
+          "apply_only_when_zero": [
+            "lighting_W",
+            "motors_W",
+            "forklift_hp",
+            "people_n",
+            "people_hours_per_day"
+          ],
+          "clamp_people_n": {
+            "min": 0,
+            "max": 25
+          }
+        },
+        "process": {
+          "tin_default_C": 15.0,
+          "tout_mode": "tie",
+          "tout_default_C": null,
+          "cycle_hours_default": 24.0,
+          "kg_mode": "zero",
+          "kg_per_m3": 0.0,
+          "behavior": "kg_gate",
+          "tin_storage_mode": "tie",
+          "tout_storage_mode": "tie",
+          "tin_process_default_C": 15.0,
+          "tout_process_mode": "default",
+          "tout_process_default_C": -18.0,
+          "kg_apply_mode": "zero",
+          "kg_apply_per_m3": 0.0,
+          "hint": "Si kg=0 => almacenamiento (sin carga de producto): Tin=Ti, Tout=Ti. Si kg>0 => proceso: Tin=15°C, Tout=tout_process_default_C (editable).",
+          "kg_estimate": {
+            "enabled": true,
+            "density_kg_m3": 180.0,
+            "rotation_daily": 0.05,
+            "cap_fill_fraction": 1.0,
+            "round_to_kg": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "refrigeration_medium",
+      "label": "Refrigeración media (5 a 10°C)",
+      "defaults": {
+        "run_hours_supp": 20,
+        "safety_factor": 1.1,
+        "ground_temp_C": 13.0,
+        "motors_hours_per_day": 24,
+        "lighting_hours_per_day": 18,
+        "forklift_hours_per_day": 2,
+        "people_btu_per_h": 1350,
+        "defrost_heat_to_room_fraction": 1.0,
+        "product_packaging_multiplier": 1.05,
+        "product_method": "enthalpy",
+        "infiltration_rh_handling": "nearest_bin",
+        "infiltration_internal_temp_rounding_F": "nearest_5F",
+        "internal_temp_C": 8.0
+      },
+      "notes": "Útil para frutas/verduras o almacenamiento con setpoints más altos. Ajusta infiltración según puertas.",
+      "autofill": {
+        "internals": {
+          "lighting_w_per_m2": 10.0,
+          "motors_w_per_m2": 12.0,
+          "forklift_hp": 0.0,
+          "people_per_100m2": 1.0,
+          "people_hours_per_day": 4.0
+        },
+        "rules": {
+          "compute_lighting_W": "lighting_W = area_m2 * lighting_w_per_m2",
+          "compute_motors_W": "motors_W = area_m2 * motors_w_per_m2",
+          "compute_people_n": "people_n = round(area_m2/100 * people_per_100m2)",
+          "forklift_hp_default": "forklift_hp = forklift_hp (const)",
+          "apply_only_when_zero": [
+            "lighting_W",
+            "motors_W",
+            "forklift_hp",
+            "people_n",
+            "people_hours_per_day"
+          ],
+          "clamp_people_n": {
+            "min": 0,
+            "max": 25
+          }
+        },
+        "process": {
+          "tin_default_C": 15.0,
+          "tout_mode": "tie",
+          "tout_default_C": null,
+          "cycle_hours_default": 24.0,
+          "kg_mode": "zero",
+          "kg_per_m3": 0.0,
+          "behavior": "kg_gate",
+          "tin_storage_mode": "tie",
+          "tout_storage_mode": "tie",
+          "tin_process_default_C": 15.0,
+          "tout_process_mode": "default",
+          "tout_process_default_C": 5.0,
+          "kg_apply_mode": "zero",
+          "kg_apply_per_m3": 0.0,
+          "hint": "Si kg=0 => almacenamiento (sin carga de producto): Tin=Ti, Tout=Ti. Si kg>0 => proceso: Tin=15°C, Tout=tout_process_default_C (editable).",
+          "kg_estimate": {
+            "enabled": true,
+            "density_kg_m3": 250.0,
+            "rotation_daily": 0.08,
+            "cap_fill_fraction": 1.0,
+            "round_to_kg": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "freezer_soft",
+      "label": "Congelación suave (-15 a -5°C)",
+      "defaults": {
+        "run_hours_supp": 20,
+        "safety_factor": 1.12,
+        "ground_temp_C": 13.0,
+        "motors_hours_per_day": 24,
+        "lighting_hours_per_day": 18,
+        "forklift_hours_per_day": 1,
+        "people_btu_per_h": 1350,
+        "defrost_heat_to_room_fraction": 1.0,
+        "product_packaging_multiplier": 1.05,
+        "product_method": "enthalpy",
+        "infiltration_rh_handling": "nearest_bin",
+        "infiltration_internal_temp_rounding_F": "nearest_5F",
+        "internal_temp_C": -10.0
+      },
+      "notes": "Para congelación moderada o cuartos de transición. Ajusta factor de seguridad según criticidad.",
+      "autofill": {
+        "internals": {
+          "lighting_w_per_m2": 8.0,
+          "motors_w_per_m2": 18.0,
+          "forklift_hp": 0.0,
+          "people_per_100m2": 0.5,
+          "people_hours_per_day": 3.0
+        },
+        "rules": {
+          "compute_lighting_W": "lighting_W = area_m2 * lighting_w_per_m2",
+          "compute_motors_W": "motors_W = area_m2 * motors_w_per_m2",
+          "compute_people_n": "people_n = round(area_m2/100 * people_per_100m2)",
+          "forklift_hp_default": "forklift_hp = forklift_hp (const)",
+          "apply_only_when_zero": [
+            "lighting_W",
+            "motors_W",
+            "forklift_hp",
+            "people_n",
+            "people_hours_per_day"
+          ],
+          "clamp_people_n": {
+            "min": 0,
+            "max": 25
+          }
+        },
+        "process": {
+          "tin_default_C": 15.0,
+          "tout_mode": "tie",
+          "tout_default_C": null,
+          "cycle_hours_default": 24.0,
+          "kg_mode": "zero",
+          "kg_per_m3": 0.0,
+          "behavior": "kg_gate",
+          "tin_storage_mode": "tie",
+          "tout_storage_mode": "tie",
+          "tin_process_default_C": 15.0,
+          "tout_process_mode": "default",
+          "tout_process_default_C": -15.0,
+          "kg_apply_mode": "zero",
+          "kg_apply_per_m3": 0.0,
+          "hint": "Si kg=0 => almacenamiento (sin carga de producto): Tin=Ti, Tout=Ti. Si kg>0 => proceso: Tin=15°C, Tout=tout_process_default_C (editable).",
+          "kg_estimate": {
+            "enabled": true,
+            "density_kg_m3": 180.0,
+            "rotation_daily": 0.08,
+            "cap_fill_fraction": 1.0,
+            "round_to_kg": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "antecamaras_dispatch",
+      "label": "Antecámara / Despacho (10 a 18°C)",
+      "defaults": {
+        "run_hours_supp": 20,
+        "safety_factor": 1.08,
+        "ground_temp_C": 13.0,
+        "motors_hours_per_day": 24,
+        "lighting_hours_per_day": 18,
+        "forklift_hours_per_day": 4,
+        "people_btu_per_h": 1350,
+        "defrost_heat_to_room_fraction": 1.0,
+        "product_packaging_multiplier": 1.05,
+        "product_method": "enthalpy",
+        "infiltration_rh_handling": "nearest_bin",
+        "infiltration_internal_temp_rounding_F": "nearest_5F",
+        "internal_temp_C": 12.0
+      },
+      "notes": "Zona de alta apertura de puertas. Normalmente la infiltración domina: revisa recambios/24h y RH.",
+      "autofill": {
+        "internals": {
+          "lighting_w_per_m2": 12.0,
+          "motors_w_per_m2": 8.0,
+          "forklift_hp": 4.0,
+          "people_per_100m2": 2.0,
+          "people_hours_per_day": 8.0
+        },
+        "rules": {
+          "compute_lighting_W": "lighting_W = area_m2 * lighting_w_per_m2",
+          "compute_motors_W": "motors_W = area_m2 * motors_w_per_m2",
+          "compute_people_n": "people_n = round(area_m2/100 * people_per_100m2)",
+          "forklift_hp_default": "forklift_hp = forklift_hp (const)",
+          "apply_only_when_zero": [
+            "lighting_W",
+            "motors_W",
+            "forklift_hp",
+            "people_n",
+            "people_hours_per_day"
+          ],
+          "clamp_people_n": {
+            "min": 0,
+            "max": 25
+          }
+        },
+        "process": {
+          "tin_default_C": 15.0,
+          "tout_mode": "default",
+          "tout_default_C": 5.0,
+          "cycle_hours_default": 24.0,
+          "kg_mode": "volume_density",
+          "kg_per_m3": 150.0,
+          "behavior": "kg_gate",
+          "tin_storage_mode": "tie",
+          "tout_storage_mode": "tie",
+          "tin_process_default_C": 15.0,
+          "tout_process_mode": "default",
+          "tout_process_default_C": 5.0,
+          "kg_apply_mode": "volume_density",
+          "kg_apply_per_m3": 150.0,
+          "hint": "Si kg=0 => almacenamiento (sin carga de producto): Tin=Ti, Tout=Ti. Si kg>0 => proceso: Tin=15°C, Tout=tout_process_default_C (editable).",
+          "kg_estimate": {
+            "enabled": true,
+            "density_kg_m3": 220.0,
+            "rotation_daily": 0.35,
+            "cap_fill_fraction": 1.0,
+            "round_to_kg": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "picking_high_traffic_refrig",
+      "label": "Refrigeración – Picking alto tráfico (0 a 5°C)",
+      "defaults": {
+        "run_hours_supp": 20,
+        "safety_factor": 1.15,
+        "ground_temp_C": 13.0,
+        "motors_hours_per_day": 24,
+        "lighting_hours_per_day": 20,
+        "forklift_hours_per_day": 6,
+        "people_btu_per_h": 1350,
+        "defrost_heat_to_room_fraction": 1.0,
+        "product_packaging_multiplier": 1.05,
+        "product_method": "enthalpy",
+        "infiltration_rh_handling": "nearest_bin",
+        "infiltration_internal_temp_rounding_F": "nearest_5F",
+        "internal_temp_C": 2.0
+      },
+      "notes": "Para operación intensa (devoluciones/picking): aumenta horas de montacargas y considera más infiltración.",
+      "autofill": {
+        "internals": {
+          "lighting_w_per_m2": 12.0,
+          "motors_w_per_m2": 18.0,
+          "forklift_hp": 4.0,
+          "people_per_100m2": 3.0,
+          "people_hours_per_day": 8.0
+        },
+        "rules": {
+          "compute_lighting_W": "lighting_W = area_m2 * lighting_w_per_m2",
+          "compute_motors_W": "motors_W = area_m2 * motors_w_per_m2",
+          "compute_people_n": "people_n = round(area_m2/100 * people_per_100m2)",
+          "forklift_hp_default": "forklift_hp = forklift_hp (const)",
+          "apply_only_when_zero": [
+            "lighting_W",
+            "motors_W",
+            "forklift_hp",
+            "people_n",
+            "people_hours_per_day"
+          ],
+          "clamp_people_n": {
+            "min": 0,
+            "max": 25
+          }
+        },
+        "process": {
+          "tin_default_C": 15.0,
+          "tout_mode": "default",
+          "tout_default_C": 5.0,
+          "cycle_hours_default": 24.0,
+          "kg_mode": "volume_density",
+          "kg_per_m3": 150.0,
+          "behavior": "kg_gate",
+          "tin_storage_mode": "tie",
+          "tout_storage_mode": "tie",
+          "tin_process_default_C": 15.0,
+          "tout_process_mode": "default",
+          "tout_process_default_C": 5.0,
+          "kg_apply_mode": "volume_density",
+          "kg_apply_per_m3": 150.0,
+          "hint": "Si kg=0 => almacenamiento (sin carga de producto): Tin=Ti, Tout=Ti. Si kg>0 => proceso: Tin=15°C, Tout=tout_process_default_C (editable).",
+          "kg_estimate": {
+            "enabled": true,
+            "density_kg_m3": 220.0,
+            "rotation_daily": 0.3,
+            "cap_fill_fraction": 1.0,
+            "round_to_kg": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "frozen_high_traffic",
+      "label": "Congelación – Alto tráfico (-25 a -15°C)",
+      "defaults": {
+        "run_hours_supp": 20,
+        "safety_factor": 1.2,
+        "ground_temp_C": 13.0,
+        "motors_hours_per_day": 24,
+        "lighting_hours_per_day": 18,
+        "forklift_hours_per_day": 3,
+        "people_btu_per_h": 1350,
+        "defrost_heat_to_room_fraction": 1.0,
+        "product_packaging_multiplier": 1.1,
+        "product_method": "enthalpy",
+        "infiltration_rh_handling": "nearest_bin",
+        "infiltration_internal_temp_rounding_F": "nearest_5F",
+        "internal_temp_C": -20.0
+      },
+      "notes": "Para congelación con puertas frecuentes: suele requerir mayor margen (cortinas/antecámara).",
+      "autofill": {
+        "internals": {
+          "lighting_w_per_m2": 10.0,
+          "motors_w_per_m2": 24.0,
+          "forklift_hp": 4.0,
+          "people_per_100m2": 2.0,
+          "people_hours_per_day": 8.0
+        },
+        "rules": {
+          "compute_lighting_W": "lighting_W = area_m2 * lighting_w_per_m2",
+          "compute_motors_W": "motors_W = area_m2 * motors_w_per_m2",
+          "compute_people_n": "people_n = round(area_m2/100 * people_per_100m2)",
+          "forklift_hp_default": "forklift_hp = forklift_hp (const)",
+          "apply_only_when_zero": [
+            "lighting_W",
+            "motors_W",
+            "forklift_hp",
+            "people_n",
+            "people_hours_per_day"
+          ],
+          "clamp_people_n": {
+            "min": 0,
+            "max": 25
+          }
+        },
+        "process": {
+          "tin_default_C": 15.0,
+          "tout_mode": "default",
+          "tout_default_C": -15.0,
+          "cycle_hours_default": 24.0,
+          "kg_mode": "volume_density",
+          "kg_per_m3": 120.0,
+          "behavior": "kg_gate",
+          "tin_storage_mode": "tie",
+          "tout_storage_mode": "tie",
+          "tin_process_default_C": 15.0,
+          "tout_process_mode": "default",
+          "tout_process_default_C": -15.0,
+          "kg_apply_mode": "volume_density",
+          "kg_apply_per_m3": 120.0,
+          "hint": "Si kg=0 => almacenamiento (sin carga de producto): Tin=Ti, Tout=Ti. Si kg>0 => proceso: Tin=15°C, Tout=tout_process_default_C (editable).",
+          "kg_estimate": {
+            "enabled": true,
+            "density_kg_m3": 180.0,
+            "rotation_daily": 0.25,
+            "cap_fill_fraction": 1.0,
+            "round_to_kg": 1.0
+          }
+        }
+      }
+    }
+  ],
+  "autofill_schema_notes": {
+    "process": {
+      "tout_mode_values": [
+        "tie",
+        "tie_plus_2",
+        "default"
+      ],
+      "logic": {
+        "Tin": "tin_default_C",
+        "Tout": "if tout_mode=='tie' -> internal_temp_C; if 'tie_plus_2' -> internal_temp_C+2; if 'default' -> tout_default_C",
+        "kg": "if kg_mode=='zero' -> 0; if 'volume_density' -> volume_m3 * kg_per_m3",
+        "cycle_h": "cycle_hours_default"
+      }
+    },
+    "process_v2": {
+      "behavior": "kg_gate",
+      "rules": [
+        "If kg_current == 0 => storage suggestions: Tin = Ti, Tout = Ti",
+        "If kg_current > 0 => process suggestions: Tin = tin_process_default_C (usually 15C), Tout = tout_process_default_C (or Ti if None)"
+      ],
+      "kg_apply": "Button may set kg if profile kg_apply_mode=='volume_density' else leaves kg at 0 unless user edits."
+    },
+    "kg_estimate": {
+      "kg_formula": "kg_est = volume_m3 * density_kg_m3 * rotation_daily",
+      "caps": [
+        "rotation_daily clamped to [0,1]",
+        "density_kg_m3 clamped to [50,600]",
+        "kg_est capped to volume_m3 * density_kg_m3 * cap_fill_fraction"
+      ],
+      "rounding": "round_to_kg"
+    }
+  }
+}

@@ -10,6 +10,7 @@ from PySide6.QtGui import QColor
 from PySide6.QtSvgWidgets import QSvgWidget
 
 from gui.pages.carga_page import CargaPage
+from gui.pages.cargas.industrial_page import IndustrialPage
 from gui.pages.materiales_page import MaterialesPage
 from gui.pages.carga_electrica.carga_electrica_page import CargaElectricaPage
 from gui.pages.creditos_page import CreditosPage
@@ -201,7 +202,7 @@ QListWidget::item:selected:hover {
 
         add_nav_item("CARGAS TERMICAS", None, header=True)
         add_nav_item("CUARTOS FRIOS", CargaPage(), indent=True, section="cargas")
-        add_nav_item("CUARTOS INDUSTRIALES", self._create_placeholder_page("CUARTOS INDUSTRIALES"), indent=True, section="cargas")
+        add_nav_item("CUARTOS INDUSTRIALES", IndustrialPage(), indent=True, section="cargas")
         add_nav_item("LEGEND", self._create_placeholder_page("LEGEND"), indent=True, section="cargas")
 
         add_nav_item("TABLEROS ELECTRICOS", MaterialesPage())

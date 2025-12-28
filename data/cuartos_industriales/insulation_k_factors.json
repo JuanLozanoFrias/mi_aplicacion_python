@@ -1,0 +1,14 @@
+{
+  "meta": {
+    "source": "CALCULO DE CUARTO #2 DEVOLUCIONES.xlsx / Hoja3",
+    "count": 6
+  },
+  "k_factor_by_insulation": {
+    "LANA MINERAL": 0.3,
+    "FIBRA DE VIDRIO": 0.25,
+    "POLIESTIRENO EXPANDIDO": 0.25,
+    "POLIESTIRENO MOLDEADO": 0.2,
+    "PANEL DE POLIURETANO": 0.16,
+    "POLIURETANO APLICADO EN SITIO": 0.14
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "meta": {
+    "name": "thermal_load_validation_rules",
+    "version": "1.0.0",
+    "created_utc": "2025-12-20T21:20:20Z",
+    "purpose": "Reglas simples de validación/sanity checks para advertencias en UI antes de calcular."
+  },
+  "rules": [
+    {
+      "id": "product_temps",
+      "severity": "warning",
+      "if": "product.Tout_C >= product.Tin_C",
+      "message": "La temperatura de salida del producto debe ser menor que la de entrada para que exista carga de enfriamiento."
+    },
+    {
+      "id": "run_hours_range",
+      "severity": "error",
+      "if": "extras.run_hours_supp <= 0 or extras.run_hours_supp > 24",
+      "message": "run_hours_supp debe estar entre 1 y 24 h/día."
+    },
+    {
+      "id": "negative_deltas",
+      "severity": "info",
+      "if": "room.T_internal_C >= room.T_ext_front_C and room.T_internal_C >= room.T_ext_roof_C",
+      "message": "Algunas superficies tienen ΔT <= 0 (no aportan transmisión). Revisa temperaturas exteriores vs internas."
+    },
+    {
+      "id": "forklift_24h_flag",
+      "severity": "warning",
+      "if": "extras.forklift_hours_per_day >= 16",
+      "message": "Montacargas con muchas horas/día puede sobreestimar; confirma horas reales de operación."
+    },
+    {
+      "id": "ach_high_flag",
+      "severity": "warning",
+      "if": "infiltration.air_changes_24h >= 10",
+      "message": "Recambios/24h muy altos. Confirma operación de puertas, cortinas, antecámara o factor de uso."
+    }
+  ]
+}

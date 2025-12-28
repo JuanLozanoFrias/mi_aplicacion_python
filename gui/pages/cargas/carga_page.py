@@ -284,9 +284,8 @@ class CargaPage(QWidget):
             return
         target_dir = Path(target_dir)
         excel_out = target_dir / f"{base_name}.xlsx"
-        json_out = target_dir / f"{base_name}.json"
 
-        # JSON
+        # JSON (solo en biblioteca)
         results = []
         for r in range(self.result_table.rowCount()):
             row = []
@@ -304,51 +303,69 @@ class CargaPage(QWidget):
                 "kw": self.lbl_total_kw.text(),
             },
         }
-        json_out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        lib_dir = Path(__file__).resolve().parents[3] / "data" / "proyectos" / "cuartos"
+        lib_dir.mkdir(parents=True, exist_ok=True)
+        lib_json = lib_dir / f"{base_name}.json"
+        lib_json.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
-        # Excel sencillo
+        # Excel en una sola hoja con algo de formato
         wb = Workbook()
-        ws_in = wb.active
-        ws_in.title = "Entradas"
-        ws_in.append(["PROYECTO", proj_name])
-        ws_in.append(["FACTOR SEGURIDAD", self.sf_spin.value()])
-        ws_in.append([])
-        ws_in.append(["CUARTO", "LARGO (m)", "ANCHO (m)", "ALTURA (m)", "USO", "N EVAPS", "FAMILIA"])
+        ws = wb.active
+        ws.title = "PROYECTO"
+
+        from openpyxl.styles import Font, Alignment, PatternFill
+        bold = Font(bold=True)
+        header_fill = PatternFill(start_color="e8efff", end_color="e8efff", fill_type="solid")
+
+        ws.append(["PROYECTO", proj_name])
+        ws.append(["FECHA", datetime.now().strftime("%Y-%m-%d %H:%M")])
+        ws.append(["FACTOR DE SEGURIDAD", self.sf_spin.value()])
+        ws.append([])
+
+        ws.append(["ENTRADAS"])
+        ws.append(["CUARTO", "LARGO (m)", "ANCHO (m)", "ALTURA (m)", "USO / PERFIL", "N EVAPS", "FAMILIA"])
+        for cell in ws[ws.max_row]:
+            cell.font = bold; cell.fill = header_fill
         for row in inputs:
-            ws_in.append(
-                [
-                    row["cuarto"],
-                    row["largo_m"],
-                    row["ancho_m"],
-                    row["altura_m"],
-                    row["uso"],
-                    row["n_ev_txt"],
-                    row["familia"],
-                ]
-            )
-        ws_out = wb.create_sheet("Resultados")
-        ws_out.append(["TOTAL BTU/H", self.lbl_total_btu.text(), "TOTAL kW", self.lbl_total_kw.text()])
-        ws_out.append([])
-        headers = ["CUARTO", "CARGA (BTU/H)", "POT (kW)", "N EVAPS", "EVAPORADOR", "UTIL (%)"]
-        ws_out.append(headers)
+            ws.append([
+                row["cuarto"],
+                row["largo_m"],
+                row["ancho_m"],
+                row["altura_m"],
+                row["uso"],
+                row["n_ev_txt"],
+                row["familia"],
+            ])
+        ws.append([])
+        ws.append(["RESULTADOS"])
+        ws.append(["TOTAL BTU/H", self.lbl_total_btu.text(), "TOTAL kW", self.lbl_total_kw.text()])
+        for cell in ws[ws.max_row-1]:
+            cell.font = bold
+        ws.append([])
+        ws.append(["CUARTO", "CARGA (BTU/H)", "POT (kW)", "N EVAPS", "EVAPORADOR", "UTIL (%)"])
+        for cell in ws[ws.max_row]:
+            cell.font = bold; cell.fill = header_fill
         for r in range(self.result_table.rowCount()):
             row = []
             for c in range(self.result_table.columnCount()):
                 item = self.result_table.item(r, c)
                 row.append(item.text() if item else "")
-            ws_out.append(row)
-        wb.save(excel_out)
+            ws.append(row)
 
-        # copia interna en data/proyectos/cuartos
-        lib_dir = Path(__file__).resolve().parents[3] / "data" / "proyectos" / "cuartos"
-        lib_dir.mkdir(parents=True, exist_ok=True)
-        lib_json = lib_dir / json_out.name
-        lib_json.write_text(json_out.read_text(encoding="utf-8"), encoding="utf-8")
+        # auto width simple
+        for col in ws.columns:
+            max_len = max(len(str(c.value)) if c.value is not None else 0 for c in col)
+            ws.column_dimensions[col[0].column_letter].width = max(12, min(40, max_len + 2))
+        for row in ws.iter_rows():
+            for cell in row:
+                cell.alignment = Alignment(vertical="center", wrap_text=True)
+
+        wb.save(excel_out)
 
         QMessageBox.information(
             self,
             "Exportado",
-            f"Archivos guardados:\n{excel_out}\n{json_out}\nCopia interna: {lib_json}",
+            f"Archivos guardados:\nExcel: {excel_out}\nJSON (biblioteca): {lib_json}",
         )
 
     def _open_library(self) -> None:

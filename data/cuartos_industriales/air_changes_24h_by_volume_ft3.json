@@ -1,0 +1,138 @@
+{
+  "meta": {
+    "source": "CALCULO DE CUARTO #2 DEVOLUCIONES.xlsx / Hoja3",
+    "count": 26
+  },
+  "table": [
+    {
+      "max_volume_ft3": 200.0,
+      "air_changes_24h_refrigeration": 44.0,
+      "air_changes_24h_freezing": 33.5
+    },
+    {
+      "max_volume_ft3": 250.0,
+      "air_changes_24h_refrigeration": 38.0,
+      "air_changes_24h_freezing": 29.0
+    },
+    {
+      "max_volume_ft3": 300.0,
+      "air_changes_24h_refrigeration": 34.5,
+      "air_changes_24h_freezing": 26.2
+    },
+    {
+      "max_volume_ft3": 400.0,
+      "air_changes_24h_refrigeration": 29.5,
+      "air_changes_24h_freezing": 22.5
+    },
+    {
+      "max_volume_ft3": 500.0,
+      "air_changes_24h_refrigeration": 26.0,
+      "air_changes_24h_freezing": 20.0
+    },
+    {
+      "max_volume_ft3": 600.0,
+      "air_changes_24h_refrigeration": 23.0,
+      "air_changes_24h_freezing": 18.0
+    },
+    {
+      "max_volume_ft3": 800.0,
+      "air_changes_24h_refrigeration": 20.0,
+      "air_changes_24h_freezing": 15.2
+    },
+    {
+      "max_volume_ft3": 1000.0,
+      "air_changes_24h_refrigeration": 17.5,
+      "air_changes_24h_freezing": 13.5
+    },
+    {
+      "max_volume_ft3": 1500.0,
+      "air_changes_24h_refrigeration": 14.0,
+      "air_changes_24h_freezing": 11.0
+    },
+    {
+      "max_volume_ft3": 2000.0,
+      "air_changes_24h_refrigeration": 12.0,
+      "air_changes_24h_freezing": 9.3
+    },
+    {
+      "max_volume_ft3": 3000.0,
+      "air_changes_24h_refrigeration": 9.5,
+      "air_changes_24h_freezing": 7.4
+    },
+    {
+      "max_volume_ft3": 4000.0,
+      "air_changes_24h_refrigeration": 8.2,
+      "air_changes_24h_freezing": 6.3
+    },
+    {
+      "max_volume_ft3": 5000.0,
+      "air_changes_24h_refrigeration": 7.2,
+      "air_changes_24h_freezing": 5.6
+    },
+    {
+      "max_volume_ft3": 6000.0,
+      "air_changes_24h_refrigeration": 6.5,
+      "air_changes_24h_freezing": 5.0
+    },
+    {
+      "max_volume_ft3": 8000.0,
+      "air_changes_24h_refrigeration": 5.5,
+      "air_changes_24h_freezing": 4.3
+    },
+    {
+      "max_volume_ft3": 10000.0,
+      "air_changes_24h_refrigeration": 4.9,
+      "air_changes_24h_freezing": 3.8
+    },
+    {
+      "max_volume_ft3": 15000.0,
+      "air_changes_24h_refrigeration": 3.9,
+      "air_changes_24h_freezing": 3.0
+    },
+    {
+      "max_volume_ft3": 20000.0,
+      "air_changes_24h_refrigeration": 3.5,
+      "air_changes_24h_freezing": 2.6
+    },
+    {
+      "max_volume_ft3": 25000.0,
+      "air_changes_24h_refrigeration": 3.0,
+      "air_changes_24h_freezing": 2.3
+    },
+    {
+      "max_volume_ft3": 30000.0,
+      "air_changes_24h_refrigeration": 2.7,
+      "air_changes_24h_freezing": 2.1
+    },
+    {
+      "max_volume_ft3": 40000.0,
+      "air_changes_24h_refrigeration": 2.3,
+      "air_changes_24h_freezing": 1.8
+    },
+    {
+      "max_volume_ft3": 50000.0,
+      "air_changes_24h_refrigeration": 2.0,
+      "air_changes_24h_freezing": 1.6
+    },
+    {
+      "max_volume_ft3": 75000.0,
+      "air_changes_24h_refrigeration": 1.6,
+      "air_changes_24h_freezing": 1.3
+    },
+    {
+      "max_volume_ft3": 100000.0,
+      "air_changes_24h_refrigeration": 1.4,
+      "air_changes_24h_freezing": 1.1
+    },
+    {
+      "max_volume_ft3": 350000.0,
+      "air_changes_24h_refrigeration": 1.13,
+      "air_changes_24h_freezing": 0.88
+    },
+    {
+      "max_volume_ft3": 700000.0,
+      "air_changes_24h_refrigeration": 0.97,
+      "air_changes_24h_freezing": 0.77
+    }
+  ]
+}

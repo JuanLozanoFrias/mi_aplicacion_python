@@ -1,0 +1,3310 @@
+{
+  "meta": {
+    "source": "CALCULO DE CUARTO #2 DEVOLUCIONES.xlsx / Hoja4",
+    "units": {
+      "freezing_point": "°F",
+      "cp": "Btu/lb·°F",
+      "latent_heat": "Btu/lb",
+      "composition": "%"
+    },
+    "count": 206
+  },
+  "by_name": {
+    "Alcachofas, globo": {
+      "name": "Alcachofas, globo",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 84.94,
+        "protein": 3.27,
+        "fat": 0.15,
+        "carbohydrate": 10.51,
+        "fiber": 5.4,
+        "ash": 1.13
+      },
+      "freezing_point_F": 29.8,
+      "cp_above_Btu_lbF": 0.93,
+      "cp_below_Btu_lbF": 0.48,
+      "latent_heat_Btu_lb": 122.0
+    },
+    "Alcachofas, de Jerusalén": {
+      "name": "Alcachofas, de Jerusalén",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 78.01,
+        "protein": 2.0,
+        "fat": 0.01,
+        "carbohydrate": 17.44,
+        "fiber": 1.6,
+        "ash": 2.54
+      },
+      "freezing_point_F": 27.5,
+      "cp_above_Btu_lbF": 0.87,
+      "cp_below_Btu_lbF": 0.54,
+      "latent_heat_Btu_lb": 112.0
+    },
+    "Espárragos": {
+      "name": "Espárragos",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 92.4,
+        "protein": 2.28,
+        "fat": 0.2,
+        "carbohydrate": 4.54,
+        "fiber": 2.1,
+        "ash": 0.57
+      },
+      "freezing_point_F": 30.9,
+      "cp_above_Btu_lbF": 0.96,
+      "cp_below_Btu_lbF": 0.43,
+      "latent_heat_Btu_lb": 133.0
+    },
+    "Habichuelas": {
+      "name": "Habichuelas",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 90.27,
+        "protein": 1.82,
+        "fat": 0.12,
+        "carbohydrate": 7.14,
+        "fiber": 3.4,
+        "ash": 0.66
+      },
+      "freezing_point_F": 30.7,
+      "cp_above_Btu_lbF": 0.95,
+      "cp_below_Btu_lbF": 0.44,
+      "latent_heat_Btu_lb": 130.0
+    },
+    "Frijoles lima": {
+      "name": "Frijoles lima",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 70.24,
+        "protein": 6.84,
+        "fat": 0.86,
+        "carbohydrate": 20.16,
+        "fiber": 4.9,
+        "ash": 1.89
+      },
+      "freezing_point_F": 30.9,
+      "cp_above_Btu_lbF": 0.84,
+      "cp_below_Btu_lbF": 0.49,
+      "latent_heat_Btu_lb": 101.0
+    },
+    "Remolachas": {
+      "name": "Remolachas",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 87.58,
+        "protein": 1.61,
+        "fat": 0.17,
+        "carbohydrate": 9.56,
+        "fiber": 2.8,
+        "ash": 1.08
+      },
+      "freezing_point_F": 30.0,
+      "cp_above_Btu_lbF": 0.93,
+      "cp_below_Btu_lbF": 0.46,
+      "latent_heat_Btu_lb": 126.0
+    },
+    "Brócoli": {
+      "name": "Brócoli",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 90.69,
+        "protein": 2.98,
+        "fat": 0.35,
+        "carbohydrate": 5.24,
+        "fiber": 3.0,
+        "ash": 0.92
+      },
+      "freezing_point_F": 30.9,
+      "cp_above_Btu_lbF": 0.96,
+      "cp_below_Btu_lbF": 0.43,
+      "latent_heat_Btu_lb": 130.0
+    },
+    "Coles de Bruselas": {
+      "name": "Coles de Bruselas",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 86.0,
+        "protein": 3.38,
+        "fat": 0.3,
+        "carbohydrate": 8.96,
+        "fiber": 3.8,
+        "ash": 1.37
+      },
+      "freezing_point_F": 30.6,
+      "cp_above_Btu_lbF": 0.93,
+      "cp_below_Btu_lbF": 0.46,
+      "latent_heat_Btu_lb": 123.0
+    },
+    "Repollo": {
+      "name": "Repollo",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 92.15,
+        "protein": 1.44,
+        "fat": 0.27,
+        "carbohydrate": 5.43,
+        "fiber": 2.3,
+        "ash": 0.71
+      },
+      "freezing_point_F": 30.4,
+      "cp_above_Btu_lbF": 0.96,
+      "cp_below_Btu_lbF": 0.44,
+      "latent_heat_Btu_lb": 132.0
+    },
+    "Zanahorias": {
+      "name": "Zanahorias",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 87.79,
+        "protein": 1.03,
+        "fat": 0.19,
+        "carbohydrate": 10.14,
+        "fiber": 3.0,
+        "ash": 0.87
+      },
+      "freezing_point_F": 29.5,
+      "cp_above_Btu_lbF": 0.94,
+      "cp_below_Btu_lbF": 0.48,
+      "latent_heat_Btu_lb": 126.0
+    },
+    "Coliflor": {
+      "name": "Coliflor",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 91.91,
+        "protein": 1.98,
+        "fat": 0.21,
+        "carbohydrate": 5.2,
+        "fiber": 2.5,
+        "ash": 0.71
+      },
+      "freezing_point_F": 30.6,
+      "cp_above_Btu_lbF": 0.96,
+      "cp_below_Btu_lbF": 0.44,
+      "latent_heat_Btu_lb": 132.0
+    },
+    "Apionabo": {
+      "name": "Apionabo",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 88.0,
+        "protein": 1.5,
+        "fat": 0.3,
+        "carbohydrate": 9.2,
+        "fiber": 1.8,
+        "ash": 1.0
+      },
+      "freezing_point_F": 30.4,
+      "cp_above_Btu_lbF": 0.93,
+      "cp_below_Btu_lbF": 0.45,
+      "latent_heat_Btu_lb": 126.0
+    },
+    "Apio": {
+      "name": "Apio",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 94.64,
+        "protein": 0.75,
+        "fat": 0.14,
+        "carbohydrate": 3.65,
+        "fiber": 1.7,
+        "ash": 0.82
+      },
+      "freezing_point_F": 31.1,
+      "cp_above_Btu_lbF": 0.97,
+      "cp_below_Btu_lbF": 0.42,
+      "latent_heat_Btu_lb": 136.0
+    },
+    "Berza": {
+      "name": "Berza",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 90.55,
+        "protein": 1.57,
+        "fat": 0.22,
+        "carbohydrate": 7.11,
+        "fiber": 3.6,
+        "ash": 0.55
+      },
+      "freezing_point_F": 30.6,
+      "cp_above_Btu_lbF": 0.96,
+      "cp_below_Btu_lbF": 0.44,
+      "latent_heat_Btu_lb": 130.0
+    },
+    "Maíz, dulce, amarillo": {
+      "name": "Maíz, dulce, amarillo",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 75.96,
+        "protein": 3.22,
+        "fat": 1.18,
+        "carbohydrate": 19.02,
+        "fiber": 2.7,
+        "ash": 0.62
+      },
+      "freezing_point_F": 30.9,
+      "cp_above_Btu_lbF": 0.86,
+      "cp_below_Btu_lbF": 0.47,
+      "latent_heat_Btu_lb": 109.0
+    },
+    "Pepinos": {
+      "name": "Pepinos",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 96.01,
+        "protein": 0.69,
+        "fat": 0.13,
+        "carbohydrate": 2.76,
+        "fiber": 0.8,
+        "ash": 0.41
+      },
+      "freezing_point_F": 31.1,
+      "cp_above_Btu_lbF": 0.98,
+      "cp_below_Btu_lbF": 0.41,
+      "latent_heat_Btu_lb": 138.0
+    },
+    "Berenjena": {
+      "name": "Berenjena",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 92.03,
+        "protein": 1.02,
+        "fat": 0.18,
+        "carbohydrate": 6.07,
+        "fiber": 2.5,
+        "ash": 0.71
+      },
+      "freezing_point_F": 30.6,
+      "cp_above_Btu_lbF": 0.96,
+      "cp_below_Btu_lbF": 0.44,
+      "latent_heat_Btu_lb": 132.0
+    },
+    "Endivia": {
+      "name": "Endivia",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 93.79,
+        "protein": 1.25,
+        "fat": 0.2,
+        "carbohydrate": 3.35,
+        "fiber": 3.1,
+        "ash": 1.41
+      },
+      "freezing_point_F": 31.8,
+      "cp_above_Btu_lbF": 0.97,
+      "cp_below_Btu_lbF": 0.4,
+      "latent_heat_Btu_lb": 135.0
+    },
+    "Ajo": {
+      "name": "Ajo",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 58.58,
+        "protein": 6.36,
+        "fat": 0.5,
+        "carbohydrate": 33.07,
+        "fiber": 2.1,
+        "ash": 1.5
+      },
+      "freezing_point_F": 30.6,
+      "cp_above_Btu_lbF": 0.76,
+      "cp_below_Btu_lbF": 0.52,
+      "latent_heat_Btu_lb": 84.0
+    },
+    "Jengibre, raíz": {
+      "name": "Jengibre, raíz",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 81.67,
+        "protein": 1.74,
+        "fat": 0.73,
+        "carbohydrate": 15.09,
+        "fiber": 2.0,
+        "ash": 0.77
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.9,
+      "cp_below_Btu_lbF": 0.46,
+      "latent_heat_Btu_lb": 117.0
+    },
+    "Rábano picante": {
+      "name": "Rábano picante",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 78.66,
+        "protein": 9.4,
+        "fat": 1.4,
+        "carbohydrate": 8.28,
+        "fiber": 2.0,
+        "ash": 2.26
+      },
+      "freezing_point_F": 28.8,
+      "cp_above_Btu_lbF": 0.88,
+      "cp_below_Btu_lbF": 0.51,
+      "latent_heat_Btu_lb": 113.0
+    },
+    "Col rizada": {
+      "name": "Col rizada",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 84.46,
+        "protein": 3.3,
+        "fat": 0.7,
+        "carbohydrate": 10.01,
+        "fiber": 2.0,
+        "ash": 1.53
+      },
+      "freezing_point_F": 31.1,
+      "cp_above_Btu_lbF": 0.91,
+      "cp_below_Btu_lbF": 0.44,
+      "latent_heat_Btu_lb": 121.0
+    },
+    "Colinabo": {
+      "name": "Colinabo",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 91.0,
+        "protein": 1.7,
+        "fat": 0.1,
+        "carbohydrate": 6.2,
+        "fiber": 3.6,
+        "ash": 1.0
+      },
+      "freezing_point_F": 30.2,
+      "cp_above_Btu_lbF": 0.96,
+      "cp_below_Btu_lbF": 0.45,
+      "latent_heat_Btu_lb": 131.0
+    },
+    "Puerros": {
+      "name": "Puerros",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 83.0,
+        "protein": 1.5,
+        "fat": 0.3,
+        "carbohydrate": 14.15,
+        "fiber": 1.8,
+        "ash": 1.05
+      },
+      "freezing_point_F": 30.7,
+      "cp_above_Btu_lbF": 0.9,
+      "cp_below_Btu_lbF": 0.46,
+      "latent_heat_Btu_lb": 119.0
+    },
+    "Lechuga, iceberg": {
+      "name": "Lechuga, iceberg",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 95.89,
+        "protein": 1.01,
+        "fat": 0.19,
+        "carbohydrate": 2.09,
+        "fiber": 1.4,
+        "ash": 0.48
+      },
+      "freezing_point_F": 31.6,
+      "cp_above_Btu_lbF": 0.98,
+      "cp_below_Btu_lbF": 0.39,
+      "latent_heat_Btu_lb": 138.0
+    },
+    "Champiñones": {
+      "name": "Champiñones",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 91.81,
+        "protein": 2.09,
+        "fat": 0.42,
+        "carbohydrate": 4.65,
+        "fiber": 1.2,
+        "ash": 0.89
+      },
+      "freezing_point_F": 30.4,
+      "cp_above_Btu_lbF": 0.95,
+      "cp_below_Btu_lbF": 0.44,
+      "latent_heat_Btu_lb": 132.0
+    },
+    "Okra": {
+      "name": "Okra",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 89.58,
+        "protein": 2.0,
+        "fat": 0.1,
+        "carbohydrate": 7.63,
+        "fiber": 3.2,
+        "ash": 0.7
+      },
+      "freezing_point_F": 28.8,
+      "cp_above_Btu_lbF": 0.95,
+      "cp_below_Btu_lbF": 0.49,
+      "latent_heat_Btu_lb": 129.0
+    },
+    "Cebollas": {
+      "name": "Cebollas",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 89.68,
+        "protein": 1.16,
+        "fat": 0.16,
+        "carbohydrate": 8.63,
+        "fiber": 1.8,
+        "ash": 0.37
+      },
+      "freezing_point_F": 30.4,
+      "cp_above_Btu_lbF": 0.94,
+      "cp_below_Btu_lbF": 0.45,
+      "latent_heat_Btu_lb": 129.0
+    },
+    "Cebollas, hojuelas deshidratadas": {
+      "name": "Cebollas, hojuelas deshidratadas",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 3.93,
+        "protein": 8.95,
+        "fat": 0.46,
+        "carbohydrate": 83.28,
+        "fiber": 9.2,
+        "ash": 3.38
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": null,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 6.0
+    },
+    "Perejil": {
+      "name": "Perejil",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 87.71,
+        "protein": 2.97,
+        "fat": 0.79,
+        "carbohydrate": 6.33,
+        "fiber": 3.3,
+        "ash": 2.2
+      },
+      "freezing_point_F": 30.0,
+      "cp_above_Btu_lbF": 0.94,
+      "cp_below_Btu_lbF": 0.46,
+      "latent_heat_Btu_lb": 126.0
+    },
+    "Chirivías": {
+      "name": "Chirivías",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 79.53,
+        "protein": 1.2,
+        "fat": 0.3,
+        "carbohydrate": 17.99,
+        "fiber": 4.9,
+        "ash": 0.98
+      },
+      "freezing_point_F": 30.4,
+      "cp_above_Btu_lbF": 0.89,
+      "cp_below_Btu_lbF": 0.48,
+      "latent_heat_Btu_lb": 114.0
+    },
+    "Arvejas, verdes": {
+      "name": "Arvejas, verdes",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 78.86,
+        "protein": 5.42,
+        "fat": 0.4,
+        "carbohydrate": 14.46,
+        "fiber": 5.1,
+        "ash": 0.87
+      },
+      "freezing_point_F": 30.9,
+      "cp_above_Btu_lbF": 0.9,
+      "cp_below_Btu_lbF": 0.47,
+      "latent_heat_Btu_lb": 113.0
+    },
+    "Pimentón, liofilizado": {
+      "name": "Pimentón, liofilizado",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 2.0,
+        "protein": 17.9,
+        "fat": 3.0,
+        "carbohydrate": 68.7,
+        "fiber": 21.3,
+        "ash": 8.4
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": null,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 3.0
+    },
+    "Pimentón, dulce, verde": {
+      "name": "Pimentón, dulce, verde",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 92.19,
+        "protein": 0.89,
+        "fat": 0.19,
+        "carbohydrate": 6.43,
+        "fiber": 1.8,
+        "ash": 0.3
+      },
+      "freezing_point_F": 30.7,
+      "cp_above_Btu_lbF": 0.96,
+      "cp_below_Btu_lbF": 0.43,
+      "latent_heat_Btu_lb": 132.0
+    },
+    "Papas, cultivo principal": {
+      "name": "Papas, cultivo principal",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 78.96,
+        "protein": 2.07,
+        "fat": 0.1,
+        "carbohydrate": 17.98,
+        "fiber": 1.6,
+        "ash": 0.89
+      },
+      "freezing_point_F": 30.9,
+      "cp_above_Btu_lbF": 0.88,
+      "cp_below_Btu_lbF": 0.46,
+      "latent_heat_Btu_lb": 113.0
+    },
+    "Batatas (camote)": {
+      "name": "Batatas (camote)",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 72.84,
+        "protein": 1.65,
+        "fat": 0.3,
+        "carbohydrate": 24.28,
+        "fiber": 3.0,
+        "ash": 0.95
+      },
+      "freezing_point_F": 29.7,
+      "cp_above_Btu_lbF": 0.83,
+      "cp_below_Btu_lbF": 0.5,
+      "latent_heat_Btu_lb": 104.0
+    },
+    "Calabazas": {
+      "name": "Calabazas",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 91.6,
+        "protein": 1.0,
+        "fat": 0.1,
+        "carbohydrate": 6.5,
+        "fiber": 0.5,
+        "ash": 0.8
+      },
+      "freezing_point_F": 30.6,
+      "cp_above_Btu_lbF": 0.95,
+      "cp_below_Btu_lbF": 0.43,
+      "latent_heat_Btu_lb": 132.0
+    },
+    "Rábanos": {
+      "name": "Rábanos",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 94.84,
+        "protein": 0.6,
+        "fat": 0.54,
+        "carbohydrate": 3.59,
+        "fiber": 1.6,
+        "ash": 0.54
+      },
+      "freezing_point_F": 30.7,
+      "cp_above_Btu_lbF": 0.97,
+      "cp_below_Btu_lbF": 0.42,
+      "latent_heat_Btu_lb": 136.0
+    },
+    "Ruibarbo": {
+      "name": "Ruibarbo",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 93.61,
+        "protein": 0.9,
+        "fat": 0.2,
+        "carbohydrate": 4.54,
+        "fiber": 1.8,
+        "ash": 0.76
+      },
+      "freezing_point_F": 30.4,
+      "cp_above_Btu_lbF": 0.97,
+      "cp_below_Btu_lbF": 0.44,
+      "latent_heat_Btu_lb": 135.0
+    },
+    "Nabo sueco": {
+      "name": "Nabo sueco",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 89.66,
+        "protein": 1.2,
+        "fat": 0.2,
+        "carbohydrate": 8.13,
+        "fiber": 2.5,
+        "ash": 0.81
+      },
+      "freezing_point_F": 30.0,
+      "cp_above_Btu_lbF": 0.94,
+      "cp_below_Btu_lbF": 0.46,
+      "latent_heat_Btu_lb": 129.0
+    },
+    "Salsifí (ostra vegetal)": {
+      "name": "Salsifí (ostra vegetal)",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 77.0,
+        "protein": 3.3,
+        "fat": 0.2,
+        "carbohydrate": 18.6,
+        "fiber": 3.3,
+        "ash": 0.9
+      },
+      "freezing_point_F": 30.0,
+      "cp_above_Btu_lbF": 0.87,
+      "cp_below_Btu_lbF": 0.49,
+      "latent_heat_Btu_lb": 110.0
+    },
+    "Espinaca": {
+      "name": "Espinaca",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 91.58,
+        "protein": 2.86,
+        "fat": 0.35,
+        "carbohydrate": 3.5,
+        "fiber": 2.7,
+        "ash": 1.72
+      },
+      "freezing_point_F": 31.5,
+      "cp_above_Btu_lbF": 0.96,
+      "cp_below_Btu_lbF": 0.42,
+      "latent_heat_Btu_lb": 132.0
+    },
+    "Calabacín (zapallo de verano)": {
+      "name": "Calabacín (zapallo de verano)",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 94.2,
+        "protein": 0.94,
+        "fat": 0.24,
+        "carbohydrate": 4.04,
+        "fiber": 1.9,
+        "ash": 0.58
+      },
+      "freezing_point_F": 31.1,
+      "cp_above_Btu_lbF": 0.97,
+      "cp_below_Btu_lbF": 0.42,
+      "latent_heat_Btu_lb": 135.0
+    },
+    "Calabaza (zapallo de invierno)": {
+      "name": "Calabaza (zapallo de invierno)",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 87.78,
+        "protein": 0.8,
+        "fat": 0.1,
+        "carbohydrate": 10.42,
+        "fiber": 1.5,
+        "ash": 0.9
+      },
+      "freezing_point_F": 30.6,
+      "cp_above_Btu_lbF": 0.93,
+      "cp_below_Btu_lbF": 0.45,
+      "latent_heat_Btu_lb": 126.0
+    },
+    "Tomates, verdes maduros": {
+      "name": "Tomates, verdes maduros",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 93.0,
+        "protein": 1.2,
+        "fat": 0.2,
+        "carbohydrate": 5.1,
+        "fiber": 1.1,
+        "ash": 0.5
+      },
+      "freezing_point_F": 30.9,
+      "cp_above_Btu_lbF": 0.96,
+      "cp_below_Btu_lbF": 0.42,
+      "latent_heat_Btu_lb": 134.0
+    },
+    "Tomates, maduros": {
+      "name": "Tomates, maduros",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 93.76,
+        "protein": 0.85,
+        "fat": 0.33,
+        "carbohydrate": 4.64,
+        "fiber": 1.1,
+        "ash": 0.42
+      },
+      "freezing_point_F": 31.1,
+      "cp_above_Btu_lbF": 0.97,
+      "cp_below_Btu_lbF": 0.43,
+      "latent_heat_Btu_lb": 135.0
+    },
+    "Hojas de nabo": {
+      "name": "Hojas de nabo",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 91.07,
+        "protein": 1.5,
+        "fat": 0.3,
+        "carbohydrate": 5.73,
+        "fiber": 3.2,
+        "ash": 1.4
+      },
+      "freezing_point_F": 31.6,
+      "cp_above_Btu_lbF": 0.96,
+      "cp_below_Btu_lbF": 0.42,
+      "latent_heat_Btu_lb": 131.0
+    },
+    "Nabo": {
+      "name": "Nabo",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 91.87,
+        "protein": 0.9,
+        "fat": 0.1,
+        "carbohydrate": 6.23,
+        "fiber": 1.8,
+        "ash": 0.7
+      },
+      "freezing_point_F": 30.0,
+      "cp_above_Btu_lbF": 0.96,
+      "cp_below_Btu_lbF": 0.45,
+      "latent_heat_Btu_lb": 132.0
+    },
+    "Berros": {
+      "name": "Berros",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 95.11,
+        "protein": 2.3,
+        "fat": 0.1,
+        "carbohydrate": 1.29,
+        "fiber": 1.5,
+        "ash": 1.2
+      },
+      "freezing_point_F": 31.5,
+      "cp_above_Btu_lbF": 0.97,
+      "cp_below_Btu_lbF": 0.4,
+      "latent_heat_Btu_lb": 137.0
+    },
+    "Ñames": {
+      "name": "Ñames",
+      "category": "Vegetables",
+      "composition_pct": {
+        "moisture": 69.6,
+        "protein": 1.53,
+        "fat": 0.17,
+        "carbohydrate": 27.89,
+        "fiber": 4.1,
+        "ash": 0.82
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.83,
+      "cp_below_Btu_lbF": 0.49,
+      "latent_heat_Btu_lb": 100.0
+    },
+    "Manzanas, frescas": {
+      "name": "Manzanas, frescas",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 83.93,
+        "protein": 0.19,
+        "fat": 0.36,
+        "carbohydrate": 15.25,
+        "fiber": 2.7,
+        "ash": 0.26
+      },
+      "freezing_point_F": 30.0,
+      "cp_above_Btu_lbF": 0.91,
+      "cp_below_Btu_lbF": 0.47,
+      "latent_heat_Btu_lb": 120.0
+    },
+    "Manzanas, secas": {
+      "name": "Manzanas, secas",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 31.76,
+        "protein": 0.93,
+        "fat": 0.32,
+        "carbohydrate": 65.89,
+        "fiber": 8.7,
+        "ash": 1.1
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.61,
+      "cp_below_Btu_lbF": 0.68,
+      "latent_heat_Btu_lb": 46.0
+    },
+    "Albaricoques": {
+      "name": "Albaricoques",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 86.35,
+        "protein": 1.4,
+        "fat": 0.39,
+        "carbohydrate": 11.12,
+        "fiber": 2.4,
+        "ash": 0.75
+      },
+      "freezing_point_F": 30.0,
+      "cp_above_Btu_lbF": 0.92,
+      "cp_below_Btu_lbF": 0.47,
+      "latent_heat_Btu_lb": 124.0
+    },
+    "Aguacates": {
+      "name": "Aguacates",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 74.27,
+        "protein": 1.98,
+        "fat": 15.32,
+        "carbohydrate": 7.39,
+        "fiber": 5.0,
+        "ash": 1.04
+      },
+      "freezing_point_F": 31.5,
+      "cp_above_Btu_lbF": 0.88,
+      "cp_below_Btu_lbF": 0.47,
+      "latent_heat_Btu_lb": 107.0
+    },
+    "Bananos": {
+      "name": "Bananos",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 74.26,
+        "protein": 1.03,
+        "fat": 0.48,
+        "carbohydrate": 23.43,
+        "fiber": 2.4,
+        "ash": 0.8
+      },
+      "freezing_point_F": 30.6,
+      "cp_above_Btu_lbF": 0.85,
+      "cp_below_Btu_lbF": 0.48,
+      "latent_heat_Btu_lb": 107.0
+    },
+    "Moras": {
+      "name": "Moras",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 85.64,
+        "protein": 0.72,
+        "fat": 0.39,
+        "carbohydrate": 12.76,
+        "fiber": 5.3,
+        "ash": 0.48
+      },
+      "freezing_point_F": 30.6,
+      "cp_above_Btu_lbF": 0.93,
+      "cp_below_Btu_lbF": 0.46,
+      "latent_heat_Btu_lb": 123.0
+    },
+    "Arándanos": {
+      "name": "Arándanos",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 84.61,
+        "protein": 0.67,
+        "fat": 0.38,
+        "carbohydrate": 14.13,
+        "fiber": 2.7,
+        "ash": 0.21
+      },
+      "freezing_point_F": 29.1,
+      "cp_above_Btu_lbF": 0.91,
+      "cp_below_Btu_lbF": 0.49,
+      "latent_heat_Btu_lb": 122.0
+    },
+    "Melón cantalupo": {
+      "name": "Melón cantalupo",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 89.78,
+        "protein": 0.88,
+        "fat": 0.28,
+        "carbohydrate": 8.36,
+        "fiber": 0.8,
+        "ash": 0.71
+      },
+      "freezing_point_F": 29.8,
+      "cp_above_Btu_lbF": 0.94,
+      "cp_below_Btu_lbF": 0.46,
+      "latent_heat_Btu_lb": 129.0
+    },
+    "Cerezas, ácidas": {
+      "name": "Cerezas, ácidas",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 86.13,
+        "protein": 1.0,
+        "fat": 0.3,
+        "carbohydrate": 12.18,
+        "fiber": 1.6,
+        "ash": 0.4
+      },
+      "freezing_point_F": 28.9,
+      "cp_above_Btu_lbF": 0.92,
+      "cp_below_Btu_lbF": 0.49,
+      "latent_heat_Btu_lb": 124.0
+    },
+    "Cerezas, dulces": {
+      "name": "Cerezas, dulces",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 80.76,
+        "protein": 1.2,
+        "fat": 0.96,
+        "carbohydrate": 16.55,
+        "fiber": 2.3,
+        "ash": 0.53
+      },
+      "freezing_point_F": 28.8,
+      "cp_above_Btu_lbF": 0.89,
+      "cp_below_Btu_lbF": 0.51,
+      "latent_heat_Btu_lb": 116.0
+    },
+    "Arándanos rojos": {
+      "name": "Arándanos rojos",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 86.54,
+        "protein": 0.39,
+        "fat": 0.2,
+        "carbohydrate": 12.68,
+        "fiber": 4.2,
+        "ash": 0.19
+      },
+      "freezing_point_F": 30.4,
+      "cp_above_Btu_lbF": 0.93,
+      "cp_below_Btu_lbF": 0.46,
+      "latent_heat_Btu_lb": 124.0
+    },
+    "Grosellas, europeas negras": {
+      "name": "Grosellas, europeas negras",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 81.96,
+        "protein": 1.4,
+        "fat": 0.41,
+        "carbohydrate": 15.38,
+        "fiber": 0.0,
+        "ash": 0.86
+      },
+      "freezing_point_F": 30.2,
+      "cp_above_Btu_lbF": 0.89,
+      "cp_below_Btu_lbF": 0.47,
+      "latent_heat_Btu_lb": 118.0
+    },
+    "Grosellas, rojas y blancas": {
+      "name": "Grosellas, rojas y blancas",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 83.95,
+        "protein": 1.4,
+        "fat": 0.2,
+        "carbohydrate": 13.8,
+        "fiber": 4.3,
+        "ash": 0.66
+      },
+      "freezing_point_F": 30.2,
+      "cp_above_Btu_lbF": 0.92,
+      "cp_below_Btu_lbF": 0.47,
+      "latent_heat_Btu_lb": 120.0
+    },
+    "Dátiles, curados": {
+      "name": "Dátiles, curados",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 22.5,
+        "protein": 1.97,
+        "fat": 0.45,
+        "carbohydrate": 73.51,
+        "fiber": 7.5,
+        "ash": 1.58
+      },
+      "freezing_point_F": 3.7,
+      "cp_above_Btu_lbF": 0.55,
+      "cp_below_Btu_lbF": 0.55,
+      "latent_heat_Btu_lb": 32.0
+    },
+    "Higos, frescos": {
+      "name": "Higos, frescos",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 79.11,
+        "protein": 0.75,
+        "fat": 0.3,
+        "carbohydrate": 19.18,
+        "fiber": 3.3,
+        "ash": 0.66
+      },
+      "freezing_point_F": 27.7,
+      "cp_above_Btu_lbF": 0.88,
+      "cp_below_Btu_lbF": 0.54,
+      "latent_heat_Btu_lb": 113.0
+    },
+    "Higos, secos": {
+      "name": "Higos, secos",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 28.43,
+        "protein": 3.05,
+        "fat": 1.17,
+        "carbohydrate": 65.35,
+        "fiber": 9.3,
+        "ash": 2.01
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.6,
+      "cp_below_Btu_lbF": 0.98,
+      "latent_heat_Btu_lb": 41.0
+    },
+    "Grosellas espinosas": {
+      "name": "Grosellas espinosas",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 87.87,
+        "protein": 0.88,
+        "fat": 0.58,
+        "carbohydrate": 10.18,
+        "fiber": 4.3,
+        "ash": 0.49
+      },
+      "freezing_point_F": 30.0,
+      "cp_above_Btu_lbF": 0.94,
+      "cp_below_Btu_lbF": 0.47,
+      "latent_heat_Btu_lb": 126.0
+    },
+    "Toronja": {
+      "name": "Toronja",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 90.89,
+        "protein": 0.63,
+        "fat": 0.1,
+        "carbohydrate": 8.08,
+        "fiber": 1.1,
+        "ash": 0.31
+      },
+      "freezing_point_F": 30.0,
+      "cp_above_Btu_lbF": 0.95,
+      "cp_below_Btu_lbF": 0.45,
+      "latent_heat_Btu_lb": 131.0
+    },
+    "Uvas, americanas": {
+      "name": "Uvas, americanas",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 81.3,
+        "protein": 0.63,
+        "fat": 0.35,
+        "carbohydrate": 17.15,
+        "fiber": 1.0,
+        "ash": 0.57
+      },
+      "freezing_point_F": 29.1,
+      "cp_above_Btu_lbF": 0.89,
+      "cp_below_Btu_lbF": 0.49,
+      "latent_heat_Btu_lb": 117.0
+    },
+    "Uvas, tipo europeo": {
+      "name": "Uvas, tipo europeo",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 80.56,
+        "protein": 0.66,
+        "fat": 0.58,
+        "carbohydrate": 17.77,
+        "fiber": 1.0,
+        "ash": 0.44
+      },
+      "freezing_point_F": 28.2,
+      "cp_above_Btu_lbF": 0.88,
+      "cp_below_Btu_lbF": 0.52,
+      "latent_heat_Btu_lb": 116.0
+    },
+    "Limones": {
+      "name": "Limones",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 87.4,
+        "protein": 1.2,
+        "fat": 0.3,
+        "carbohydrate": 10.7,
+        "fiber": 4.7,
+        "ash": 0.4
+      },
+      "freezing_point_F": 29.5,
+      "cp_above_Btu_lbF": 0.94,
+      "cp_below_Btu_lbF": 0.48,
+      "latent_heat_Btu_lb": 126.0
+    },
+    "Limas": {
+      "name": "Limas",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 88.26,
+        "protein": 0.7,
+        "fat": 0.2,
+        "carbohydrate": 10.54,
+        "fiber": 2.8,
+        "ash": 0.3
+      },
+      "freezing_point_F": 29.1,
+      "cp_above_Btu_lbF": 0.94,
+      "cp_below_Btu_lbF": 0.48,
+      "latent_heat_Btu_lb": 127.0
+    },
+    "Mangos": {
+      "name": "Mangos",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 81.71,
+        "protein": 0.51,
+        "fat": 0.27,
+        "carbohydrate": 17.0,
+        "fiber": 1.8,
+        "ash": 0.5
+      },
+      "freezing_point_F": 30.4,
+      "cp_above_Btu_lbF": 0.89,
+      "cp_below_Btu_lbF": 0.47,
+      "latent_heat_Btu_lb": 117.0
+    },
+    "Melones, casaba": {
+      "name": "Melones, casaba",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 92.0,
+        "protein": 0.9,
+        "fat": 0.1,
+        "carbohydrate": 6.2,
+        "fiber": 0.8,
+        "ash": 0.8
+      },
+      "freezing_point_F": 30.0,
+      "cp_above_Btu_lbF": 0.95,
+      "cp_below_Btu_lbF": 0.45,
+      "latent_heat_Btu_lb": 132.0
+    },
+    "Melones, honeydew": {
+      "name": "Melones, honeydew",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 89.66,
+        "protein": 0.46,
+        "fat": 0.1,
+        "carbohydrate": 9.18,
+        "fiber": 0.6,
+        "ash": 0.6
+      },
+      "freezing_point_F": 30.4,
+      "cp_above_Btu_lbF": 0.94,
+      "cp_below_Btu_lbF": 0.44,
+      "latent_heat_Btu_lb": 129.0
+    },
+    "Melones, sandía": {
+      "name": "Melones, sandía",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 91.51,
+        "protein": 0.62,
+        "fat": 0.43,
+        "carbohydrate": 7.18,
+        "fiber": 0.5,
+        "ash": 0.26
+      },
+      "freezing_point_F": 31.3,
+      "cp_above_Btu_lbF": 0.95,
+      "cp_below_Btu_lbF": 0.42,
+      "latent_heat_Btu_lb": 132.0
+    },
+    "Nectarinas": {
+      "name": "Nectarinas",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 86.28,
+        "protein": 0.94,
+        "fat": 0.46,
+        "carbohydrate": 11.78,
+        "fiber": 1.6,
+        "ash": 0.54
+      },
+      "freezing_point_F": 30.4,
+      "cp_above_Btu_lbF": 0.92,
+      "cp_below_Btu_lbF": 0.45,
+      "latent_heat_Btu_lb": 124.0
+    },
+    "Aceitunas": {
+      "name": "Aceitunas",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 79.99,
+        "protein": 0.84,
+        "fat": 10.68,
+        "carbohydrate": 6.26,
+        "fiber": 3.2,
+        "ash": 2.23
+      },
+      "freezing_point_F": 29.5,
+      "cp_above_Btu_lbF": 0.9,
+      "cp_below_Btu_lbF": 0.49,
+      "latent_heat_Btu_lb": 115.0
+    },
+    "Naranjas": {
+      "name": "Naranjas",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 82.3,
+        "protein": 1.3,
+        "fat": 0.3,
+        "carbohydrate": 15.5,
+        "fiber": 4.5,
+        "ash": 0.6
+      },
+      "freezing_point_F": 30.6,
+      "cp_above_Btu_lbF": 0.91,
+      "cp_below_Btu_lbF": 0.47,
+      "latent_heat_Btu_lb": 118.0
+    },
+    "Duraznos, frescos": {
+      "name": "Duraznos, frescos",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 87.66,
+        "protein": 0.7,
+        "fat": 0.9,
+        "carbohydrate": 11.1,
+        "fiber": 2.0,
+        "ash": 0.46
+      },
+      "freezing_point_F": 30.4,
+      "cp_above_Btu_lbF": 0.93,
+      "cp_below_Btu_lbF": 0.45,
+      "latent_heat_Btu_lb": 126.0
+    },
+    "Duraznos, secos": {
+      "name": "Duraznos, secos",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 31.8,
+        "protein": 3.61,
+        "fat": 0.76,
+        "carbohydrate": 61.33,
+        "fiber": 8.2,
+        "ash": 2.5
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.61,
+      "cp_below_Btu_lbF": 0.83,
+      "latent_heat_Btu_lb": 46.0
+    },
+    "Peras": {
+      "name": "Peras",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 83.81,
+        "protein": 0.39,
+        "fat": 0.4,
+        "carbohydrate": 15.11,
+        "fiber": 2.4,
+        "ash": 0.28
+      },
+      "freezing_point_F": 29.1,
+      "cp_above_Btu_lbF": 0.91,
+      "cp_below_Btu_lbF": 0.49,
+      "latent_heat_Btu_lb": 120.0
+    },
+    "Caquis": {
+      "name": "Caquis",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 64.4,
+        "protein": 0.8,
+        "fat": 0.4,
+        "carbohydrate": 33.5,
+        "fiber": 0.0,
+        "ash": 0.9
+      },
+      "freezing_point_F": 28.0,
+      "cp_above_Btu_lbF": 0.78,
+      "cp_below_Btu_lbF": 0.55,
+      "latent_heat_Btu_lb": 92.0
+    },
+    "Piñas": {
+      "name": "Piñas",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 86.5,
+        "protein": 0.39,
+        "fat": 0.43,
+        "carbohydrate": 12.39,
+        "fiber": 1.2,
+        "ash": 0.29
+      },
+      "freezing_point_F": 30.2,
+      "cp_above_Btu_lbF": 0.92,
+      "cp_below_Btu_lbF": 0.46,
+      "latent_heat_Btu_lb": 124.0
+    },
+    "Ciruelas": {
+      "name": "Ciruelas",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 85.2,
+        "protein": 0.79,
+        "fat": 0.62,
+        "carbohydrate": 13.01,
+        "fiber": 1.5,
+        "ash": 0.39
+      },
+      "freezing_point_F": 30.6,
+      "cp_above_Btu_lbF": 0.91,
+      "cp_below_Btu_lbF": 0.45,
+      "latent_heat_Btu_lb": 123.0
+    },
+    "Granadas": {
+      "name": "Granadas",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 80.97,
+        "protein": 0.95,
+        "fat": 0.3,
+        "carbohydrate": 17.17,
+        "fiber": 0.6,
+        "ash": 0.61
+      },
+      "freezing_point_F": 26.6,
+      "cp_above_Btu_lbF": 0.88,
+      "cp_below_Btu_lbF": 0.55,
+      "latent_heat_Btu_lb": 116.0
+    },
+    "Ciruelas pasas, secas": {
+      "name": "Ciruelas pasas, secas",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 32.39,
+        "protein": 2.61,
+        "fat": 0.52,
+        "carbohydrate": 62.73,
+        "fiber": 7.1,
+        "ash": 1.76
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.61,
+      "cp_below_Btu_lbF": 0.84,
+      "latent_heat_Btu_lb": 46.0
+    },
+    "Membrillos": {
+      "name": "Membrillos",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 83.8,
+        "protein": 0.4,
+        "fat": 0.1,
+        "carbohydrate": 15.3,
+        "fiber": 1.9,
+        "ash": 0.4
+      },
+      "freezing_point_F": 28.4,
+      "cp_above_Btu_lbF": 0.91,
+      "cp_below_Btu_lbF": 0.51,
+      "latent_heat_Btu_lb": 120.0
+    },
+    "Pasas, sin semillas": {
+      "name": "Pasas, sin semillas",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 15.42,
+        "protein": 3.22,
+        "fat": 0.46,
+        "carbohydrate": 79.13,
+        "fiber": 4.0,
+        "ash": 1.77
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.49,
+      "cp_below_Btu_lbF": 0.49,
+      "latent_heat_Btu_lb": 22.0
+    },
+    "Frambuesas": {
+      "name": "Frambuesas",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 86.57,
+        "protein": 0.91,
+        "fat": 0.55,
+        "carbohydrate": 11.57,
+        "fiber": 6.8,
+        "ash": 0.4
+      },
+      "freezing_point_F": 30.9,
+      "cp_above_Btu_lbF": 0.95,
+      "cp_below_Btu_lbF": 0.46,
+      "latent_heat_Btu_lb": 124.0
+    },
+    "Fresas": {
+      "name": "Fresas",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 91.57,
+        "protein": 0.61,
+        "fat": 0.37,
+        "carbohydrate": 7.02,
+        "fiber": 2.3,
+        "ash": 0.43
+      },
+      "freezing_point_F": 30.6,
+      "cp_above_Btu_lbF": 0.96,
+      "cp_below_Btu_lbF": 0.44,
+      "latent_heat_Btu_lb": 132.0
+    },
+    "Mandarinas": {
+      "name": "Mandarinas",
+      "category": "Fruits",
+      "composition_pct": {
+        "moisture": 87.6,
+        "protein": 0.63,
+        "fat": 0.19,
+        "carbohydrate": 11.19,
+        "fiber": 2.3,
+        "ash": 0.39
+      },
+      "freezing_point_F": 30.0,
+      "cp_above_Btu_lbF": 0.93,
+      "cp_below_Btu_lbF": 0.46,
+      "latent_heat_Btu_lb": 126.0
+    },
+    "Bacalao": {
+      "name": "Bacalao",
+      "category": "WholeFish",
+      "composition_pct": {
+        "moisture": 81.22,
+        "protein": 17.81,
+        "fat": 0.67,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 1.16
+      },
+      "freezing_point_F": 28.0,
+      "cp_above_Btu_lbF": 0.9,
+      "cp_below_Btu_lbF": 0.51,
+      "latent_heat_Btu_lb": 117.0
+    },
+    "Eglefino": {
+      "name": "Eglefino",
+      "category": "WholeFish",
+      "composition_pct": {
+        "moisture": 79.92,
+        "protein": 18.91,
+        "fat": 0.72,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 1.21
+      },
+      "freezing_point_F": 28.0,
+      "cp_above_Btu_lbF": 0.9,
+      "cp_below_Btu_lbF": 0.51,
+      "latent_heat_Btu_lb": 115.0
+    },
+    "Fletán": {
+      "name": "Fletán",
+      "category": "WholeFish",
+      "composition_pct": {
+        "moisture": 77.92,
+        "protein": 20.81,
+        "fat": 2.29,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 1.36
+      },
+      "freezing_point_F": 28.0,
+      "cp_above_Btu_lbF": 0.89,
+      "cp_below_Btu_lbF": 0.52,
+      "latent_heat_Btu_lb": 112.0
+    },
+    "Arenque, ahumado": {
+      "name": "Arenque, ahumado",
+      "category": "WholeFish",
+      "composition_pct": {
+        "moisture": 59.7,
+        "protein": 24.58,
+        "fat": 12.37,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 1.94
+      },
+      "freezing_point_F": 28.0,
+      "cp_above_Btu_lbF": 0.78,
+      "cp_below_Btu_lbF": 0.54,
+      "latent_heat_Btu_lb": 86.0
+    },
+    "Caballa, del Atlántico": {
+      "name": "Caballa, del Atlántico",
+      "category": "WholeFish",
+      "composition_pct": {
+        "moisture": 63.55,
+        "protein": 18.6,
+        "fat": 13.89,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 1.35
+      },
+      "freezing_point_F": 28.0,
+      "cp_above_Btu_lbF": 0.8,
+      "cp_below_Btu_lbF": 0.53,
+      "latent_heat_Btu_lb": 91.0
+    },
+    "Perca": {
+      "name": "Perca",
+      "category": "WholeFish",
+      "composition_pct": {
+        "moisture": 78.7,
+        "protein": 18.62,
+        "fat": 1.63,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 1.2
+      },
+      "freezing_point_F": 28.0,
+      "cp_above_Btu_lbF": 0.89,
+      "cp_below_Btu_lbF": 0.51,
+      "latent_heat_Btu_lb": 113.0
+    },
+    "Abadejo, del Atlántico": {
+      "name": "Abadejo, del Atlántico",
+      "category": "WholeFish",
+      "composition_pct": {
+        "moisture": 78.18,
+        "protein": 19.44,
+        "fat": 0.98,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 1.41
+      },
+      "freezing_point_F": 28.0,
+      "cp_above_Btu_lbF": 0.88,
+      "cp_below_Btu_lbF": 0.51,
+      "latent_heat_Btu_lb": 112.0
+    },
+    "Salmón, rosado": {
+      "name": "Salmón, rosado",
+      "category": "WholeFish",
+      "composition_pct": {
+        "moisture": 76.35,
+        "protein": 19.94,
+        "fat": 3.45,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 1.22
+      },
+      "freezing_point_F": 28.0,
+      "cp_above_Btu_lbF": 0.88,
+      "cp_below_Btu_lbF": 0.52,
+      "latent_heat_Btu_lb": 110.0
+    },
+    "Atún, aleta azul": {
+      "name": "Atún, aleta azul",
+      "category": "WholeFish",
+      "composition_pct": {
+        "moisture": 68.09,
+        "protein": 23.33,
+        "fat": 4.9,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 1.18
+      },
+      "freezing_point_F": 28.0,
+      "cp_above_Btu_lbF": 0.82,
+      "cp_below_Btu_lbF": 0.52,
+      "latent_heat_Btu_lb": 98.0
+    },
+    "Merlán": {
+      "name": "Merlán",
+      "category": "WholeFish",
+      "composition_pct": {
+        "moisture": 80.27,
+        "protein": 18.31,
+        "fat": 1.31,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 1.3
+      },
+      "freezing_point_F": 28.0,
+      "cp_above_Btu_lbF": 0.9,
+      "cp_below_Btu_lbF": 0.51,
+      "latent_heat_Btu_lb": 115.0
+    },
+    "Almejas": {
+      "name": "Almejas",
+      "category": "Shellfish",
+      "composition_pct": {
+        "moisture": 81.82,
+        "protein": 12.77,
+        "fat": 0.97,
+        "carbohydrate": 2.57,
+        "fiber": 0.0,
+        "ash": 1.87
+      },
+      "freezing_point_F": 28.0,
+      "cp_above_Btu_lbF": 0.9,
+      "cp_below_Btu_lbF": 0.51,
+      "latent_heat_Btu_lb": 117.0
+    },
+    "Langosta, americana": {
+      "name": "Langosta, americana",
+      "category": "Shellfish",
+      "composition_pct": {
+        "moisture": 76.76,
+        "protein": 18.8,
+        "fat": 0.9,
+        "carbohydrate": 0.5,
+        "fiber": 0.0,
+        "ash": 2.2
+      },
+      "freezing_point_F": 28.0,
+      "cp_above_Btu_lbF": 0.87,
+      "cp_below_Btu_lbF": 0.51,
+      "latent_heat_Btu_lb": 110.0
+    },
+    "Ostras": {
+      "name": "Ostras",
+      "category": "Shellfish",
+      "composition_pct": {
+        "moisture": 85.16,
+        "protein": 7.05,
+        "fat": 2.46,
+        "carbohydrate": 3.91,
+        "fiber": 0.0,
+        "ash": 1.42
+      },
+      "freezing_point_F": 28.0,
+      "cp_above_Btu_lbF": 0.91,
+      "cp_below_Btu_lbF": 0.51,
+      "latent_heat_Btu_lb": 122.0
+    },
+    "Vieira, carne": {
+      "name": "Vieira, carne",
+      "category": "Shellfish",
+      "composition_pct": {
+        "moisture": 78.57,
+        "protein": 16.78,
+        "fat": 0.76,
+        "carbohydrate": 2.36,
+        "fiber": 0.0,
+        "ash": 1.53
+      },
+      "freezing_point_F": 28.0,
+      "cp_above_Btu_lbF": 0.89,
+      "cp_below_Btu_lbF": 0.51,
+      "latent_heat_Btu_lb": 113.0
+    },
+    "Camarón": {
+      "name": "Camarón",
+      "category": "Shellfish",
+      "composition_pct": {
+        "moisture": 75.86,
+        "protein": 20.31,
+        "fat": 1.73,
+        "carbohydrate": 0.91,
+        "fiber": 0.0,
+        "ash": 1.2
+      },
+      "freezing_point_F": 28.0,
+      "cp_above_Btu_lbF": 0.87,
+      "cp_below_Btu_lbF": 0.52,
+      "latent_heat_Btu_lb": 109.0
+    },
+    "Pecho (brisket)": {
+      "name": "Pecho (brisket)",
+      "category": "Beef",
+      "composition_pct": {
+        "moisture": 55.18,
+        "protein": 16.94,
+        "fat": 26.54,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 0.8
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.76,
+      "cp_below_Btu_lbF": 0.56,
+      "latent_heat_Btu_lb": 79.0
+    },
+    "Canal, calidad Choice": {
+      "name": "Canal, calidad Choice",
+      "category": "Beef",
+      "composition_pct": {
+        "moisture": 57.26,
+        "protein": 17.32,
+        "fat": 24.05,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 0.81
+      },
+      "freezing_point_F": 28.0,
+      "cp_above_Btu_lbF": 0.77,
+      "cp_below_Btu_lbF": 0.55,
+      "latent_heat_Btu_lb": 82.0
+    },
+    "Canal, calidad Select": {
+      "name": "Canal, calidad Select",
+      "category": "Beef",
+      "composition_pct": {
+        "moisture": 58.21,
+        "protein": 17.48,
+        "fat": 22.55,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 0.82
+      },
+      "freezing_point_F": 28.9,
+      "cp_above_Btu_lbF": 0.78,
+      "cp_below_Btu_lbF": 0.54,
+      "latent_heat_Btu_lb": 83.0
+    },
+    "Hígado": {
+      "name": "Hígado",
+      "category": "Beef",
+      "composition_pct": {
+        "moisture": 68.99,
+        "protein": 20.0,
+        "fat": 3.85,
+        "carbohydrate": 5.82,
+        "fiber": 0.0,
+        "ash": 1.34
+      },
+      "freezing_point_F": 28.9,
+      "cp_above_Btu_lbF": 0.83,
+      "cp_below_Btu_lbF": 0.52,
+      "latent_heat_Btu_lb": 99.0
+    },
+    "Costillas, enteras (costillas 6-12)": {
+      "name": "Costillas, enteras (costillas 6-12)",
+      "category": "Beef",
+      "composition_pct": {
+        "moisture": 54.54,
+        "protein": 16.37,
+        "fat": 26.98,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 0.77
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.75,
+      "cp_below_Btu_lbF": 0.55,
+      "latent_heat_Btu_lb": 78.0
+    },
+    "Redondo, corte completo, magro y graso": {
+      "name": "Redondo, corte completo, magro y graso",
+      "category": "Beef",
+      "composition_pct": {
+        "moisture": 64.75,
+        "protein": 20.37,
+        "fat": 12.81,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 0.97
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.81,
+      "cp_below_Btu_lbF": 0.52,
+      "latent_heat_Btu_lb": 93.0
+    },
+    "Redondo, corte completo, magro": {
+      "name": "Redondo, corte completo, magro",
+      "category": "Beef",
+      "composition_pct": {
+        "moisture": 70.83,
+        "protein": 22.03,
+        "fat": 4.89,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 1.07
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.84,
+      "cp_below_Btu_lbF": 0.51,
+      "latent_heat_Btu_lb": 102.0
+    },
+    "Sirloin (lomo), magro": {
+      "name": "Sirloin (lomo), magro",
+      "category": "Beef",
+      "composition_pct": {
+        "moisture": 71.7,
+        "protein": 21.24,
+        "fat": 4.4,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 1.08
+      },
+      "freezing_point_F": 28.9,
+      "cp_above_Btu_lbF": 0.84,
+      "cp_below_Btu_lbF": 0.5,
+      "latent_heat_Btu_lb": 103.0
+    },
+    "Lomo corto, bistec porterhouse, magro": {
+      "name": "Lomo corto, bistec porterhouse, magro",
+      "category": "Beef",
+      "composition_pct": {
+        "moisture": 69.59,
+        "protein": 20.27,
+        "fat": 8.17,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 1.01
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.83,
+      "cp_below_Btu_lbF": 0.51,
+      "latent_heat_Btu_lb": 100.0
+    },
+    "Lomo corto, bistec T-Bone, magro": {
+      "name": "Lomo corto, bistec T-Bone, magro",
+      "category": "Beef",
+      "composition_pct": {
+        "moisture": 69.71,
+        "protein": 20.78,
+        "fat": 7.27,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 1.27
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.83,
+      "cp_below_Btu_lbF": 0.51,
+      "latent_heat_Btu_lb": 100.0
+    },
+    "Lomo fino, magro": {
+      "name": "Lomo fino, magro",
+      "category": "Beef",
+      "composition_pct": {
+        "moisture": 68.4,
+        "protein": 20.78,
+        "fat": 7.9,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 1.04
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.82,
+      "cp_below_Btu_lbF": 0.51,
+      "latent_heat_Btu_lb": 98.0
+    },
+    "Ternera, magra": {
+      "name": "Ternera, magra",
+      "category": "Beef",
+      "composition_pct": {
+        "moisture": 75.91,
+        "protein": 20.2,
+        "fat": 2.87,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 1.08
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.87,
+      "cp_below_Btu_lbF": 0.5,
+      "latent_heat_Btu_lb": 109.0
+    },
+    "Grasa dorsal": {
+      "name": "Grasa dorsal",
+      "category": "Pork",
+      "composition_pct": {
+        "moisture": 7.69,
+        "protein": 2.92,
+        "fat": 88.69,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 0.7
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.52,
+      "cp_below_Btu_lbF": 0.71,
+      "latent_heat_Btu_lb": 11.0
+    },
+    "Tocineta": {
+      "name": "Tocineta",
+      "category": "Pork",
+      "composition_pct": {
+        "moisture": 31.58,
+        "protein": 8.66,
+        "fat": 57.54,
+        "carbohydrate": 0.09,
+        "fiber": 0.0,
+        "ash": 2.13
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": null,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 45.0
+    },
+    "Panceta": {
+      "name": "Panceta",
+      "category": "Pork",
+      "composition_pct": {
+        "moisture": 36.74,
+        "protein": 9.34,
+        "fat": 53.01,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 0.49
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.67,
+      "cp_below_Btu_lbF": 0.8,
+      "latent_heat_Btu_lb": 53.0
+    },
+    "Canal": {
+      "name": "Canal",
+      "category": "Pork",
+      "composition_pct": {
+        "moisture": 49.83,
+        "protein": 13.91,
+        "fat": 35.07,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 0.72
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.74,
+      "cp_below_Btu_lbF": 0.74,
+      "latent_heat_Btu_lb": 71.0
+    },
+    "Jamón, curado, entero, magro": {
+      "name": "Jamón, curado, entero, magro",
+      "category": "Pork",
+      "composition_pct": {
+        "moisture": 68.26,
+        "protein": 22.32,
+        "fat": 5.71,
+        "carbohydrate": 0.05,
+        "fiber": 0.0,
+        "ash": 3.66
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": null,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 98.0
+    },
+    "Jamón, curado estilo casero, magro": {
+      "name": "Jamón, curado estilo casero, magro",
+      "category": "Pork",
+      "composition_pct": {
+        "moisture": 55.93,
+        "protein": 27.8,
+        "fat": 8.32,
+        "carbohydrate": 0.3,
+        "fiber": 0.0,
+        "ash": 7.65
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.75,
+      "cp_below_Btu_lbF": 0.55,
+      "latent_heat_Btu_lb": 80.0
+    },
+    "Paleta, entera, magra": {
+      "name": "Paleta, entera, magra",
+      "category": "Pork",
+      "composition_pct": {
+        "moisture": 72.63,
+        "protein": 19.55,
+        "fat": 7.14,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 1.02
+      },
+      "freezing_point_F": 28.0,
+      "cp_above_Btu_lbF": 0.86,
+      "cp_below_Btu_lbF": 0.53,
+      "latent_heat_Btu_lb": 104.0
+    },
+    "Braunschweiger": {
+      "name": "Braunschweiger",
+      "category": "Sausage",
+      "composition_pct": {
+        "moisture": 48.01,
+        "protein": 13.5,
+        "fat": 32.09,
+        "carbohydrate": 3.13,
+        "fiber": 0.0,
+        "ash": 3.27
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.72,
+      "cp_below_Btu_lbF": 0.57,
+      "latent_heat_Btu_lb": 69.0
+    },
+    "Salchicha tipo Frankfurt": {
+      "name": "Salchicha tipo Frankfurt",
+      "category": "Sausage",
+      "composition_pct": {
+        "moisture": 53.87,
+        "protein": 11.28,
+        "fat": 29.15,
+        "carbohydrate": 2.55,
+        "fiber": 0.0,
+        "ash": 3.15
+      },
+      "freezing_point_F": 28.9,
+      "cp_above_Btu_lbF": 0.75,
+      "cp_below_Btu_lbF": 0.55,
+      "latent_heat_Btu_lb": 77.0
+    },
+    "Salchicha italiana": {
+      "name": "Salchicha italiana",
+      "category": "Sausage",
+      "composition_pct": {
+        "moisture": 51.08,
+        "protein": 14.25,
+        "fat": 31.33,
+        "carbohydrate": 0.65,
+        "fiber": 0.0,
+        "ash": 2.7
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.74,
+      "cp_below_Btu_lbF": 0.57,
+      "latent_heat_Btu_lb": 74.0
+    },
+    "Salchicha polaca": {
+      "name": "Salchicha polaca",
+      "category": "Sausage",
+      "composition_pct": {
+        "moisture": 53.15,
+        "protein": 14.1,
+        "fat": 28.72,
+        "carbohydrate": 1.63,
+        "fiber": 0.0,
+        "ash": 2.4
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.75,
+      "cp_below_Btu_lbF": 0.56,
+      "latent_heat_Btu_lb": 77.0
+    },
+    "Salchicha de cerdo": {
+      "name": "Salchicha de cerdo",
+      "category": "Sausage",
+      "composition_pct": {
+        "moisture": 44.52,
+        "protein": 11.69,
+        "fat": 40.29,
+        "carbohydrate": 1.02,
+        "fiber": 0.0,
+        "ash": 2.49
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.7,
+      "cp_below_Btu_lbF": 0.58,
+      "latent_heat_Btu_lb": 64.0
+    },
+    "Salchichas ahumadas (eslabones)": {
+      "name": "Salchichas ahumadas (eslabones)",
+      "category": "Sausage",
+      "composition_pct": {
+        "moisture": 39.3,
+        "protein": 22.2,
+        "fat": 31.7,
+        "carbohydrate": 2.1,
+        "fiber": 0.0,
+        "ash": 4.7
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.67,
+      "cp_below_Btu_lbF": 0.59,
+      "latent_heat_Btu_lb": 56.0
+    },
+    "Pollo": {
+      "name": "Pollo",
+      "category": "Poultry",
+      "composition_pct": {
+        "moisture": 65.99,
+        "protein": 18.6,
+        "fat": 15.06,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 0.79
+      },
+      "freezing_point_F": 27.0,
+      "cp_above_Btu_lbF": 1.04,
+      "cp_below_Btu_lbF": 0.79,
+      "latent_heat_Btu_lb": 95.0
+    },
+    "Pato": {
+      "name": "Pato",
+      "category": "Poultry",
+      "composition_pct": {
+        "moisture": 48.5,
+        "protein": 11.49,
+        "fat": 39.34,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 0.68
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.73,
+      "cp_below_Btu_lbF": 0.59,
+      "latent_heat_Btu_lb": 70.0
+    },
+    "Pavo": {
+      "name": "Pavo",
+      "category": "Poultry",
+      "composition_pct": {
+        "moisture": 70.4,
+        "protein": 20.42,
+        "fat": 8.02,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 0.88
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.84,
+      "cp_below_Btu_lbF": 0.54,
+      "latent_heat_Btu_lb": 101.0
+    },
+    "Clara": {
+      "name": "Clara",
+      "category": "Egg",
+      "composition_pct": {
+        "moisture": 87.81,
+        "protein": 10.52,
+        "fat": 0.0,
+        "carbohydrate": 1.03,
+        "fiber": 0.0,
+        "ash": 0.64
+      },
+      "freezing_point_F": 30.9,
+      "cp_above_Btu_lbF": 0.93,
+      "cp_below_Btu_lbF": 0.43,
+      "latent_heat_Btu_lb": 126.0
+    },
+    "Clara, en polvo": {
+      "name": "Clara, en polvo",
+      "category": "Egg",
+      "composition_pct": {
+        "moisture": 14.62,
+        "protein": 76.92,
+        "fat": 0.04,
+        "carbohydrate": 4.17,
+        "fiber": 0.0,
+        "ash": 4.25
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.55,
+      "cp_below_Btu_lbF": 0.5,
+      "latent_heat_Btu_lb": 21.0
+    },
+    "Huevo entero": {
+      "name": "Huevo entero",
+      "category": "Egg",
+      "composition_pct": {
+        "moisture": 75.33,
+        "protein": 12.49,
+        "fat": 10.02,
+        "carbohydrate": 1.22,
+        "fiber": 0.0,
+        "ash": 0.94
+      },
+      "freezing_point_F": 30.9,
+      "cp_above_Btu_lbF": 0.87,
+      "cp_below_Btu_lbF": 0.47,
+      "latent_heat_Btu_lb": 108.0
+    },
+    "Huevo entero, en polvo": {
+      "name": "Huevo entero, en polvo",
+      "category": "Egg",
+      "composition_pct": {
+        "moisture": 3.1,
+        "protein": 47.35,
+        "fat": 40.95,
+        "carbohydrate": 4.95,
+        "fiber": 0.0,
+        "ash": 3.65
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.49,
+      "cp_below_Btu_lbF": 0.48,
+      "latent_heat_Btu_lb": 4.0
+    },
+    "Yema": {
+      "name": "Yema",
+      "category": "Egg",
+      "composition_pct": {
+        "moisture": 48.81,
+        "protein": 16.76,
+        "fat": 30.87,
+        "carbohydrate": 1.78,
+        "fiber": 0.0,
+        "ash": 1.77
+      },
+      "freezing_point_F": 30.9,
+      "cp_above_Btu_lbF": 0.73,
+      "cp_below_Btu_lbF": 0.54,
+      "latent_heat_Btu_lb": 70.0
+    },
+    "Yema, salada": {
+      "name": "Yema, salada",
+      "category": "Egg",
+      "composition_pct": {
+        "moisture": 50.8,
+        "protein": 14.0,
+        "fat": 23.0,
+        "carbohydrate": 1.6,
+        "fiber": 0.0,
+        "ash": 10.6
+      },
+      "freezing_point_F": 1.0,
+      "cp_above_Btu_lbF": 0.72,
+      "cp_below_Btu_lbF": 0.91,
+      "latent_heat_Btu_lb": 73.0
+    },
+    "Yema, azucarada": {
+      "name": "Yema, azucarada",
+      "category": "Egg",
+      "composition_pct": {
+        "moisture": 51.25,
+        "protein": 13.8,
+        "fat": 22.75,
+        "carbohydrate": 10.8,
+        "fiber": 0.0,
+        "ash": 1.4
+      },
+      "freezing_point_F": 25.0,
+      "cp_above_Btu_lbF": 0.73,
+      "cp_below_Btu_lbF": 0.61,
+      "latent_heat_Btu_lb": 74.0
+    },
+    "Mezcla de cortes, magro": {
+      "name": "Mezcla de cortes, magro",
+      "category": "Lamb",
+      "composition_pct": {
+        "moisture": 73.42,
+        "protein": 20.29,
+        "fat": 5.25,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 1.06
+      },
+      "freezing_point_F": 28.6,
+      "cp_above_Btu_lbF": 0.86,
+      "cp_below_Btu_lbF": 0.51,
+      "latent_heat_Btu_lb": 105.0
+    },
+    "Pierna, entera, magra": {
+      "name": "Pierna, entera, magra",
+      "category": "Lamb",
+      "composition_pct": {
+        "moisture": 74.11,
+        "protein": 20.56,
+        "fat": 4.51,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 1.07
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.86,
+      "cp_below_Btu_lbF": 0.51,
+      "latent_heat_Btu_lb": 107.0
+    },
+    "Mantequilla": {
+      "name": "Mantequilla",
+      "category": "Butter",
+      "composition_pct": {
+        "moisture": 17.94,
+        "protein": 0.85,
+        "fat": 81.11,
+        "carbohydrate": 0.06,
+        "fiber": 0.0,
+        "ash": 0.04
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.57,
+      "cp_below_Btu_lbF": 0.63,
+      "latent_heat_Btu_lb": 26.0
+    },
+    "Queso camembert": {
+      "name": "Queso camembert",
+      "category": "Cheese",
+      "composition_pct": {
+        "moisture": 51.8,
+        "protein": 19.8,
+        "fat": 24.26,
+        "carbohydrate": 0.46,
+        "fiber": 0.0,
+        "ash": 3.68
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.74,
+      "cp_below_Btu_lbF": 0.8,
+      "latent_heat_Btu_lb": 74.0
+    },
+    "Queso cheddar": {
+      "name": "Queso cheddar",
+      "category": "Cheese",
+      "composition_pct": {
+        "moisture": 36.75,
+        "protein": 24.9,
+        "fat": 33.14,
+        "carbohydrate": 1.28,
+        "fiber": 0.0,
+        "ash": 3.93
+      },
+      "freezing_point_F": 8.8,
+      "cp_above_Btu_lbF": 0.66,
+      "cp_below_Btu_lbF": 0.73,
+      "latent_heat_Btu_lb": 53.0
+    },
+    "Queso cottage, sin crema": {
+      "name": "Queso cottage, sin crema",
+      "category": "Cheese",
+      "composition_pct": {
+        "moisture": 79.77,
+        "protein": 17.27,
+        "fat": 0.42,
+        "carbohydrate": 1.85,
+        "fiber": 0.0,
+        "ash": 0.69
+      },
+      "freezing_point_F": 29.8,
+      "cp_above_Btu_lbF": 0.89,
+      "cp_below_Btu_lbF": 0.48,
+      "latent_heat_Btu_lb": 114.0
+    },
+    "Queso crema": {
+      "name": "Queso crema",
+      "category": "Cheese",
+      "composition_pct": {
+        "moisture": 53.75,
+        "protein": 7.55,
+        "fat": 34.87,
+        "carbohydrate": 2.66,
+        "fiber": 0.0,
+        "ash": 1.17
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.75,
+      "cp_below_Btu_lbF": 0.7,
+      "latent_heat_Btu_lb": 77.0
+    },
+    "Queso gouda": {
+      "name": "Queso gouda",
+      "category": "Cheese",
+      "composition_pct": {
+        "moisture": 41.46,
+        "protein": 24.94,
+        "fat": 27.44,
+        "carbohydrate": 2.22,
+        "fiber": 0.0,
+        "ash": 3.94
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.69,
+      "cp_below_Btu_lbF": 0.66,
+      "latent_heat_Btu_lb": 59.0
+    },
+    "Queso limburger": {
+      "name": "Queso limburger",
+      "category": "Cheese",
+      "composition_pct": {
+        "moisture": 48.42,
+        "protein": 20.05,
+        "fat": 27.25,
+        "carbohydrate": 0.49,
+        "fiber": 0.0,
+        "ash": 3.79
+      },
+      "freezing_point_F": 18.7,
+      "cp_above_Btu_lbF": 0.72,
+      "cp_below_Btu_lbF": 0.67,
+      "latent_heat_Btu_lb": 70.0
+    },
+    "Queso mozzarella": {
+      "name": "Queso mozzarella",
+      "category": "Cheese",
+      "composition_pct": {
+        "moisture": 54.14,
+        "protein": 19.42,
+        "fat": 21.6,
+        "carbohydrate": 2.22,
+        "fiber": 0.0,
+        "ash": 2.62
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.75,
+      "cp_below_Btu_lbF": 0.59,
+      "latent_heat_Btu_lb": 78.0
+    },
+    "Queso parmesano, duro": {
+      "name": "Queso parmesano, duro",
+      "category": "Cheese",
+      "composition_pct": {
+        "moisture": 29.16,
+        "protein": 35.75,
+        "fat": 25.83,
+        "carbohydrate": 3.22,
+        "fiber": 0.0,
+        "ash": 6.04
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.62,
+      "cp_below_Btu_lbF": 0.7,
+      "latent_heat_Btu_lb": 42.0
+    },
+    "Queso americano, procesado": {
+      "name": "Queso americano, procesado",
+      "category": "Cheese",
+      "composition_pct": {
+        "moisture": 39.16,
+        "protein": 22.15,
+        "fat": 31.25,
+        "carbohydrate": 1.3,
+        "fiber": 0.0,
+        "ash": 5.84
+      },
+      "freezing_point_F": 19.6,
+      "cp_above_Btu_lbF": 0.67,
+      "cp_below_Btu_lbF": 0.66,
+      "latent_heat_Btu_lb": 56.0
+    },
+    "Queso roquefort": {
+      "name": "Queso roquefort",
+      "category": "Cheese",
+      "composition_pct": {
+        "moisture": 39.38,
+        "protein": 21.54,
+        "fat": 30.64,
+        "carbohydrate": 2.0,
+        "fiber": 0.0,
+        "ash": 6.44
+      },
+      "freezing_point_F": 2.7,
+      "cp_above_Btu_lbF": 0.67,
+      "cp_below_Btu_lbF": 0.8,
+      "latent_heat_Btu_lb": 57.0
+    },
+    "Queso suizo": {
+      "name": "Queso suizo",
+      "category": "Cheese",
+      "composition_pct": {
+        "moisture": 37.21,
+        "protein": 28.43,
+        "fat": 27.45,
+        "carbohydrate": 3.38,
+        "fiber": 0.0,
+        "ash": 3.53
+      },
+      "freezing_point_F": 14.0,
+      "cp_above_Btu_lbF": 0.66,
+      "cp_below_Btu_lbF": 0.69,
+      "latent_heat_Btu_lb": 53.0
+    },
+    "Crema, mitad y mitad": {
+      "name": "Crema, mitad y mitad",
+      "category": "Cream",
+      "composition_pct": {
+        "moisture": 80.57,
+        "protein": 2.96,
+        "fat": 11.5,
+        "carbohydrate": 4.3,
+        "fiber": 0.0,
+        "ash": 0.67
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.89,
+      "cp_below_Btu_lbF": 0.52,
+      "latent_heat_Btu_lb": 116.0
+    },
+    "Crema de mesa": {
+      "name": "Crema de mesa",
+      "category": "Cream",
+      "composition_pct": {
+        "moisture": 73.75,
+        "protein": 2.7,
+        "fat": 19.31,
+        "carbohydrate": 3.66,
+        "fiber": 0.0,
+        "ash": 0.58
+      },
+      "freezing_point_F": 28.0,
+      "cp_above_Btu_lbF": 0.86,
+      "cp_below_Btu_lbF": 0.53,
+      "latent_heat_Btu_lb": 106.0
+    },
+    "Crema para batir, alta grasa": {
+      "name": "Crema para batir, alta grasa",
+      "category": "Cream",
+      "composition_pct": {
+        "moisture": 57.71,
+        "protein": 2.05,
+        "fat": 37.0,
+        "carbohydrate": 2.79,
+        "fiber": 0.0,
+        "ash": 0.45
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.78,
+      "cp_below_Btu_lbF": 0.55,
+      "latent_heat_Btu_lb": 83.0
+    },
+    "Chocolate": {
+      "name": "Chocolate",
+      "category": "IceCream",
+      "composition_pct": {
+        "moisture": 55.7,
+        "protein": 3.8,
+        "fat": 11.0,
+        "carbohydrate": 28.2,
+        "fiber": 1.2,
+        "ash": 1.0
+      },
+      "freezing_point_F": 21.9,
+      "cp_above_Btu_lbF": 0.74,
+      "cp_below_Btu_lbF": 0.66,
+      "latent_heat_Btu_lb": 80.0
+    },
+    "Fresa": {
+      "name": "Fresa",
+      "category": "IceCream",
+      "composition_pct": {
+        "moisture": 60.0,
+        "protein": 3.2,
+        "fat": 8.4,
+        "carbohydrate": 27.6,
+        "fiber": 0.3,
+        "ash": 0.7
+      },
+      "freezing_point_F": 21.9,
+      "cp_above_Btu_lbF": 0.76,
+      "cp_below_Btu_lbF": 0.65,
+      "latent_heat_Btu_lb": 86.0
+    },
+    "Vainilla": {
+      "name": "Vainilla",
+      "category": "IceCream",
+      "composition_pct": {
+        "moisture": 61.0,
+        "protein": 3.5,
+        "fat": 11.0,
+        "carbohydrate": 23.6,
+        "fiber": 0.0,
+        "ash": 0.9
+      },
+      "freezing_point_F": 21.9,
+      "cp_above_Btu_lbF": 0.77,
+      "cp_below_Btu_lbF": 0.65,
+      "latent_heat_Btu_lb": 88.0
+    },
+    "Leche condensada, endulzada (enlatada)": {
+      "name": "Leche condensada, endulzada (enlatada)",
+      "category": "Milk",
+      "composition_pct": {
+        "moisture": 27.16,
+        "protein": 7.91,
+        "fat": 8.7,
+        "carbohydrate": 54.4,
+        "fiber": 0.0,
+        "ash": 1.83
+      },
+      "freezing_point_F": 5.0,
+      "cp_above_Btu_lbF": 0.56,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 39.0
+    },
+    "Leche evaporada": {
+      "name": "Leche evaporada",
+      "category": "Milk",
+      "composition_pct": {
+        "moisture": 74.04,
+        "protein": 6.81,
+        "fat": 7.56,
+        "carbohydrate": 10.04,
+        "fiber": 0.0,
+        "ash": 1.55
+      },
+      "freezing_point_F": 29.5,
+      "cp_above_Btu_lbF": 0.85,
+      "cp_below_Btu_lbF": 0.5,
+      "latent_heat_Btu_lb": 106.0
+    },
+    "Leche descremada": {
+      "name": "Leche descremada",
+      "category": "Milk",
+      "composition_pct": {
+        "moisture": 90.8,
+        "protein": 3.41,
+        "fat": 0.18,
+        "carbohydrate": 4.85,
+        "fiber": 0.0,
+        "ash": 0.76
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.94,
+      "cp_below_Btu_lbF": 0.43,
+      "latent_heat_Btu_lb": 130.0
+    },
+    "Leche descremada, en polvo": {
+      "name": "Leche descremada, en polvo",
+      "category": "Milk",
+      "composition_pct": {
+        "moisture": 3.16,
+        "protein": 36.16,
+        "fat": 0.77,
+        "carbohydrate": 51.98,
+        "fiber": 0.0,
+        "ash": 7.93
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.43,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 5.0
+    },
+    "Leche entera (Leche #1)": {
+      "name": "Leche entera (Leche #1)",
+      "category": "Milk",
+      "composition_pct": {
+        "moisture": 87.69,
+        "protein": 3.28,
+        "fat": 3.66,
+        "carbohydrate": 4.65,
+        "fiber": 0.0,
+        "ash": 0.72
+      },
+      "freezing_point_F": 30.9,
+      "cp_above_Btu_lbF": 0.93,
+      "cp_below_Btu_lbF": 0.43,
+      "latent_heat_Btu_lb": 126.0
+    },
+    "Leche entera, en polvo (Leche #1)": {
+      "name": "Leche entera, en polvo (Leche #1)",
+      "category": "Milk",
+      "composition_pct": {
+        "moisture": 2.47,
+        "protein": 26.32,
+        "fat": 26.71,
+        "carbohydrate": 38.42,
+        "fiber": 0.0,
+        "ash": 6.08
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.44,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 3.0
+    },
+    "Suero, ácido, en polvo": {
+      "name": "Suero, ácido, en polvo",
+      "category": "Milk",
+      "composition_pct": {
+        "moisture": 3.51,
+        "protein": 11.73,
+        "fat": 0.54,
+        "carbohydrate": 73.45,
+        "fiber": 0.0,
+        "ash": 10.77
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.4,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 5.0
+    },
+    "Suero, dulce, en polvo": {
+      "name": "Suero, dulce, en polvo",
+      "category": "Milk",
+      "composition_pct": {
+        "moisture": 3.19,
+        "protein": 12.93,
+        "fat": 1.07,
+        "carbohydrate": 74.46,
+        "fiber": 0.0,
+        "ash": 8.35
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.4,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 5.0
+    },
+    "Almendras": {
+      "name": "Almendras",
+      "category": "Nuts",
+      "composition_pct": {
+        "moisture": 4.42,
+        "protein": 19.95,
+        "fat": 52.21,
+        "carbohydrate": 20.4,
+        "fiber": 10.9,
+        "ash": 3.03
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.53,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 6.0
+    },
+    "Avellanas": {
+      "name": "Avellanas",
+      "category": "Nuts",
+      "composition_pct": {
+        "moisture": 5.42,
+        "protein": 13.04,
+        "fat": 62.64,
+        "carbohydrate": 15.3,
+        "fiber": 6.1,
+        "ash": 3.61
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.5,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 8.0
+    },
+    "Maní, crudo": {
+      "name": "Maní, crudo",
+      "category": "Nuts",
+      "composition_pct": {
+        "moisture": 6.5,
+        "protein": 25.8,
+        "fat": 49.24,
+        "carbohydrate": 16.14,
+        "fiber": 8.5,
+        "ash": 2.33
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.53,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 9.0
+    },
+    "Maní, tostado en seco con sal": {
+      "name": "Maní, tostado en seco con sal",
+      "category": "Nuts",
+      "composition_pct": {
+        "moisture": 1.55,
+        "protein": 23.68,
+        "fat": 49.66,
+        "carbohydrate": 21.51,
+        "fiber": 8.0,
+        "ash": 3.6
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.5,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 2.0
+    },
+    "Pacanas": {
+      "name": "Pacanas",
+      "category": "Nuts",
+      "composition_pct": {
+        "moisture": 4.82,
+        "protein": 7.75,
+        "fat": 67.64,
+        "carbohydrate": 18.24,
+        "fiber": 7.6,
+        "ash": 1.56
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.52,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 7.0
+    },
+    "Nueces, inglesas": {
+      "name": "Nueces, inglesas",
+      "category": "Nuts",
+      "composition_pct": {
+        "moisture": 3.65,
+        "protein": 14.29,
+        "fat": 61.87,
+        "carbohydrate": 18.34,
+        "fiber": 4.8,
+        "ash": 1.86
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.5,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 5.0
+    },
+    "Fudge de vainilla": {
+      "name": "Fudge de vainilla",
+      "category": "Candy",
+      "composition_pct": {
+        "moisture": 10.9,
+        "protein": 1.1,
+        "fat": 5.4,
+        "carbohydrate": 82.3,
+        "fiber": 0.0,
+        "ash": 0.4
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.45,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 15.0
+    },
+    "Malvaviscos": {
+      "name": "Malvaviscos",
+      "category": "Candy",
+      "composition_pct": {
+        "moisture": 16.4,
+        "protein": 1.8,
+        "fat": 0.2,
+        "carbohydrate": 81.3,
+        "fiber": 0.1,
+        "ash": 0.3
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.48,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 24.0
+    },
+    "Chocolate con leche": {
+      "name": "Chocolate con leche",
+      "category": "Candy",
+      "composition_pct": {
+        "moisture": 1.3,
+        "protein": 6.9,
+        "fat": 30.7,
+        "carbohydrate": 59.2,
+        "fiber": 3.4,
+        "ash": 1.5
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.44,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 2.0
+    },
+    "Garrapiñada de maní": {
+      "name": "Garrapiñada de maní",
+      "category": "Candy",
+      "composition_pct": {
+        "moisture": 1.8,
+        "protein": 7.5,
+        "fat": 19.1,
+        "carbohydrate": 69.3,
+        "fiber": 2.0,
+        "ash": 1.5
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.42,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 3.0
+    },
+    "Jugo de manzana, sin endulzar": {
+      "name": "Jugo de manzana, sin endulzar",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 87.93,
+        "protein": 0.06,
+        "fat": 0.11,
+        "carbohydrate": 11.68,
+        "fiber": 0.1,
+        "ash": 0.22
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.92,
+      "cp_below_Btu_lbF": 0.43,
+      "latent_heat_Btu_lb": 126.0
+    },
+    "Jugo de toronja, endulzado": {
+      "name": "Jugo de toronja, endulzado",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 87.38,
+        "protein": 0.58,
+        "fat": 0.09,
+        "carbohydrate": 11.13,
+        "fiber": 0.1,
+        "ash": 0.82
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.92,
+      "cp_below_Btu_lbF": 0.43,
+      "latent_heat_Btu_lb": 126.0
+    },
+    "Jugo de uva, sin endulzar": {
+      "name": "Jugo de uva, sin endulzar",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 84.12,
+        "protein": 0.56,
+        "fat": 0.08,
+        "carbohydrate": 14.96,
+        "fiber": 0.1,
+        "ash": 0.29
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.9,
+      "cp_below_Btu_lbF": 0.43,
+      "latent_heat_Btu_lb": 121.0
+    },
+    "Jugo de limón": {
+      "name": "Jugo de limón",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 92.46,
+        "protein": 0.4,
+        "fat": 0.29,
+        "carbohydrate": 6.48,
+        "fiber": 0.4,
+        "ash": 0.36
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.95,
+      "cp_below_Btu_lbF": 0.41,
+      "latent_heat_Btu_lb": 133.0
+    },
+    "Jugo de lima, sin endulzar": {
+      "name": "Jugo de lima, sin endulzar",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 92.52,
+        "protein": 0.25,
+        "fat": 0.23,
+        "carbohydrate": 6.69,
+        "fiber": 0.4,
+        "ash": 0.31
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.95,
+      "cp_below_Btu_lbF": 0.41,
+      "latent_heat_Btu_lb": 133.0
+    },
+    "Jugo de naranja": {
+      "name": "Jugo de naranja",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 89.01,
+        "protein": 0.59,
+        "fat": 0.14,
+        "carbohydrate": 9.85,
+        "fiber": 0.2,
+        "ash": 0.41
+      },
+      "freezing_point_F": 31.3,
+      "cp_above_Btu_lbF": 0.93,
+      "cp_below_Btu_lbF": 0.42,
+      "latent_heat_Btu_lb": 128.0
+    },
+    "Jugo de piña, sin endulzar": {
+      "name": "Jugo de piña, sin endulzar",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 85.53,
+        "protein": 0.32,
+        "fat": 0.08,
+        "carbohydrate": 13.78,
+        "fiber": 0.2,
+        "ash": 0.3
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.91,
+      "cp_below_Btu_lbF": 0.43,
+      "latent_heat_Btu_lb": 123.0
+    },
+    "Jugo de ciruela pasa": {
+      "name": "Jugo de ciruela pasa",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 81.24,
+        "protein": 0.61,
+        "fat": 0.03,
+        "carbohydrate": 17.45,
+        "fiber": 1.0,
+        "ash": 0.68
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.89,
+      "cp_below_Btu_lbF": 0.45,
+      "latent_heat_Btu_lb": 117.0
+    },
+    "Jugo de tomate": {
+      "name": "Jugo de tomate",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 93.9,
+        "protein": 0.76,
+        "fat": 0.06,
+        "carbohydrate": 4.23,
+        "fiber": 0.4,
+        "ash": 1.05
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.96,
+      "cp_below_Btu_lbF": 0.41,
+      "latent_heat_Btu_lb": 135.0
+    },
+    "Bebida de arándano rojo y manzana": {
+      "name": "Bebida de arándano rojo y manzana",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 82.8,
+        "protein": 0.1,
+        "fat": 0.0,
+        "carbohydrate": 17.1,
+        "fiber": 0.1,
+        "ash": 0.0
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.89,
+      "cp_below_Btu_lbF": 0.44,
+      "latent_heat_Btu_lb": 119.0
+    },
+    "Bebida de arándano rojo y uva": {
+      "name": "Bebida de arándano rojo y uva",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 85.6,
+        "protein": 0.2,
+        "fat": 0.1,
+        "carbohydrate": 14.0,
+        "fiber": 0.1,
+        "ash": 0.1
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.91,
+      "cp_below_Btu_lbF": 0.43,
+      "latent_heat_Btu_lb": 123.0
+    },
+    "Bebida de ponche de frutas": {
+      "name": "Bebida de ponche de frutas",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 88.0,
+        "protein": 0.0,
+        "fat": 0.0,
+        "carbohydrate": 11.9,
+        "fiber": 0.1,
+        "ash": 0.1
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.92,
+      "cp_below_Btu_lbF": 0.43,
+      "latent_heat_Btu_lb": 126.0
+    },
+    "Agua con gas": {
+      "name": "Agua con gas",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 99.9,
+        "protein": 0.0,
+        "fat": 0.0,
+        "carbohydrate": 0.0,
+        "fiber": 0.0,
+        "ash": 0.1
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 1.0,
+      "cp_below_Btu_lbF": 0.39,
+      "latent_heat_Btu_lb": 144.0
+    },
+    "Gaseosa cola": {
+      "name": "Gaseosa cola",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 89.4,
+        "protein": 0.0,
+        "fat": 0.0,
+        "carbohydrate": 10.4,
+        "fiber": 0.0,
+        "ash": 0.1
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.93,
+      "cp_below_Btu_lbF": 0.42,
+      "latent_heat_Btu_lb": 129.0
+    },
+    "Gaseosa crema": {
+      "name": "Gaseosa crema",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 86.7,
+        "protein": 0.0,
+        "fat": 0.0,
+        "carbohydrate": 13.3,
+        "fiber": 0.0,
+        "ash": 0.1
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.91,
+      "cp_below_Btu_lbF": 0.43,
+      "latent_heat_Btu_lb": 125.0
+    },
+    "Ginger ale": {
+      "name": "Ginger ale",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 91.2,
+        "protein": 0.0,
+        "fat": 0.0,
+        "carbohydrate": 8.7,
+        "fiber": 0.0,
+        "ash": 0.0
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.94,
+      "cp_below_Btu_lbF": 0.41,
+      "latent_heat_Btu_lb": 131.0
+    },
+    "Gaseosa de uva": {
+      "name": "Gaseosa de uva",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 88.8,
+        "protein": 0.0,
+        "fat": 0.0,
+        "carbohydrate": 11.2,
+        "fiber": 0.0,
+        "ash": 0.1
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.93,
+      "cp_below_Btu_lbF": 0.42,
+      "latent_heat_Btu_lb": 128.0
+    },
+    "Gaseosa de limón-lima": {
+      "name": "Gaseosa de limón-lima",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 89.5,
+        "protein": 0.0,
+        "fat": 0.0,
+        "carbohydrate": 10.4,
+        "fiber": 0.0,
+        "ash": 0.1
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.93,
+      "cp_below_Btu_lbF": 0.42,
+      "latent_heat_Btu_lb": 129.0
+    },
+    "Gaseosa de naranja": {
+      "name": "Gaseosa de naranja",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 87.6,
+        "protein": 0.0,
+        "fat": 0.0,
+        "carbohydrate": 12.3,
+        "fiber": 0.0,
+        "ash": 0.1
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.92,
+      "cp_below_Btu_lbF": 0.43,
+      "latent_heat_Btu_lb": 126.0
+    },
+    "Cerveza de raíz (root beer)": {
+      "name": "Cerveza de raíz (root beer)",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 89.3,
+        "protein": 0.0,
+        "fat": 0.0,
+        "carbohydrate": 10.6,
+        "fiber": 0.0,
+        "ash": 0.1
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.93,
+      "cp_below_Btu_lbF": 0.42,
+      "latent_heat_Btu_lb": 128.0
+    },
+    "Leche con chocolate, 2% grasa": {
+      "name": "Leche con chocolate, 2% grasa",
+      "category": "Beverages",
+      "composition_pct": {
+        "moisture": 83.58,
+        "protein": 3.21,
+        "fat": 2.0,
+        "carbohydrate": 10.4,
+        "fiber": 0.5,
+        "ash": 0.81
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.9,
+      "cp_below_Btu_lbF": 0.44,
+      "latent_heat_Btu_lb": 120.0
+    },
+    "Miel": {
+      "name": "Miel",
+      "category": "Miscellaneous",
+      "composition_pct": {
+        "moisture": 17.1,
+        "protein": 0.3,
+        "fat": 0.0,
+        "carbohydrate": 82.4,
+        "fiber": 0.2,
+        "ash": 0.2
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.48,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 25.0
+    },
+    "Jarabe de arce": {
+      "name": "Jarabe de arce",
+      "category": "Miscellaneous",
+      "composition_pct": {
+        "moisture": 32.0,
+        "protein": 0.0,
+        "fat": 0.2,
+        "carbohydrate": 67.2,
+        "fiber": 0.0,
+        "ash": 0.6
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.58,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 46.0
+    },
+    "Palomitas de maíz, reventadas al aire": {
+      "name": "Palomitas de maíz, reventadas al aire",
+      "category": "Miscellaneous",
+      "composition_pct": {
+        "moisture": 4.1,
+        "protein": 12.0,
+        "fat": 4.2,
+        "carbohydrate": 77.9,
+        "fiber": 15.1,
+        "ash": 1.8
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.49,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 6.0
+    },
+    "Palomitas de maíz, reventadas en aceite": {
+      "name": "Palomitas de maíz, reventadas en aceite",
+      "category": "Miscellaneous",
+      "composition_pct": {
+        "moisture": 2.8,
+        "protein": 9.0,
+        "fat": 28.1,
+        "carbohydrate": 57.2,
+        "fiber": 10.0,
+        "ash": 2.9
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.48,
+      "cp_below_Btu_lbF": null,
+      "latent_heat_Btu_lb": 4.0
+    },
+    "Levadura, de panadero, comprimida": {
+      "name": "Levadura, de panadero, comprimida",
+      "category": "Miscellaneous",
+      "composition_pct": {
+        "moisture": 69.0,
+        "protein": 8.4,
+        "fat": 1.9,
+        "carbohydrate": 18.1,
+        "fiber": 8.1,
+        "ash": 1.8
+      },
+      "freezing_point_F": null,
+      "cp_above_Btu_lbF": 0.85,
+      "cp_below_Btu_lbF": 0.52,
+      "latent_heat_Btu_lb": 100.0
+    }
+  }
+}

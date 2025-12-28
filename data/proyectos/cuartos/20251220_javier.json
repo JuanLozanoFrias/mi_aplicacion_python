@@ -1,0 +1,62 @@
+{
+  "proyecto": "JAVIER",
+  "factor_seguridad": 1.15,
+  "inputs": [
+    {
+      "cuarto": 1,
+      "largo_m": 3.0,
+      "ancho_m": 3.0,
+      "altura_m": 3.0,
+      "uso": "HELADOS",
+      "n_ev_txt": "AUTO (1-4)",
+      "familia": "AUTO"
+    },
+    {
+      "cuarto": 2,
+      "largo_m": 10.0,
+      "ancho_m": 10.0,
+      "altura_m": 3.0,
+      "uso": "LACTEOS",
+      "n_ev_txt": "3",
+      "familia": "AUTO"
+    }
+  ],
+  "resultados": [
+    [
+      "CUARTO 1 - HELADOS",
+      "10.925",
+      "3,20",
+      "1",
+      "WEF-1680 - FRONTAL",
+      "89,5"
+    ],
+    [
+      "CUARTO 2 - LACTEOS",
+      "62.675",
+      "18,37",
+      "3",
+      "WEFM-006 - FRONTAL",
+      "92,8"
+    ],
+    [
+      "CUARTO 3",
+      "--",
+      "--",
+      "--",
+      "--",
+      "--"
+    ],
+    [
+      "CUARTO 4",
+      "--",
+      "--",
+      "--",
+      "--",
+      "--"
+    ]
+  ],
+  "totales": {
+    "btu_h": "73.600,00",
+    "kw": "21,57"
+  }
+}

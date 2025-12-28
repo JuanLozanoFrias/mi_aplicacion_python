@@ -1,0 +1,411 @@
+{
+  "meta": {
+    "source": "CALCULO DE CUARTO #2 DEVOLUCIONES.xlsx / Hoja2",
+    "note": "Col11 uses a different divisor than col10 for some rows (Excel inconsistency)."
+  },
+  "inputs_raw_by_label": {
+    "Tipo de Producto": "MILK - CANNED, CONDENSED, SWEETENED",
+    "Contenido de Agua": 0.2716,
+    "Contenido de Proteína": 0.0791,
+    "Contenido de Grasa": 0.087,
+    "Contenido de Carbohidrato": 0.544,
+    "Contenido de Fibra": 0,
+    "Contenido de Ceniza": 0.0183,
+    "Temperatura de Ingreso": 15,
+    "Temperatura de Salida": 5,
+    "Cantidad de Producto": 4500,
+    "Tiempo de Ciclo": 24,
+    "Largo": 20,
+    "Ancho": 5.3,
+    "Alto": 5.9,
+    "Temperatura Interna": 2,
+    "Temperatura Externa Frente": 28,
+    "Temperatura Externa Fondo": 28,
+    "Temperatura Externa Derecha": 28,
+    "Temperatura Externa Izquierda": 28,
+    "Temperatura Externa Techo": 30,
+    "Tipo de aislamiento": "PANEL DE POLIURETANO",
+    "Espesor del Aislamiento": 4,
+    "Iluminación": 1710.5855999999997,
+    "Consumo Motores": 2500,
+    "Montacargas": 4,
+    "Deshielo Electrcio": 0,
+    "# Operarios": 2,
+    "Horas Continuas": 8,
+    "Punto Congelación": "-15°C  /  5°F",
+    "Cp Antes de Congelación": 0.5659142972564838,
+    "Calor latente": 38.94744,
+    "Cp Después de Congelación": 0.767740125,
+    "Entalpia, H @ 59 °F": 77.2259710733376,
+    "Entalpia, H @ 41 °F": 67.4805857155584,
+    "Cargas por Iluminación": 5249.787206399999,
+    "Cargas por Motores y Montacargas": 27036,
+    "Cargas por Deshielo Electrico": 0,
+    "Cagas por Ocupación": 1080,
+    "Cargas por Infiltración de Aire": 33500.49156157439,
+    "Cargas térmicas por perdidas en paredes": 12984.479241830399,
+    "Cargas térmicas del producto": 4110.942558606656,
+    "Cargas Térmica Total Proceso": 83961.70056841144
+  },
+  "outputs_raw_by_label": {
+    "INFORMACIÓN DEL PRODUCTO": {
+      "value_col10": NaN,
+      "value_col11": NaN,
+      "row_index": 2
+    },
+    "Familia de productos": {
+      "value_col10": "Milk",
+      "value_col11": NaN,
+      "row_index": 3
+    },
+    "PRODUCTO": {
+      "value_col10": "Canned, condensed, sweetened",
+      "value_col11": NaN,
+      "row_index": 4
+    },
+    "Punto Congelación": {
+      "value_col10": 5.0,
+      "value_col11": -15.0,
+      "row_index": 5
+    },
+    "Cp Antes de Congelación": {
+      "value_col10": 0.5659142972564838,
+      "value_col11": NaN,
+      "row_index": 6
+    },
+    "Calor latente": {
+      "value_col10": 38.94744,
+      "value_col11": NaN,
+      "row_index": 7
+    },
+    "Cp Después de Congelación": {
+      "value_col10": 0.767740125,
+      "value_col11": NaN,
+      "row_index": 8
+    },
+    "Cantidad de Producto": {
+      "value_col10": 9900.0,
+      "value_col11": 4500.0,
+      "row_index": 9
+    },
+    "Temperatura de Ingreso": {
+      "value_col10": 59.0,
+      "value_col11": 15.0,
+      "row_index": 12
+    },
+    "Temperatura de Salida": {
+      "value_col10": 41.0,
+      "value_col11": 5.0,
+      "row_index": 13
+    },
+    "Tiempo de Ciclo": {
+      "value_col10": 24.0,
+      "value_col11": NaN,
+      "row_index": 14
+    },
+    "Carga Refrigeración": {
+      "value_col10": 100845.9277711054,
+      "value_col11": NaN,
+      "row_index": 15
+    },
+    "Carga Congelación": {
+      "value_col10": 0.0,
+      "value_col11": NaN,
+      "row_index": 16
+    },
+    "Carga Después de Cong": {
+      "value_col10": 0.0,
+      "value_col11": NaN,
+      "row_index": 17
+    },
+    "Carga Térmica / Ciclo": {
+      "value_col10": 98662.62140655975,
+      "value_col11": 28.916360318452444,
+      "row_index": 25
+    },
+    "Entalpia, H @ 59 °F": {
+      "value_col10": 77.2259710733376,
+      "value_col11": NaN,
+      "row_index": 20
+    },
+    "Entalpia, H @ 41 °F": {
+      "value_col10": 67.4805857155584,
+      "value_col11": NaN,
+      "row_index": 21
+    },
+    "METODO DE CÁLCULO": {
+      "value_col10": "PROMEDIO",
+      "value_col11": NaN,
+      "row_index": 24
+    },
+    "INFORMACIÓN DEL CUARTO": {
+      "value_col10": NaN,
+      "value_col11": NaN,
+      "row_index": 28
+    },
+    "Largo": {
+      "value_col10": 65.6,
+      "value_col11": 20.0,
+      "row_index": 30
+    },
+    "Ancho": {
+      "value_col10": 17.383999999999997,
+      "value_col11": 5.3,
+      "row_index": 31
+    },
+    "Alto": {
+      "value_col10": 19.352,
+      "value_col11": 5.9,
+      "row_index": 32
+    },
+    "Temperatura Interna": {
+      "value_col10": 35.6,
+      "value_col11": 2.0,
+      "row_index": 33
+    },
+    "Temperatura Externa Frente": {
+      "value_col10": 82.4,
+      "value_col11": 28.0,
+      "row_index": 34
+    },
+    "Temperatura Externa Fondo": {
+      "value_col10": 82.4,
+      "value_col11": 28.0,
+      "row_index": 35
+    },
+    "Temperatura Externa Derecha": {
+      "value_col10": 82.4,
+      "value_col11": 28.0,
+      "row_index": 36
+    },
+    "Temperatura Externa Izquierda": {
+      "value_col10": 82.4,
+      "value_col11": 28.0,
+      "row_index": 37
+    },
+    "Temperatura Externa Techo": {
+      "value_col10": 86.0,
+      "value_col11": 30.0,
+      "row_index": 38
+    },
+    "TIPO AISLAMIENTO": {
+      "value_col10": "PANEL DE POLIURETANO",
+      "value_col11": NaN,
+      "row_index": 40
+    },
+    "Espesor del aislamiento": {
+      "value_col10": 4.0,
+      "value_col11": NaN,
+      "row_index": 41
+    },
+    "Factor de Transferencia por pared": {
+      "value_col10": 0.96,
+      "value_col11": NaN,
+      "row_index": 42
+    },
+    "Transferencia pared Frente": {
+      "value_col10": 57035.700633600005,
+      "value_col11": NaN,
+      "row_index": 43
+    },
+    "Transferencia pared Fondo": {
+      "value_col10": 57035.700633600005,
+      "value_col11": NaN,
+      "row_index": 44
+    },
+    "Transferencia pared Derecha": {
+      "value_col10": 15114.460667903997,
+      "value_col11": NaN,
+      "row_index": 45
+    },
+    "Transferencia pared Izquierda": {
+      "value_col10": 15114.460667903997,
+      "value_col11": NaN,
+      "row_index": 46
+    },
+    "Transferencia pared Techo": {
+      "value_col10": 55176.64911359998,
+      "value_col11": NaN,
+      "row_index": 47
+    },
+    "Transferencia pared Piso": {
+      "value_col10": 60212.61311999999,
+      "value_col11": NaN,
+      "row_index": 48
+    },
+    "Total Perdidas Pared /24 horas": {
+      "value_col10": 259689.58483660797,
+      "value_col11": 76.11066378564126,
+      "row_index": 49
+    },
+    "Infiltración de Aire": {
+      "value_col10": NaN,
+      "value_col11": NaN,
+      "row_index": 51
+    },
+    "Volumen del Cuarto": {
+      "value_col10": 22068.835020799997,
+      "value_col11": 625.4000000000001,
+      "row_index": 52
+    },
+    "Temperatura Externa": {
+      "value_col10": 78.80000000000001,
+      "value_col11": 26.0,
+      "row_index": 53
+    },
+    "Humedad Relativa Exterior": {
+      "value_col10": 0.6,
+      "value_col11": NaN,
+      "row_index": 54
+    },
+    "Recambios en 24 Horas": {
+      "value_col10": 6.0,
+      "value_col11": 6.0,
+      "row_index": 55
+    },
+    "Calor removido Al aire": {
+      "value_col10": 2.53,
+      "value_col11": NaN,
+      "row_index": 56
+    },
+    "factor de Uso": {
+      "value_col10": 2.0,
+      "value_col11": NaN,
+      "row_index": 57
+    },
+    "Total por infiltración de aire/24 horas": {
+      "value_col10": 670009.8312314878,
+      "value_col11": 196.36864924721215,
+      "row_index": 58
+    },
+    "Cargas Complementarias": {
+      "value_col10": NaN,
+      "value_col11": NaN,
+      "row_index": 60
+    },
+    "Iluminación": {
+      "value_col10": 104995.74412799999,
+      "value_col11": 30.772492417350524,
+      "row_index": 61
+    },
+    "Montacargas": {
+      "value_col10": 4.0,
+      "value_col11": NaN,
+      "row_index": 62
+    },
+    "Consumo motores": {
+      "value_col10": 2500.0,
+      "value_col11": NaN,
+      "row_index": 63
+    },
+    "Carga Motores": {
+      "value_col10": 540720.0,
+      "value_col11": 158.4759671746776,
+      "row_index": 64
+    },
+    "# Personas": {
+      "value_col10": 2.0,
+      "value_col11": NaN,
+      "row_index": 65
+    },
+    "Horas": {
+      "value_col10": 8.0,
+      "value_col11": NaN,
+      "row_index": 66
+    },
+    "Carga personas": {
+      "value_col10": 21600.0,
+      "value_col11": 6.330597889800703,
+      "row_index": 67
+    },
+    "Deshielo electrico": {
+      "value_col10": 0.0,
+      "value_col11": NaN,
+      "row_index": 68
+    },
+    "# deshielos": {
+      "value_col10": 6.0,
+      "value_col11": NaN,
+      "row_index": 69
+    },
+    "Duración deshielo": {
+      "value_col10": 20.0,
+      "value_col11": NaN,
+      "row_index": 70
+    },
+    "Carga Deshielo": {
+      "value_col10": 0.0,
+      "value_col11": 0.0,
+      "row_index": 71
+    },
+    "Total 24 Horas Suplementarias": {
+      "value_col10": 1597015.160196096,
+      "value_col11": 468.0583705146822,
+      "row_index": 72
+    },
+    "Total por Hora": {
+      "value_col10": 79850.75800980479,
+      "value_col11": 21.2753804779401,
+      "row_index": 73
+    },
+    "Duración Ciclo": {
+      "value_col10": 24.0,
+      "value_col11": NaN,
+      "row_index": 75
+    },
+    "Carga por Hora": {
+      "value_col10": 4110.942558606656,
+      "value_col11": 1.2048483466021853,
+      "row_index": 76
+    },
+    "Carga Total": {
+      "value_col10": 83961.70056841144,
+      "value_col11": 22.480228824542287,
+      "row_index": 78
+    }
+  },
+  "selected": {
+    "room": {
+      "L_m": 20.0,
+      "W_m": 5.3,
+      "H_m": 5.9,
+      "T_internal_C": 2.0,
+      "T_ext_front_C": 28.0,
+      "T_ext_back_C": 28.0,
+      "T_ext_right_C": 28.0,
+      "T_ext_left_C": 28.0,
+      "T_ext_roof_C": 30.0,
+      "insulation_type": "PANEL DE POLIURETANO",
+      "insulation_thickness_in": 4.0
+    },
+    "product": {
+      "name": "MILK - CANNED, CONDENSED, SWEETENED",
+      "Tin_C": null,
+      "Tout_C": 5.0,
+      "mass_kg": 4500.0,
+      "cycle_h": 24.0
+    },
+    "operation": {
+      "lighting_W": 1710.5855999999997,
+      "motors_W": 2500.0,
+      "forklift_hp": 4.0,
+      "defrost_W": 0.0,
+      "people_count": 2.0,
+      "people_hours": 8.0,
+      "outside_RH": 0.6,
+      "outside_temp_F_for_infil": 78.80000000000001,
+      "air_changes_24h": 6.0,
+      "use_factor": 2.0
+    },
+    "key_results": {
+      "transmission_total_24h_Btu": 259689.58483660797,
+      "infiltration_total_24h_Btu": 670009.8312314878,
+      "supplementary_total_24h_Btu": 1597015.160196096,
+      "supplementary_Btuh_excel_col10": 79850.75800980479,
+      "supplementary_kW_excel_col11": 21.2753804779401,
+      "product_Btuh": 4110.942558606656,
+      "total_Btuh_excel": 83961.70056841144,
+      "total_kW_excel": 22.480228824542287
+    }
+  }
+}
