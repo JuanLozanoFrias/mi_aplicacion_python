@@ -1142,7 +1142,6 @@ class CargaElectricaPage(QWidget):
             return
         target_dir = Path(target_dir)
         excel_out = target_dir / f"{base_name}.xlsx"
-        json_out = target_dir / f"{base_name}.json"
         try:
             resultados = recalcular(book, write_sheet=False, selection=selection)
             dist_list = [self._get_distance_for_row(i) for i in range(self.sel_table.rowCount())]
@@ -1183,25 +1182,15 @@ class CargaElectricaPage(QWidget):
                     "niveles": sel.niveles,
                     "distancia": dist,
                 })
-            with open(json_out, "w", encoding="utf-8") as fh:
-                json.dump(data, fh, ensure_ascii=False, indent=2)
-
-            # Copia interna del JSON en data/proyectos/carga_electrica
+            # Guardar JSON solo en biblioteca interna
             lib_dir = Path(__file__).resolve().parents[3] / "data" / "proyectos" / "carga_electrica"
             lib_dir.mkdir(parents=True, exist_ok=True)
-            lib_json = self._unique_path(lib_dir / json_out.name)
-            try:
-                shutil.copy2(json_out, lib_json)
-            except Exception:
-                try:
-                    with open(lib_json, "w", encoding="utf-8") as fh:
-                        json.dump(data, fh, ensure_ascii=False, indent=2)
-                except Exception:
-                    lib_json = None
+            lib_json = self._unique_path(lib_dir / f"{base_name}.json")
+            with open(lib_json, "w", encoding="utf-8") as fh:
+                json.dump(data, fh, ensure_ascii=False, indent=2)
 
-            self.status.setText(f"Exportado: {excel_out.name} y {json_out.name}")
-            extra = f"\nCopia interna: {lib_json}" if lib_json else ""
-            QMessageBox.information(self, "Exportado", f"Archivos guardados:\n{excel_out}\n{json_out}{extra}")
+            self.status.setText(f"Exportado: {excel_out.name} y JSON en biblioteca")
+            QMessageBox.information(self, "Exportado", f"Archivos guardados:\nExcel: {excel_out}\nJSON (biblioteca): {lib_json}")
         except Exception as e:
             self.status.setText(f"Error al exportar: {e}")
             QMessageBox.critical(self, "Error", str(e))
