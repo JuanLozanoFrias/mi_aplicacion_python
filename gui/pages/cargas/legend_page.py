@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Dict, List
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QGuiApplication
+from PySide6.QtGui import QGuiApplication, QFontMetrics
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -54,13 +54,17 @@ class LegendPage(QWidget):
         # Scroll area para el contenido
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         content = QWidget()
+        content.setMinimumWidth(0)
+        content.setSizePolicy(content.sizePolicy().Expanding, content.sizePolicy().Preferred)
         scroll.setWidget(content)
         layout = QVBoxLayout(content)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(8)
+        layout.setContentsMargins(4, 4, 4, 4)
+        layout.setSpacing(6)
 
         # Folder + acciones
+        self._folder_full_path = ""
         self.lbl_folder = QLabel("Carpeta: --")
         self.lbl_folder.setToolTip("")
         self.btn_copy_folder = QPushButton("Copiar ruta")
@@ -114,13 +118,13 @@ class LegendPage(QWidget):
     def _make_table(self, headers: List[str]) -> QTableWidget:
         tbl = QTableWidget(0, len(headers))
         tbl.setHorizontalHeaderLabels(headers)
-        tbl.horizontalHeader().setStretchLastSection(True)
         tbl.verticalHeader().setVisible(False)
         tbl.setEditTriggers(QTableWidget.NoEditTriggers)
         tbl.setSelectionMode(QTableWidget.NoSelection)
         tbl.setAlternatingRowColors(True)
         tbl.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         tbl.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        tbl.verticalHeader().setDefaultSectionSize(22)
         return tbl
 
     def _make_list(self) -> QListWidget:
@@ -170,23 +174,26 @@ class LegendPage(QWidget):
         self.lbl_folder.setText(f"Carpeta: {folder}")
         self.lbl_folder.setToolTip(str(folder))
         files = sources.get("files_found", [])
+        self._folder_full_path = str(folder)
+        self.lbl_folder.setToolTip(self._folder_full_path)
+        self._update_folder_elide()
 
         resumen = (
-            f"Archivos: {', '.join(files) if files else 'ninguno'} | "
+            f"Archivos: {len(files)} (ver lista) | "
             f"Equipos: {len(equipos)} | Usos BT: {len(usos.get('BT', []))} | Usos MT: {len(usos.get('MT', []))} | "
             f"Variadores: {len(variadores)} | WCR: {len(wcr)}"
         )
         self.lbl_summary.setText(resumen)
 
         self._fill_config(cfg)
-        self._fill_table(self.tbl_equipos, [(e.equipo, e.btu_hr_ft) for e in equipos], numeric_cols={1})
+        self._fill_table(self.tbl_equipos, [(e.equipo, e.btu_hr_ft) for e in equipos], numeric_cols={1}, stretch_cols={0}, resize_cols={1})
         self._fill_list(self.list_usos_bt, usos.get("BT", []))
         self._fill_list(self.list_usos_mt, usos.get("MT", []))
-        self._fill_table(self.tbl_variadores, [(v.modelo, v.potencia) for v in variadores], numeric_cols={1})
-        self._fill_table(self.tbl_wcr, [(w.modelo, w.capacidad) for w in wcr], numeric_cols={1})
+        self._fill_table(self.tbl_variadores, [(v.modelo, v.potencia) for v in variadores], numeric_cols={1}, stretch_cols={0}, resize_cols={1})
+        self._fill_table(self.tbl_wcr, [(w.modelo, w.capacidad) for w in wcr], numeric_cols={1}, stretch_cols={0}, resize_cols={1})
         for name, tbl in self.tbl_plantillas.items():
             items = plantillas.get(name, []) or []
-            self._fill_table(tbl, [(p.qty, p.descripcion) for p in items], numeric_cols={0})
+            self._fill_table(tbl, [(p.qty, p.descripcion) for p in items], numeric_cols={0}, stretch_cols={1}, resize_cols={0})
 
     def _fill_config(self, cfg) -> None:
         rows = []
@@ -209,8 +216,10 @@ class LegendPage(QWidget):
                     rows.append((k, v))
         self._fill_table(self.tbl_config, rows)
 
-    def _fill_table(self, tbl: QTableWidget, rows: List[tuple], numeric_cols: set[int] | None = None) -> None:
+    def _fill_table(self, tbl: QTableWidget, rows: List[tuple], numeric_cols: set[int] | None = None, stretch_cols: set[int] | None = None, resize_cols: set[int] | None = None) -> None:
         numeric_cols = numeric_cols or set()
+        stretch_cols = stretch_cols or set()
+        resize_cols = resize_cols or set()
         tbl.setRowCount(0)
         for r_idx, row in enumerate(rows):
             tbl.insertRow(r_idx)
@@ -219,8 +228,15 @@ class LegendPage(QWidget):
                 align = Qt.AlignRight if c_idx in numeric_cols else Qt.AlignCenter
                 item.setTextAlignment(align)
                 tbl.setItem(r_idx, c_idx, item)
-        tbl.resizeColumnsToContents()
-        tbl.horizontalHeader().setStretchLastSection(True)
+        header = tbl.horizontalHeader()
+        for c in range(tbl.columnCount()):
+            if c in stretch_cols:
+                header.setSectionResizeMode(c, QHeaderView.Stretch)
+            elif c in resize_cols:
+                header.setSectionResizeMode(c, QHeaderView.ResizeToContents)
+            else:
+                header.setSectionResizeMode(c, QHeaderView.ResizeToContents)
+        header.setStretchLastSection(True)
         tbl.resizeRowsToContents()
         h = sum(tbl.rowHeight(r) for r in range(tbl.rowCount())) + tbl.horizontalHeader().height() + 4
         tbl.setMaximumHeight(h if h > 0 else tbl.horizontalHeader().height() + 10)
@@ -233,6 +249,17 @@ class LegendPage(QWidget):
         for it in items:
             lst.addItem(QListWidgetItem(str(it)))
         lst.setMaximumHeight(min(200, lst.sizeHintForRow(0) * lst.count() + 8))
+
+    def _update_folder_elide(self) -> None:
+        if not self._folder_full_path:
+            return
+        fm = QFontMetrics(self.lbl_folder.font())
+        text = fm.elidedText(f"Carpeta: {self._folder_full_path}", Qt.ElideMiddle, self.lbl_folder.width())
+        self.lbl_folder.setText(text)
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self._update_folder_elide()
 
 
 if __name__ == "__main__":
