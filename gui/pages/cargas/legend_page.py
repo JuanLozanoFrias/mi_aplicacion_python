@@ -20,6 +20,7 @@ from PySide6.QtWidgets import (
     QScrollArea,
     QHBoxLayout,
     QAbstractScrollArea,
+    QSizePolicy,
 )
 
 try:
@@ -240,8 +241,7 @@ class LegendPage(QWidget):
                 header.setSectionResizeMode(c, QHeaderView.ResizeToContents)
         header.setStretchLastSection(True)
         tbl.resizeRowsToContents()
-        h = sum(tbl.rowHeight(r) for r in range(tbl.rowCount())) + tbl.horizontalHeader().height() + 4
-        tbl.setMaximumHeight(h if h > 0 else tbl.horizontalHeader().height() + 10)
+        self._fit_table_to_contents(tbl)
 
     def _fill_list(self, lst: QListWidget, items: List[str]) -> None:
         lst.clear()
@@ -250,7 +250,7 @@ class LegendPage(QWidget):
             return
         for it in items:
             lst.addItem(QListWidgetItem(str(it)))
-        lst.setMaximumHeight(min(200, lst.sizeHintForRow(0) * lst.count() + 8))
+        self._fit_list_to_contents(lst)
 
     def _update_folder_elide(self) -> None:
         if not self._folder_full_path:
@@ -262,6 +262,40 @@ class LegendPage(QWidget):
     def resizeEvent(self, event):
         super().resizeEvent(event)
         self._update_folder_elide()
+
+    # Ajuste de tamaños para evitar scroll interno cuando hay pocas filas
+    def _fit_table_to_contents(self, tbl: QTableWidget) -> None:
+        max_rows_no_scroll = 40
+        tbl.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        tbl.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        tbl.resizeColumnsToContents()
+        tbl.resizeRowsToContents()
+        row_count = tbl.rowCount()
+        if row_count == 0:
+            h = tbl.horizontalHeader().height() + tbl.frameWidth() * 2 + 6 + tbl.verticalHeader().defaultSectionSize()
+        else:
+            h = tbl.horizontalHeader().height() + sum(tbl.rowHeight(r) for r in range(row_count)) + tbl.frameWidth() * 2 + 6
+        tbl.setMinimumHeight(h)
+        tbl.setMaximumHeight(h if row_count <= max_rows_no_scroll else tbl.sizeHint().height())
+        tbl.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed if row_count <= max_rows_no_scroll else QSizePolicy.Preferred)
+
+    def _fit_list_to_contents(self, lst: QListWidget) -> None:
+        max_rows_no_scroll = 40
+        lst.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        lst.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        count = lst.count()
+        if count == 0:
+            h = lst.sizeHintForRow(0) + lst.frameWidth() * 2 + 8
+        else:
+            h = lst.sizeHintForRow(0) * count + lst.frameWidth() * 2 + 8
+        if count <= max_rows_no_scroll:
+            lst.setMinimumHeight(h)
+            lst.setMaximumHeight(h)
+            lst.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        else:
+            lst.setMinimumHeight(min(h, 300))
+            lst.setMaximumHeight(400)
+            lst.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
 
 
 if __name__ == "__main__":
