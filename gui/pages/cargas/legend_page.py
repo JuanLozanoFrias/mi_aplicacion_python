@@ -57,7 +57,7 @@ class LegendPage(QWidget):
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         content = QWidget()
         content.setMinimumWidth(0)
-        content.setSizePolicy(content.sizePolicy().Expanding, content.sizePolicy().Preferred)
+        content.setSizePolicy(content.sizePolicy().expanding(), content.sizePolicy().preferred())
         scroll.setWidget(content)
         layout = QVBoxLayout(content)
         layout.setContentsMargins(4, 4, 4, 4)
