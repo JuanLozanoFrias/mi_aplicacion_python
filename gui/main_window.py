@@ -11,6 +11,7 @@ from PySide6.QtSvgWidgets import QSvgWidget
 
 from gui.pages.carga_page import CargaPage
 from gui.pages.cargas.industrial_page import IndustrialPage
+from gui.pages.cargas.legend_page import LegendPage
 from gui.pages.materiales_page import MaterialesPage
 from gui.pages.carga_electrica.carga_electrica_page import CargaElectricaPage
 from gui.pages.creditos_page import CreditosPage
