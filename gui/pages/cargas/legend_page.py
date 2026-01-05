@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List
 import traceback
 
-from PySide6.QtCore import Qt, QAbstractTableModel, QModelIndex
+from PySide6.QtCore import Qt, QAbstractTableModel, QModelIndex, QTimer
 from PySide6.QtGui import QGuiApplication, QKeySequence, QShortcut
 from PySide6.QtWidgets import (
     QWidget,
@@ -67,7 +67,8 @@ class LegendPage(QWidget):
         self._suspend_updates = False
         self.total_bt = 0.0
         self.total_mt = 0.0
-        self._equipos_catalog: List[str] = []
+        self._equipos_bt: List[str] = []
+        self._equipos_mt: List[str] = []
         self._usos_bt: List[str] = []
         self._usos_mt: List[str] = []
 
@@ -222,6 +223,10 @@ class LegendPage(QWidget):
         self.bt_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.bt_view.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.bt_view.setFocusPolicy(Qt.StrongFocus)
+        self.bt_view.setEditTriggers(QAbstractItemView.SelectedClicked | QAbstractItemView.EditKeyPressed | QAbstractItemView.AnyKeyPressed)
+        self.bt_view.setStyleSheet(
+            "QTableView::item:selected { background: #eaf2ff; color: #0f172a; }"
+        )
         self.bt_view.horizontalHeader().setStretchLastSection(True)
         self.bt_view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.bt_view.verticalHeader().setVisible(False)
@@ -237,12 +242,18 @@ class LegendPage(QWidget):
         self.bt_model.rowsRemoved.connect(self._mark_dirty_and_totals)
         self.bt_view.keyPressEvent = lambda event, v=self.bt_view: self._table_key_press(event, self.bt_model, v)
         self._install_shortcuts(self.bt_view, self.bt_model)
+        self.bt_model.rowsInserted.connect(lambda *_: self._ensure_combo_editors(self.bt_view))
+        self.bt_model.modelReset.connect(lambda *_: self._ensure_combo_editors(self.bt_view))
 
         self.mt_view = QTableView()
         self.mt_view.setModel(self.mt_model)
         self.mt_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.mt_view.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.mt_view.setFocusPolicy(Qt.StrongFocus)
+        self.mt_view.setEditTriggers(QAbstractItemView.SelectedClicked | QAbstractItemView.EditKeyPressed | QAbstractItemView.AnyKeyPressed)
+        self.mt_view.setStyleSheet(
+            "QTableView::item:selected { background: #eaf2ff; color: #0f172a; }"
+        )
         self.mt_view.horizontalHeader().setStretchLastSection(True)
         self.mt_view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.mt_view.verticalHeader().setVisible(False)
@@ -258,6 +269,22 @@ class LegendPage(QWidget):
         self.mt_model.rowsRemoved.connect(self._mark_dirty_and_totals)
         self.mt_view.keyPressEvent = lambda event, v=self.mt_view: self._table_key_press(event, self.mt_model, v)
         self._install_shortcuts(self.mt_view, self.mt_model)
+        self.mt_model.rowsInserted.connect(lambda *_: self._ensure_combo_editors(self.mt_view))
+        self.mt_model.modelReset.connect(lambda *_: self._ensure_combo_editors(self.mt_view))
+
+        # Delegates para equipos/usos desde data/LEGEND
+        self._equipos_bt_delegate = ComboDelegate(lambda: self._equipos_bt, editable=True, parent=self)
+        self._equipos_mt_delegate = ComboDelegate(lambda: self._equipos_mt, editable=True, parent=self)
+        self._usos_bt_delegate = ComboDelegate(lambda: self._usos_bt, editable=True, parent=self)
+        self._usos_mt_delegate = ComboDelegate(lambda: self._usos_mt, editable=True, parent=self)
+        col_equipo = PROJ_COLUMNS.index("equipo")
+        col_uso = PROJ_COLUMNS.index("uso")
+        self.bt_view.setItemDelegateForColumn(col_equipo, self._equipos_bt_delegate)
+        self.mt_view.setItemDelegateForColumn(col_equipo, self._equipos_mt_delegate)
+        self.bt_view.setItemDelegateForColumn(col_uso, self._usos_bt_delegate)
+        self.mt_view.setItemDelegateForColumn(col_uso, self._usos_mt_delegate)
+        self._ensure_combo_editors(self.bt_view)
+        self._ensure_combo_editors(self.mt_view)
         # Ramales y tablas BT
         self.spin_bt = QSpinBox()
         self.spin_bt.setRange(1, 20)
@@ -605,13 +632,16 @@ class LegendPage(QWidget):
         row_h = view.verticalHeader().defaultSectionSize()
         h = header_h + (row_h * max(row_count, 1)) + view.frameWidth() * 2 + 6
         header = view.horizontalHeader()
-        header.setSectionResizeMode(QHeaderView.Stretch)
+        if model:
+            for col in range(model.columnCount()):
+                header.setSectionResizeMode(col, QHeaderView.Interactive)
         view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         view.setMinimumHeight(h)
         view.setMaximumHeight(h)
         view.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         view.setAlternatingRowColors(True)
+        self._apply_combo_column_widths(view)
 
     def _refresh_table_view(self, view: QTableView) -> None:
         try:
@@ -1040,9 +1070,85 @@ class LegendPage(QWidget):
             return
         usos = data.get("usos", {}) if isinstance(data, dict) else {}
         equipos = data.get("equipos", []) if isinstance(data, dict) else []
-        self._equipos_catalog = [getattr(e, "equipo", "") for e in equipos]
-        self._usos_bt = usos.get("BT", []) if isinstance(usos, dict) else []
-        self._usos_mt = usos.get("MT", []) if isinstance(usos, dict) else []
+        equipos_bt = data.get("equipos_bt", []) if isinstance(data, dict) else []
+        equipos_mt = data.get("equipos_mt", []) if isinstance(data, dict) else []
+        if equipos_bt:
+            self._equipos_bt = sorted(
+                [getattr(e, "equipo", "") for e in equipos_bt if getattr(e, "equipo", "")],
+                key=lambda x: x.upper(),
+            )
+        else:
+            self._equipos_bt = sorted(
+                [getattr(e, "equipo", "") for e in equipos if getattr(e, "equipo", "")],
+                key=lambda x: x.upper(),
+            )
+        if equipos_mt:
+            self._equipos_mt = sorted(
+                [getattr(e, "equipo", "") for e in equipos_mt if getattr(e, "equipo", "")],
+                key=lambda x: x.upper(),
+            )
+        else:
+            self._equipos_mt = list(self._equipos_bt)
+        self._usos_bt = sorted(
+            usos.get("BT", []) if isinstance(usos, dict) else [],
+            key=lambda x: str(x).upper(),
+        )
+        self._usos_mt = sorted(
+            usos.get("MT", []) if isinstance(usos, dict) else [],
+            key=lambda x: str(x).upper(),
+        )
+        self._apply_combo_column_widths(self.bt_view)
+        self._apply_combo_column_widths(self.mt_view)
+        self._refresh_combo_editors(self.bt_view)
+        self._refresh_combo_editors(self.mt_view)
+
+    def _apply_combo_column_widths(self, view: QTableView) -> None:
+        model = view.model()
+        if not model:
+            return
+        col_equipo = PROJ_COLUMNS.index("equipo")
+        col_uso = PROJ_COLUMNS.index("uso")
+        fm = view.fontMetrics()
+
+        def _max_width(texts: List[str], header_text: str) -> int:
+            max_w = fm.horizontalAdvance(header_text)
+            for t in texts:
+                max_w = max(max_w, fm.horizontalAdvance(str(t)))
+            return max_w + 36  # padding + combo arrow
+
+        if view is self.bt_view:
+            uso_texts = self._usos_bt
+            equipo_texts = self._equipos_bt
+        else:
+            uso_texts = self._usos_mt
+            equipo_texts = self._equipos_mt
+        equipo_w = _max_width(equipo_texts, "EQUIPO")
+        uso_w = _max_width(uso_texts, "USO")
+        view.setColumnWidth(col_equipo, max(120, equipo_w))
+        view.setColumnWidth(col_uso, max(100, uso_w))
+
+    def _ensure_combo_editors(self, view: QTableView) -> None:
+        model = view.model()
+        if not model:
+            return
+        col_equipo = PROJ_COLUMNS.index("equipo")
+        col_uso = PROJ_COLUMNS.index("uso")
+        for row in range(model.rowCount()):
+            for col in (col_equipo, col_uso):
+                idx = model.index(row, col)
+                view.openPersistentEditor(idx)
+
+    def _refresh_combo_editors(self, view: QTableView) -> None:
+        model = view.model()
+        if not model:
+            return
+        col_equipo = PROJ_COLUMNS.index("equipo")
+        col_uso = PROJ_COLUMNS.index("uso")
+        for row in range(model.rowCount()):
+            for col in (col_equipo, col_uso):
+                idx = model.index(row, col)
+                view.closePersistentEditor(idx)
+                view.openPersistentEditor(idx)
 
 
 class ComboDelegate(QStyledItemDelegate):
@@ -1059,6 +1165,12 @@ class ComboDelegate(QStyledItemDelegate):
         cb.setEditable(self.editable)
         cb.addItems(items)
         cb.setInsertPolicy(QComboBox.NoInsert)
+        cb.setStyleSheet(
+            "QComboBox { background: #ffffff; color: #0f172a; }"
+            "QComboBox QAbstractItemView { background: #ffffff; color: #0f172a; selection-background-color: #dbeafe; selection-color: #0f172a; }"
+        )
+        cb.view().setStyleSheet("background: #ffffff; color: #0f172a;")
+        cb.setMaxVisibleItems(max(len(items), 10))
         return cb
 
     def setEditorData(self, editor, index):

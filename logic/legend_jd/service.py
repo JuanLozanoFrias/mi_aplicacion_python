@@ -7,6 +7,7 @@ from .models import LegendConfig, PlantillaBOMItem
 from .folder_loader import (
     load_config,
     load_equipos,
+    load_equipos_split,
     load_plantillas,
     load_usos,
     load_variadores,
@@ -36,6 +37,9 @@ class LegendJDService:
         equipos, eq_found = load_equipos(base)
         if eq_found:
             files_found.append("equipos.json")
+        equipos_split, eqs_found = load_equipos_split(base)
+        if eqs_found and "legend_jd_analysis.json" not in files_found:
+            files_found.append("legend_jd_analysis.json")
 
         usos, usos_found = load_usos(base)
         if usos_found:
@@ -56,6 +60,8 @@ class LegendJDService:
         return {
             "config": cfg,
             "equipos": equipos,
+            "equipos_bt": equipos_split.get("BT", []),
+            "equipos_mt": equipos_split.get("MT", []),
             "usos": usos,
             "variadores": variadores,
             "wcr": wcr,

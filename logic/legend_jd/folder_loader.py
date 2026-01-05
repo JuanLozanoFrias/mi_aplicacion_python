@@ -22,6 +22,36 @@ def _safe_read_json(path: Path):
         return None
 
 
+def _load_analysis_info(dir_path: Path) -> Dict[str, object]:
+    data = _safe_read_json(dir_path / "legend_jd_analysis.json")
+    if not isinstance(data, dict):
+        return {}
+    info = data.get("INFO")
+    return info if isinstance(info, dict) else {}
+
+
+def _split_equipos_by_row(rows: List[dict]) -> Dict[str, List[dict]]:
+    items = [r for r in rows if isinstance(r, dict) and isinstance(r.get("row"), int)]
+    if not items:
+        return {"BT": [], "MT": []}
+    items = sorted(items, key=lambda x: x.get("row", 0))
+    blocks: List[List[dict]] = []
+    current: List[dict] = []
+    prev = None
+    for item in items:
+        row = item.get("row", 0)
+        if prev is not None and row - prev > 1:
+            blocks.append(current)
+            current = []
+        current.append(item)
+        prev = row
+    if current:
+        blocks.append(current)
+    if len(blocks) == 1:
+        return {"BT": blocks[0], "MT": []}
+    return {"BT": blocks[0], "MT": blocks[1]}
+
+
 def load_config(dir_path: Path) -> Tuple[LegendConfig | None, bool]:
     data = _safe_read_json(dir_path / "config.json")
     if not isinstance(data, dict):
@@ -45,13 +75,61 @@ def load_config(dir_path: Path) -> Tuple[LegendConfig | None, bool]:
 def load_equipos(dir_path: Path) -> Tuple[List[EquipoCatalogItem], bool]:
     data = _safe_read_json(dir_path / "equipos.json") or []
     items: List[EquipoCatalogItem] = []
+    seen: set[str] = set()
     if isinstance(data, list):
         for d in data:
             try:
-                items.append(EquipoCatalogItem(str(d.get("equipo", "")), float(d.get("btu_hr_ft", 0.0))))
+                nombre = str(d.get("equipo", "")).strip()
+                if not nombre:
+                    continue
+                key = nombre.upper()
+                if key in seen:
+                    continue
+                seen.add(key)
+                items.append(EquipoCatalogItem(nombre, float(d.get("btu_hr_ft", 0.0))))
             except Exception:
                 continue
-    return items, bool(data)
+    info = _load_analysis_info(dir_path)
+    info_items = info.get("equipos", [])
+    if isinstance(info_items, list):
+        for d in info_items:
+            try:
+                nombre = str(d.get("equipo", "")).strip()
+                if not nombre:
+                    continue
+                key = nombre.upper()
+                if key in seen:
+                    continue
+                seen.add(key)
+                items.append(EquipoCatalogItem(nombre, float(d.get("btu_hr_ft", 0.0))))
+            except Exception:
+                continue
+    return items, bool(items)
+
+
+def load_equipos_split(dir_path: Path) -> Tuple[Dict[str, List[EquipoCatalogItem]], bool]:
+    info = _load_analysis_info(dir_path)
+    info_items = info.get("equipos", [])
+    if not isinstance(info_items, list):
+        return {"BT": [], "MT": []}, False
+    split = _split_equipos_by_row(info_items)
+    out: Dict[str, List[EquipoCatalogItem]] = {"BT": [], "MT": []}
+    for key in ("BT", "MT"):
+        seen: set[str] = set()
+        for d in split.get(key, []):
+            try:
+                nombre = str(d.get("equipo", "")).strip()
+                if not nombre:
+                    continue
+                u = nombre.upper()
+                if u in seen:
+                    continue
+                seen.add(u)
+                out[key].append(EquipoCatalogItem(nombre, float(d.get("btu_hr_ft", 0.0))))
+            except Exception:
+                continue
+    found = bool(out.get("BT")) or bool(out.get("MT"))
+    return out, found
 
 
 def load_usos(dir_path: Path) -> Tuple[Dict[str, List[str]], bool]:
@@ -62,7 +140,22 @@ def load_usos(dir_path: Path) -> Tuple[Dict[str, List[str]], bool]:
             val = data.get(k, [])
             if isinstance(val, list):
                 usos[k] = [str(x) for x in val]
-    return usos, bool(data)
+    info = _load_analysis_info(dir_path)
+    info_usos = info.get("usos", {})
+    if isinstance(info_usos, dict):
+        for k in ("BT", "MT"):
+            val = info_usos.get(k, [])
+            if isinstance(val, list):
+                existing = [str(x) for x in usos.get(k, [])]
+                seen = {e.upper() for e in existing}
+                for x in val:
+                    name = str(x)
+                    if name.upper() in seen:
+                        continue
+                    seen.add(name.upper())
+                    existing.append(name)
+                usos[k] = existing
+    return usos, bool(usos.get("BT")) or bool(usos.get("MT"))
 
 
 def load_variadores(dir_path: Path) -> Tuple[List[VariadorItem], bool]:
