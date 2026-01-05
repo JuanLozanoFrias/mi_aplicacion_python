@@ -59,7 +59,15 @@ class _ScaledPixmapLabel(QLabel):
         super().resizeEvent(event)
         if self._pix is None:
             return
-        scaled = self._pix.scaled(self.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        dpr = self.devicePixelRatioF()
+        target_w = max(1, int(self.width() * dpr))
+        target_h = max(1, int(self.height() * dpr))
+        max_w = self._pix.width()
+        max_h = self._pix.height()
+        target_w = min(target_w, max_w)
+        target_h = min(target_h, max_h)
+        scaled = self._pix.scaled(target_w, target_h, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        scaled.setDevicePixelRatio(dpr)
         self.setPixmap(scaled)
 
 
@@ -147,7 +155,7 @@ class CreditosPage(QWidget):
 
         quote_text = QLabel(
             "DEDICAMOS ESTA PLATAFORMA A NUESTRAS FAMILIAS.\n"
-            "GRACIAS POR SU PACIENCIA, SU APOYO Y SU AMOR MIENTRAS INNOVÁBAMOS.\n"
+            "GRACIAS POR SU PACIENCIA, APOYO Y AMOR MIENTRAS INNOVÁBAMOS.\n"
             "SI ALGUNA VEZ NOS PERDIMOS MOMENTOS BONITOS, ESTE LOGRO TAMBIÉN ES DE USTEDES."
         )
         quote_text.setAlignment(Qt.AlignCenter)

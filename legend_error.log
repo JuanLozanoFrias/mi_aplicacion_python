@@ -1,0 +1,62 @@
+[ADD_RAMALES] START bloque=bt count=3
+[ADD_RAMALES] BT set_items OK
+[ADD_RAMALES] START bloque=bt count=5
+[ADD_RAMALES] BT set_items OK
+[ADD_RAMALES] START bloque=bt count=4
+[ADD_RAMALES] BT set_items OK
+[ADD_RAMALES] START bloque=bt count=2
+[ADD_RAMALES] BT set_items OK
+[ADD_RAMALES] START bloque=bt count=1
+[ADD_RAMALES] BT set_items OK
+[ADD_RAMALES] START bloque=bt count=3
+[ADD_RAMALES] BT set_items OK
+[ADD_RAMALES] START bloque=bt count=1
+[ADD_RAMALES] BT set_items OK
+[ADD_RAMALES] START bloque=bt count=2
+[ADD_RAMALES] BT set_items OK
+[ADD_RAMALES] DONE
+[ADD_RAMALES] START bloque=bt count=2
+[ADD_RAMALES] BT set_items OK
+[ADD_RAMALES] DONE
+[ADD_RAMALES] START bloque=bt count=1
+[ADD_RAMALES] BT add_rows OK
+[ADD_RAMALES] DONE
+[ADD_RAMALES] START bloque=bt count=5
+[ADD_RAMALES] BT add_rows OK
+[ADD_RAMALES] DONE
+[ADD_RAMALES] START bloque=bt count=2
+[ADD_RAMALES] BT add_rows OK
+[ADD_RAMALES] DONE
+[ADD_RAMALES] START bloque=bt count=3
+[ADD_RAMALES] BT add_rows OK
+[ADD_RAMALES] DONE
+[ADD_RAMALES] START bloque=bt count=3
+[ADD_RAMALES] BT add_rows OK
+[ADD_RAMALES] DONE
+[ADD_RAMALES] START bloque=bt count=3
+[ADD_RAMALES] BT add_rows OK
+[ADD_RAMALES] DONE
+[ADD_RAMALES] START bloque=bt count=3
+[ADD_RAMALES] BT add_rows OK
+[ADD_RAMALES] DONE
+[ADD_RAMALES] START bloque=bt count=2
+[ADD_RAMALES] BT add_rows OK
+[ADD_RAMALES] DONE
+[ADD_RAMALES] START bloque=bt count=2
+[ADD_RAMALES] BT add_rows OK
+[ADD_RAMALES] DONE
+[ADD_RAMALES] START bloque=bt count=2
+[ADD_RAMALES] BT add_rows OK
+[ADD_RAMALES] DONE
+[ADD_RAMALES] START bloque=bt count=5
+[ADD_RAMALES] BT add_rows OK
+[ADD_RAMALES] DONE
+[ADD_RAMALES] START bloque=bt count=1
+[ADD_RAMALES] BT add_rows OK
+[ADD_RAMALES] DONE
+[ADD_RAMALES] START bloque=bt count=1
+[ADD_RAMALES] BT add_rows OK
+[ADD_RAMALES] DONE
+[ADD_RAMALES] START bloque=bt count=5
+[ADD_RAMALES] BT add_rows OK
+[ADD_RAMALES] DONE

@@ -1,0 +1,765 @@
+{
+  "file": "LEGEND jd.xlsm",
+  "sheets": [
+    "VALIDACION",
+    "INFO",
+    "CARGAS",
+    "CARNES",
+    "LACTEOS",
+    "FRUTAS",
+    "CC",
+    "HELADO",
+    "EVAPORADORES",
+    "COPELAND",
+    "BITZER",
+    "LEGEND",
+    "COTIZACION",
+    "Precios COMP",
+    "CONTEO"
+  ],
+  "INFO": {
+    "config": {
+      "Proyecto": "asdas",
+      "Ciudad": "bogota",
+      "Vendedor": "juan",
+      "Unidades": "IP:  BTU/Hr - °F",
+      "Tipo Sistema": "Rack",
+      "# Ramales en BT": 4,
+      "# Ramales en MT": 3,
+      "# Compresores BT": 2,
+      "# Compresores MT": 2,
+      "Tevap BT": -22,
+      "Tevap MT": 15,
+      "T condensación": 85,
+      "Refrigerante": "R-507a",
+      "Compresores": "BITZER",
+      "Tipo Instalación": "LOOP",
+      "Tipo deshielo": "DESHIELO POR GAS CALIENTE",
+      "TIPO CONTROL": "TEV",
+      "# LOOPS": 4,
+      "# CONDENSADORES": 1,
+      "factor de Seguridad CF": 1.15,
+      "CARGA MT": 0
+    },
+    "equipos": [
+      {
+        "row": 5,
+        "equipo": "MULTIPUERTA CONGELACIÓN",
+        "btu_hr_ft": 1390.0,
+        "kw_formula": "=G5/3.412"
+      },
+      {
+        "row": 6,
+        "equipo": "ISLA DOBLE  CONGELACIÓN",
+        "btu_hr_ft": 776.0,
+        "kw_formula": "=G6*3.28/3.412"
+      },
+      {
+        "row": 7,
+        "equipo": "ISLA DOBLE CON TAPAS",
+        "btu_hr_ft": 460.0,
+        "kw_formula": "=G7*3.28/3.412"
+      },
+      {
+        "row": 8,
+        "equipo": "GONDOLA CONGELACIÓN",
+        "btu_hr_ft": 700.0,
+        "kw_formula": "=G8*3.28/3.412"
+      },
+      {
+        "row": 9,
+        "equipo": "CONDOLA CON TAPAS",
+        "btu_hr_ft": 420.0,
+        "kw_formula": "=G9*3.28/3.412"
+      },
+      {
+        "row": 10,
+        "equipo": "SIRIUS ARRIBA",
+        "btu_hr_ft": 686.0,
+        "kw_formula": "=G10/3.412"
+      },
+      {
+        "row": 11,
+        "equipo": "SIRIUS ABAJO",
+        "btu_hr_ft": 650.0,
+        "kw_formula": "=G11*3.28/3.412"
+      },
+      {
+        "row": 12,
+        "equipo": "VITRINA ORINOCO",
+        "btu_hr_ft": 550.0,
+        "kw_formula": "=G12*3.28/3.412"
+      },
+      {
+        "row": 13,
+        "equipo": "VITRINA TAYRONA",
+        "btu_hr_ft": 550.0,
+        "kw_formula": "=G13*3.28/3.412"
+      },
+      {
+        "row": 14,
+        "equipo": "VITRINA FENIX",
+        "btu_hr_ft": 550.0,
+        "kw_formula": "=G14*3.28/3.412"
+      },
+      {
+        "row": 15,
+        "equipo": "VITRINA MCR",
+        "btu_hr_ft": 550.0,
+        "kw_formula": "=G15*3.28/3.412"
+      },
+      {
+        "row": 16,
+        "equipo": "VITRINA KOGUI",
+        "btu_hr_ft": 650.0,
+        "kw_formula": "=G16*3.28/3.412"
+      },
+      {
+        "row": 17,
+        "equipo": "VITRINA GRAVITY",
+        "btu_hr_ft": 750.0,
+        "kw_formula": "=G17*3.28/3.412"
+      },
+      {
+        "row": 26,
+        "equipo": "VITRINA ORINOCO",
+        "btu_hr_ft": 550.0,
+        "kw_formula": "=G26*3.28/3.412"
+      },
+      {
+        "row": 27,
+        "equipo": "VITRINA TAYRONA",
+        "btu_hr_ft": 550.0,
+        "kw_formula": "=G27*3.28/3.412"
+      },
+      {
+        "row": 28,
+        "equipo": "VITRINA FENIX",
+        "btu_hr_ft": 550.0,
+        "kw_formula": "=G28*3.28/3.412"
+      },
+      {
+        "row": 29,
+        "equipo": "VITRINA MCR",
+        "btu_hr_ft": 550.0,
+        "kw_formula": "=G29*3.28/3.412"
+      },
+      {
+        "row": 30,
+        "equipo": "VITRINA KOGUI",
+        "btu_hr_ft": 650.0,
+        "kw_formula": "=G30*3.28/3.412"
+      },
+      {
+        "row": 31,
+        "equipo": "VITRINA GRAVITY",
+        "btu_hr_ft": 750.0,
+        "kw_formula": "=G31*3.28/3.412"
+      },
+      {
+        "row": 32,
+        "equipo": "AUTOSERVICIO ATLAS",
+        "btu_hr_ft": 1485.0,
+        "kw_formula": "=G32*3.28/3.412"
+      },
+      {
+        "row": 33,
+        "equipo": "AUTOSERVICIO ARGOS",
+        "btu_hr_ft": 1485.0,
+        "kw_formula": "=G33*3.28/3.412"
+      },
+      {
+        "row": 34,
+        "equipo": "AUTOATLAS CON PUERTAS",
+        "btu_hr_ft": 890.0,
+        "kw_formula": "=G34*3.28/3.412"
+      },
+      {
+        "row": 35,
+        "equipo": "AUTOARGOS CON PUERTAS",
+        "btu_hr_ft": 890.0,
+        "kw_formula": "=G35*3.28/3.412"
+      },
+      {
+        "row": 36,
+        "equipo": "AUTOSERVICIO ORION",
+        "btu_hr_ft": 1150.0,
+        "kw_formula": "=G36*3.28/3.412"
+      },
+      {
+        "row": 37,
+        "equipo": "AUTOSERVICIO ZEUS",
+        "btu_hr_ft": 1150.0,
+        "kw_formula": "=G37*3.28/3.412"
+      },
+      {
+        "row": 38,
+        "equipo": "ISLA LACTEOS",
+        "btu_hr_ft": 1800.0,
+        "kw_formula": "=G38*3.28/3.412"
+      },
+      {
+        "row": 39,
+        "equipo": "MULTIPUERTA CONSERVACIÓN",
+        "btu_hr_ft": 1390.0,
+        "kw_formula": "=G39/3.412"
+      }
+    ],
+    "usos": {
+      "BT": [
+        "CC",
+        "IC",
+        "PESCADO",
+        "POLLO FRIZADO"
+      ],
+      "MT": [
+        "CARNE",
+        "POLLO",
+        "CERDO",
+        "DELI",
+        "C. FRIAS",
+        "LÁCTEOS",
+        "BEBIDAS",
+        "FRUVER",
+        "PREP",
+        "VARIOS",
+        "PANADERIA"
+      ]
+    },
+    "variadores_fc102": [
+      {
+        "modelo": "FC102P1K1T2P55",
+        "potencia": 1.5
+      },
+      {
+        "modelo": "FC102P1K5T2P55",
+        "potencia": 2.0
+      },
+      {
+        "modelo": "FC102P2K2T2P55",
+        "potencia": 3.0
+      },
+      {
+        "modelo": "FC102P3K0T2P55",
+        "potencia": 4.0
+      },
+      {
+        "modelo": "FC102P3K7T2P55",
+        "potencia": 5.0
+      },
+      {
+        "modelo": "FC102P5K5T2P55",
+        "potencia": 7.5
+      },
+      {
+        "modelo": "FC102P7K5T2P55",
+        "potencia": 10.0
+      },
+      {
+        "modelo": "FC102P11KT2P55",
+        "potencia": 15.0
+      },
+      {
+        "modelo": "FC102P15KT2P55",
+        "potencia": 20.0
+      },
+      {
+        "modelo": "FC102P18KT2P55",
+        "potencia": 25.0
+      },
+      {
+        "modelo": "FC102P22KT2P55",
+        "potencia": 30.0
+      },
+      {
+        "modelo": "FC102P30KT2P55",
+        "potencia": 40.0
+      },
+      {
+        "modelo": "FC102P37KT2P55",
+        "potencia": 50.0
+      },
+      {
+        "modelo": "FC102P45KT2P55",
+        "potencia": 60.0
+      }
+    ],
+    "wcr_capacidades": [
+      {
+        "modelo": "WCU-060",
+        "capacidad": 60000.0
+      },
+      {
+        "modelo": "WCU-075",
+        "capacidad": 75000.0
+      },
+      {
+        "modelo": "WCR-090",
+        "capacidad": 90000.0
+      },
+      {
+        "modelo": "WCR-120",
+        "capacidad": 120000.0
+      },
+      {
+        "modelo": "WCR-180",
+        "capacidad": 180000.0
+      },
+      {
+        "modelo": "WCR-230-063",
+        "capacidad": 211000.0
+      },
+      {
+        "modelo": "WCR-270",
+        "capacidad": 240000.0
+      },
+      {
+        "modelo": "WCR-340-063",
+        "capacidad": 250000.0
+      },
+      {
+        "modelo": "WCR-340-080",
+        "capacidad": 360000.0
+      },
+      {
+        "modelo": "WCR-400-080",
+        "capacidad": 440000.0
+      },
+      {
+        "modelo": "WCR-500-080",
+        "capacidad": 500000.0
+      },
+      {
+        "modelo": "WCR-500-091",
+        "capacidad": 550000.0
+      },
+      {
+        "modelo": "WCR-600-091",
+        "capacidad": 620000.0
+      },
+      {
+        "modelo": "WCR-080-2X2",
+        "capacidad": 570000.0
+      },
+      {
+        "modelo": "WCR-090-2X2",
+        "capacidad": 720000.0
+      },
+      {
+        "modelo": "WCR-700-080",
+        "capacidad": 750000.0
+      },
+      {
+        "modelo": "WCR-700-091",
+        "capacidad": 950000.0
+      },
+      {
+        "modelo": "WCU-060 BNR",
+        "capacidad": 45000.0
+      },
+      {
+        "modelo": "WCU-075 BNR",
+        "capacidad": 58000.0
+      },
+      {
+        "modelo": "WCR-090 BNR",
+        "capacidad": 70000.0
+      },
+      {
+        "modelo": "WCR-120 BNR",
+        "capacidad": 95000.0
+      },
+      {
+        "modelo": "WCR-180 BNR",
+        "capacidad": 140000.0
+      },
+      {
+        "modelo": "WCR-230-063 BNR",
+        "capacidad": 180000.0
+      },
+      {
+        "modelo": "WCR-340-063 BNR",
+        "capacidad": 200000.0
+      },
+      {
+        "modelo": "WCR-400-080 BNR",
+        "capacidad": 280000.0
+      },
+      {
+        "modelo": "WCR-500-080 BNR",
+        "capacidad": 340000.0
+      }
+    ],
+    "plantillas_materiales": {
+      "Rack Loop": [
+        {
+          "qty": 1,
+          "descripcion": "Estructura en acero estructural"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Botella recibidora"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Válvula de seguridad"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Válvula reguladora de presión para la linea de liquido"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Indicador de nivel de liquido"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Separador de Aceite coalescente con reservorio"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Filtro de succión de núcleo reemplazable, por compresor"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Filtro general de liquido, de núcleo reemplazable"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Filtro  general en linea de aceite"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Válvulas de servicio por compresor"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Resistencia de carter por compresor"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Control de presión LP/HP por compresor"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Control de aceite electrónico por compresor"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Válvula de bola por cada loop para revisión y mantenimiento"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Manemotros de caratula para succión y descarga"
+        }
+      ],
+      "Minisistema": [
+        {
+          "qty": 1,
+          "descripcion": "Estructura portante en acero estructural"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Válvulas de servicio por compresor"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Resistencia de carter por compresor"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Control de nivel de aceite electrónico, por compresor"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Control de presión LP/HP por compresor"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Botella recibidora liquido"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Válvula de seguridad"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Indicador de nivel de liquido"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Filtro de succión de núcleo reemplazable"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Separador de Aceite coalescente con reservorio"
+        }
+      ],
+      "Rack Americano": [
+        {
+          "qty": 1,
+          "descripcion": "Estructura en acero estructural"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Botella recibidora"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Válvula de seguridad"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Válvula reguladora de presión para la linea de liquido"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Indicador de nivel de liquido"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Separador de Aceite coalescente con reservorio"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Filtro de succión de núcleo reemplazable, por compresor"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Filtro general de liquido, de núcleo reemplazable"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Filtro  general en linea de aceite"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Válvulas de servicio por compresor"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Resistencia de carter por compresor"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Control de presión LP/HP por compresor"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Control de aceite electrónico por compresor"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Válvula CDS en succión por cada ramal"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Válvula de bola por cada ramal"
+        },
+        {
+          "qty": 1,
+          "descripcion": "Manemotros de caratula para succión y descarga"
+        }
+      ]
+    }
+  },
+  "CARGAS_layout": {
+    "sheet": "CARGAS",
+    "header_row": 3,
+    "columns": {
+      "C": "Ramal",
+      "D": "Equipo",
+      "F": "Uso",
+      "G": "Dim_entrada",
+      "K": "Dim_ft (formula: G*3.28)",
+      "L": "BTU/ft",
+      "M": "BTU/hr (formula: K*L)",
+      "N": "Modelo"
+    }
+  },
+  "LEGEND_layout": {
+    "sheet": "LEGEND",
+    "table_header_row": 8,
+    "columns": [
+      "SUCCION",
+      "LOOP",
+      "RAMAL",
+      "DIM (FT)",
+      "EQUIPO",
+      "USO",
+      "CARGA (BTU/Hr)",
+      "Tevap °F",
+      "EVAPORADORES Cant.",
+      "EVAPORADORES Modelo",
+      "CONTROL",
+      "SUCCION",
+      "LIQUIDA",
+      "DIRECCION DE LIQUIDO",
+      "DESHIELO"
+    ]
+  },
+  "EVAPORADORES_layout": {
+    "sheet": "EVAPORADORES",
+    "secciones": [
+      {
+        "nombre": "EVAPORADORES DOBLES",
+        "tevap_row": 4,
+        "model_start_row": 5,
+        "model_col": "B",
+        "tevap_start_col": "C"
+      },
+      {
+        "nombre": "EVAPORADORES FRONTALES",
+        "tevap_row": 10,
+        "model_start_row": 11,
+        "model_col": "B",
+        "tevap_start_col": "C"
+      }
+    ]
+  },
+  "PERFORMANCE_tables": {
+    "COPELAND": {
+      "groups_detected": 2,
+      "groups": [
+        {
+          "group_start_col": "B",
+          "group_end_col": "AL",
+          "num_models": 31,
+          "sample_models": [
+            "2DF3F16KE-TFC",
+            "2DL3F20KE-TFC",
+            "2DA3F23KE-TFC",
+            "2DB3F25KE-TFC",
+            "3DA3F28KE-TFC",
+            "3DADF28KE-TFC",
+            "3DB3F33KE-TFC",
+            "3DBDF33KE-TFC",
+            "3DF3F40KE-TFC",
+            "3DFDF40KE-TFC"
+          ],
+          "num_blocks_vertical": 72,
+          "first_block_row": 5
+        },
+        {
+          "group_start_col": "AM",
+          "group_end_col": "CM",
+          "num_models": 47,
+          "sample_models": [
+            "2DC3R53KE-TFC",
+            "2DD3R63KE-TFC",
+            "2DL3R78KE-TFC",
+            "3DA3R10ME-TFC",
+            "3DADR10ME-TFC",
+            "3DB3R12ME-TFC",
+            "3DBDR12ML-TFC",
+            "3DF3R15ME-TFC",
+            "3DFDR15ME-TFC",
+            "3DS3R17ME-TFC"
+          ],
+          "num_blocks_vertical": 72,
+          "first_block_row": 5
+        }
+      ]
+    },
+    "BITZER": {
+      "groups_detected": 5,
+      "groups": [
+        {
+          "group_start_col": "B",
+          "group_end_col": "AA",
+          "num_models": 20,
+          "sample_models": [
+            "2HES-1",
+            "2FES-2",
+            "2EES-2",
+            "2DES-2",
+            "2CES-3",
+            "4FES-3",
+            "4EES-4",
+            "4DES-5",
+            "4CES-6",
+            "4VES-7"
+          ],
+          "num_blocks_vertical": 72,
+          "first_block_row": 5
+        },
+        {
+          "group_start_col": "AB",
+          "group_end_col": "BA",
+          "num_models": 20,
+          "sample_models": [
+            "2HES-2",
+            "2FES-3",
+            "2EES-3",
+            "2DES-3",
+            "2CES-4",
+            "4FES-5",
+            "4EES-6",
+            "4DES-7",
+            "4CES-9",
+            "4VES-10"
+          ],
+          "num_blocks_vertical": 72,
+          "first_block_row": 5
+        },
+        {
+          "group_start_col": "BB",
+          "group_end_col": "CB",
+          "num_models": 20,
+          "sample_models": [
+            "2HES-1Y",
+            "2FES-2Y",
+            "2EES-2Y",
+            "2DES-2Y",
+            "2CES-3Y",
+            "4FES-3Y",
+            "4EES-4Y",
+            "4DES-5Y",
+            "4CES-6Y",
+            "4VES-6Y"
+          ],
+          "num_blocks_vertical": 32,
+          "first_block_row": 5
+        },
+        {
+          "group_start_col": "CC",
+          "group_end_col": "CY",
+          "num_models": 18,
+          "sample_models": [
+            "2NSL-05K",
+            "2MSL-07K",
+            "2KSL-1K",
+            "2JSL-2K",
+            "2HSL-3K",
+            "2GSL-3K",
+            "2FSL-4K",
+            "2ESL-4K",
+            "2DSL-5K",
+            "2CSL-6K"
+          ],
+          "num_blocks_vertical": 3,
+          "first_block_row": 5
+        },
+        {
+          "group_start_col": "CZ",
+          "group_end_col": "DU",
+          "num_models": 18,
+          "sample_models": [
+            "2NSL-05K",
+            "2MSL-07K",
+            "2KSL-1K",
+            "2JSL-2K",
+            "2HSL-3K",
+            "2GSL-3K",
+            "2FSL-4K",
+            "2ESL-4K",
+            "2DSL-5K",
+            "2CSL-6K"
+          ],
+          "num_blocks_vertical": 3,
+          "first_block_row": 5
+        }
+      ]
+    }
+  }
+}

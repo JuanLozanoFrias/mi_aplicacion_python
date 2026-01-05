@@ -1,0 +1,10 @@
+[
+  {
+    "modelo": "WCU-060",
+    "capacidad": 60000
+  },
+  {
+    "modelo": "WCR-120",
+    "capacidad": 120000
+  }
+]

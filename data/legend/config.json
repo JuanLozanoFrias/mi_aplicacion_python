@@ -1,0 +1,12 @@
+{
+  "proyecto": "Demo",
+  "ciudad": "Bogotá",
+  "tipo_sistema": "Rack",
+  "refrigerante": "R-507A",
+  "tcond": 85,
+  "tevap_bt": -22,
+  "tevap_mt": 15,
+  "marca_compresores": "BITZER",
+  "tipo_instalacion": "LOOP",
+  "factor_seguridad": 1.15
+}

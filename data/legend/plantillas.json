@@ -1,0 +1,28 @@
+{
+  "Rack Loop": [
+    {
+      "qty": 1,
+      "descripcion": "Válvula de servicio 1-1/8\""
+    },
+    {
+      "qty": 2,
+      "descripcion": "Filtro secador 1-1/8\""
+    }
+  ],
+  "Minisistema": [
+    {
+      "qty": 1,
+      "descripcion": "Manómetro baja"
+    },
+    {
+      "qty": 1,
+      "descripcion": "Manómetro alta"
+    }
+  ],
+  "Rack Americano": [
+    {
+      "qty": 1,
+      "descripcion": "Válvula check 1-3/8\""
+    }
+  ]
+}

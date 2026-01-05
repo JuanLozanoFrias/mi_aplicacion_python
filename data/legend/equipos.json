@@ -1,0 +1,14 @@
+[
+  {
+    "equipo": "ISLA DOBLE CONGELACION 776",
+    "btu_hr_ft": 1200
+  },
+  {
+    "equipo": "GONDOLA CONGELACION 700",
+    "btu_hr_ft": 1100
+  },
+  {
+    "equipo": "CUARTO FRIO CONGELACION",
+    "btu_hr_ft": 1500
+  }
+]

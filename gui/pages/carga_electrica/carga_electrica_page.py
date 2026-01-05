@@ -9,6 +9,7 @@ from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 from typing import List, Dict, Iterable, Tuple
 import math
+import pandas as pd
 
 from PySide6.QtCore import Qt, QTimer, QRect, QEvent
 from PySide6.QtWidgets import (
