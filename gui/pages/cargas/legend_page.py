@@ -5,7 +5,7 @@ from typing import Any, Callable, Dict, List
 import traceback
 
 from PySide6.QtCore import Qt, QAbstractTableModel, QModelIndex
-from PySide6.QtGui import QGuiApplication
+from PySide6.QtGui import QGuiApplication, QKeySequence, QShortcut
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -24,6 +24,8 @@ from PySide6.QtWidgets import (
     QSpinBox,
     QInputDialog,
     QScrollArea,
+    QHeaderView,
+    QMenu,
 )
 
 try:
@@ -219,63 +221,60 @@ class LegendPage(QWidget):
         self.bt_view.setModel(self.bt_model)
         self.bt_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.bt_view.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.bt_view.setFocusPolicy(Qt.StrongFocus)
         self.bt_view.horizontalHeader().setStretchLastSection(True)
+        self.bt_view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.bt_view.verticalHeader().setVisible(False)
+        self.bt_view.verticalHeader().setDefaultSectionSize(24)
+        self.bt_view.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
+        self.bt_view.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.bt_view.customContextMenuRequested.connect(
+            lambda pos, v=self.bt_view, m=self.bt_model: self._show_table_menu(v, m, "bt", pos)
+        )
         self.bt_model.modelReset.connect(self._recalc_totals)
         self.bt_model.dataChanged.connect(self._mark_dirty_and_totals)
         self.bt_model.rowsInserted.connect(self._mark_dirty_and_totals)
         self.bt_model.rowsRemoved.connect(self._mark_dirty_and_totals)
-        self.bt_view.setItemDelegateForColumn(PROJ_COLUMNS.index("equipo"), ComboDelegate(lambda: self._equipos_catalog))
-        self.bt_view.setItemDelegateForColumn(PROJ_COLUMNS.index("uso"), ComboDelegate(lambda: self._usos_bt))
-        self.bt_view.setItemDelegateForColumn(PROJ_COLUMNS.index("deshielo"), ComboDelegate(lambda: ["", "DESHIELO ELECTRICO", "DESHIELO POR TIEMPO"], editable=False))
         self.bt_view.keyPressEvent = lambda event, v=self.bt_view: self._table_key_press(event, self.bt_model, v)
+        self._install_shortcuts(self.bt_view, self.bt_model)
 
         self.mt_view = QTableView()
         self.mt_view.setModel(self.mt_model)
         self.mt_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.mt_view.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.mt_view.setFocusPolicy(Qt.StrongFocus)
         self.mt_view.horizontalHeader().setStretchLastSection(True)
+        self.mt_view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.mt_view.verticalHeader().setVisible(False)
+        self.mt_view.verticalHeader().setDefaultSectionSize(24)
+        self.mt_view.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
+        self.mt_view.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.mt_view.customContextMenuRequested.connect(
+            lambda pos, v=self.mt_view, m=self.mt_model: self._show_table_menu(v, m, "mt", pos)
+        )
         self.mt_model.modelReset.connect(self._recalc_totals)
         self.mt_model.dataChanged.connect(self._mark_dirty_and_totals)
         self.mt_model.rowsInserted.connect(self._mark_dirty_and_totals)
         self.mt_model.rowsRemoved.connect(self._mark_dirty_and_totals)
-        self.mt_view.setItemDelegateForColumn(PROJ_COLUMNS.index("equipo"), ComboDelegate(lambda: self._equipos_catalog))
-        self.mt_view.setItemDelegateForColumn(PROJ_COLUMNS.index("uso"), ComboDelegate(lambda: self._usos_mt))
-        self.mt_view.setItemDelegateForColumn(PROJ_COLUMNS.index("deshielo"), ComboDelegate(lambda: ["", "DESHIELO ELECTRICO", "DESHIELO POR TIEMPO"], editable=False))
         self.mt_view.keyPressEvent = lambda event, v=self.mt_view: self._table_key_press(event, self.mt_model, v)
+        self._install_shortcuts(self.mt_view, self.mt_model)
         # Ramales y tablas BT
         self.spin_bt = QSpinBox()
         self.spin_bt.setRange(1, 20)
-        self.spin_bt.setEnabled(False)
-        self.spin_bt_add = QSpinBox()
-        self.spin_bt_add.setRange(1, 20)
-        self.spin_bt_add.setValue(1)
-        self.btn_add_ramales_bt = QPushButton("AGREGAR")
-        self.btn_add_ramales_bt.clicked.connect(self._add_ramales_bt_bulk)
+        self.spin_bt.setEnabled(True)
+        self.btn_apply_bt = QPushButton("APLICAR")
+        self.btn_apply_bt.clicked.connect(lambda: self._on_bt_ramales_changed(self.spin_bt.value()))
 
         proj_outer.addWidget(QLabel("BAJA (BT)"))
         ram_bt_layout = QHBoxLayout()
         ram_bt_layout.addWidget(QLabel("RAMALES BT:"))
         ram_bt_layout.addWidget(self.spin_bt)
+        ram_bt_layout.addWidget(self.btn_apply_bt)
         ram_bt_layout.addSpacing(12)
-        ram_bt_layout.addWidget(QLabel("AGREGAR:"))
-        ram_bt_layout.addWidget(self.spin_bt_add)
-        ram_bt_layout.addWidget(self.btn_add_ramales_bt)
         ram_bt_layout.addStretch(1)
         proj_outer.addLayout(ram_bt_layout)
 
-        btn_bt_row = QHBoxLayout()
-        btn_add_bt = QPushButton("AGREGAR FILA")
-        btn_del_bt = QPushButton("ELIMINAR FILA")
-        btn_dup_bt = QPushButton("DUPLICAR FILA")
-        btn_add_bt.clicked.connect(lambda: self._add_row(self.bt_model, self.bt_view))
-        btn_del_bt.clicked.connect(lambda: self._del_row(self.bt_view, self.bt_model))
-        btn_dup_bt.clicked.connect(lambda: self._dup_row(self.bt_view, self.bt_model))
-        for b in (btn_add_bt, btn_del_bt, btn_dup_bt):
-            btn_bt_row.addWidget(b)
-        btn_bt_row.addStretch(1)
-        proj_outer.addLayout(btn_bt_row)
+        # BT fila controls removed per request
         proj_outer.addWidget(self.bt_view)
         self.lbl_total_bt = QLabel("TOTAL BT: 0.0")
         proj_outer.addWidget(self.lbl_total_bt)
@@ -283,34 +282,19 @@ class LegendPage(QWidget):
         # Ramales y tablas MT
         self.spin_mt = QSpinBox()
         self.spin_mt.setRange(1, 20)
-        self.spin_mt.setEnabled(False)
-        btn_ramal_mt_add = QPushButton("+ RAMAL")
-        btn_ramal_mt_sub = QPushButton("- RAMAL")
-        btn_ramal_mt_add.clicked.connect(lambda: self._add_ramal("mt"))
-        btn_ramal_mt_sub.clicked.connect(lambda: self._del_ramal("mt"))
+        self.spin_mt.setEnabled(True)
+        self.btn_apply_mt = QPushButton("APLICAR")
+        self.btn_apply_mt.clicked.connect(lambda: self._on_mt_ramales_changed(self.spin_mt.value()))
 
         proj_outer.addWidget(QLabel("MEDIA (MT)"))
         ram_mt_layout = QHBoxLayout()
         ram_mt_layout.addWidget(QLabel("RAMALES MT:"))
         ram_mt_layout.addWidget(self.spin_mt)
-        ram_mt_layout.addWidget(btn_ramal_mt_add)
-        ram_mt_layout.addWidget(btn_ramal_mt_sub)
+        ram_mt_layout.addWidget(self.btn_apply_mt)
+        ram_mt_layout.addSpacing(12)
         ram_mt_layout.addStretch(1)
         proj_outer.addLayout(ram_mt_layout)
 
-        btn_mt_row = QHBoxLayout()
-        btn_add_mt = QPushButton("AGREGAR FILA")
-        btn_del_mt = QPushButton("ELIMINAR FILA")
-        btn_dup_mt = QPushButton("DUPLICAR FILA")
-        btn_dup_ramal_mt = QPushButton("DUPLICAR RAMAL...")
-        btn_add_mt.clicked.connect(lambda: self._add_row(self.mt_model, self.mt_view))
-        btn_del_mt.clicked.connect(lambda: self._del_row(self.mt_view, self.mt_model))
-        btn_dup_mt.clicked.connect(lambda: self._dup_row(self.mt_view, self.mt_model))
-        btn_dup_ramal_mt.clicked.connect(lambda: self._duplicate_ramal_dialog("mt"))
-        for b in (btn_add_mt, btn_del_mt, btn_dup_mt, btn_dup_ramal_mt):
-            btn_mt_row.addWidget(b)
-        btn_mt_row.addStretch(1)
-        proj_outer.addLayout(btn_mt_row)
         proj_outer.addWidget(self.mt_view)
         self.lbl_total_mt = QLabel("TOTAL MT: 0.0")
         proj_outer.addWidget(self.lbl_total_mt)
@@ -451,7 +435,6 @@ class LegendPage(QWidget):
         self.spin_mt.setEnabled(True)
         self.spin_bt.blockSignals(False)
         self.spin_mt.blockSignals(False)
-        self._update_bt_add_controls()
         self.bt_model.set_items(bt_items)
         self.mt_model.set_items(mt_items)
         self._fit_table_to_contents_view(self.bt_view)
@@ -461,7 +444,11 @@ class LegendPage(QWidget):
     def _add_row(self, model, view: QTableView) -> None:
         model.add_row({})
         self._fit_table_to_contents_view(view)
-        self._set_dirty(True)
+        bloque = self._block_for_model(model)
+        if bloque:
+            self._renumber_ramales(bloque)
+        else:
+            self._set_dirty(True)
 
     def _del_row(self, view: QTableView, model) -> None:
         sel = view.selectionModel().selectedRows()
@@ -481,22 +468,186 @@ class LegendPage(QWidget):
         self._fit_table_to_contents_view(view)
         self._set_dirty(True)
 
+    def _show_table_menu(self, view: QTableView, model: "LegendItemsTableModel", bloque: str, pos) -> None:
+        index = view.indexAt(pos)
+        if index.isValid():
+            if not view.selectionModel().isRowSelected(index.row(), QModelIndex()):
+                view.selectRow(index.row())
+        menu = QMenu(view)
+        act_add = menu.addAction("AGREGAR FILA")
+        act_del = menu.addAction("ELIMINAR FILA")
+        menu.addSeparator()
+        act_copy = menu.addAction("COPIAR")
+        act_paste = menu.addAction("PEGAR")
+        action = menu.exec(view.mapToGlobal(pos))
+        if action == act_add:
+            self._add_row_after(view, model, bloque)
+            self._renumber_ramales(bloque)
+        elif action == act_del:
+            self._delete_selected_rows(view, model, bloque)
+            self._renumber_ramales(bloque)
+        elif action == act_copy:
+            self._copy_selection(model, view)
+        elif action == act_paste:
+            self._paste_selection_at(model, view)
+            self._renumber_ramales(bloque)
+
+    def _install_shortcuts(self, view: QTableView, model: "LegendItemsTableModel") -> None:
+        if not hasattr(self, "_shortcuts"):
+            self._shortcuts = []
+        sc_copy = QShortcut(QKeySequence.Copy, view)
+        sc_copy.setContext(Qt.WidgetWithChildrenShortcut)
+        sc_copy.activated.connect(lambda m=model, v=view: self._copy_selection(m, v))
+        self._shortcuts.append(sc_copy)
+        sc_paste = QShortcut(QKeySequence.Paste, view)
+        sc_paste.setContext(Qt.WidgetWithChildrenShortcut)
+        sc_paste.activated.connect(lambda m=model, v=view: self._paste_selection(m, v))
+        self._shortcuts.append(sc_paste)
+        sc_dup = QShortcut(QKeySequence(Qt.CTRL | Qt.Key_D), view)
+        sc_dup.setContext(Qt.WidgetWithChildrenShortcut)
+        sc_dup.activated.connect(lambda m=model, v=view: self._dup_selection(m, v))
+        self._shortcuts.append(sc_dup)
+
+    def _add_row_after(self, view: QTableView, model: "LegendItemsTableModel", bloque: str) -> None:
+        sel = view.selectionModel().selectedRows()
+        insert_at = model.rowCount()
+        ramal_val = 1
+        if sel:
+            row_idx = sel[0].row()
+            insert_at = row_idx + 1
+            try:
+                ramal_val = self._to_int(model.items[row_idx].get("ramal", 1))
+            except Exception:
+                ramal_val = 1
+        row = self._default_row(bloque)
+        row["ramal"] = ramal_val
+        model.insert_rows_at(insert_at, [row])
+        self._fit_table_to_contents_view(view)
+        self._set_dirty(True)
+
+    def _delete_selected_rows(self, view: QTableView, model: "LegendItemsTableModel", bloque: str) -> None:
+        sel = view.selectionModel().selectedRows()
+        if not sel:
+            QMessageBox.information(self, "LEGEND", "SELECCIONA UNA FILA PRIMERO.")
+            return
+        rows = sorted((i.row() for i in sel), reverse=True)
+        for r in rows:
+            model.del_row(r)
+        self._fit_table_to_contents_view(view)
+        self._set_dirty(True)
+
+    def _paste_selection_at(self, model: "LegendItemsTableModel", view: QTableView) -> None:
+        text = QGuiApplication.clipboard().text()
+        if not text:
+            return
+        sel = view.selectionModel().selectedRows()
+        insert_at = sel[0].row() if sel else model.rowCount()
+        rows: List[dict] = []
+        for line in text.splitlines():
+            parts = line.split("\t")
+            row = model.default_row.copy()
+            for idx, key in enumerate(model.headers):
+                if idx < len(parts):
+                    row[key] = parts[idx]
+            rows.append(row)
+        model.insert_rows_at(insert_at, rows)
+        self._fit_table_to_contents_view(view)
+        bloque = self._block_for_model(model)
+        if bloque:
+            self._renumber_ramales(bloque)
+        else:
+            self._set_dirty(True)
+
+    def _selected_row_indices(self, view: QTableView) -> List[int]:
+        rows = sorted({i.row() for i in view.selectionModel().selectedRows()})
+        if rows:
+            return rows
+        rows = sorted({i.row() for i in view.selectionModel().selectedIndexes()})
+        if rows:
+            return rows
+        current = view.currentIndex()
+        if current.isValid():
+            return [current.row()]
+        return []
+
+    def _renumber_ramales(self, bloque: str) -> None:
+        model = self.bt_model if bloque == "bt" else self.mt_model
+        view = self.bt_view if bloque == "bt" else self.mt_view
+        key_items = "bt_items" if bloque == "bt" else "mt_items"
+        key_ramales = "bt_ramales" if bloque == "bt" else "mt_ramales"
+        items = model.items
+        row_count = model.rowCount()
+        for idx, row in enumerate(items):
+            if isinstance(row, dict):
+                row["ramal"] = idx + 1
+        if row_count > 0:
+            col = PROJ_COLUMNS.index("ramal")
+            top = model.index(0, col)
+            bottom = model.index(row_count - 1, col)
+            model.dataChanged.emit(top, bottom, [Qt.DisplayRole, Qt.EditRole])
+        self.project_data[key_items] = model.items
+        self.project_data[key_ramales] = max(row_count, 1)
+        if bloque == "bt":
+            self.spin_bt.blockSignals(True)
+            self.spin_bt.setValue(self.project_data[key_ramales])
+            self.spin_bt.blockSignals(False)
+        else:
+            self.spin_mt.blockSignals(True)
+            self.spin_mt.setValue(self.project_data[key_ramales])
+            self.spin_mt.blockSignals(False)
+        self._fit_table_to_contents_view(view)
+        self._set_dirty(True)
+
     def _fit_table_to_contents_view(self, view: QTableView) -> None:
-        view.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        view.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        if not hasattr(view, "_legend_fixed_height"):
-            view.setMinimumHeight(260)
-            view.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
-            setattr(view, "_legend_fixed_height", True)
+        model = view.model()
+        row_count = model.rowCount() if model else 0
+        header_h = view.horizontalHeader().height()
+        row_h = view.verticalHeader().defaultSectionSize()
+        h = header_h + (row_h * max(row_count, 1)) + view.frameWidth() * 2 + 6
+        header = view.horizontalHeader()
+        header.setSectionResizeMode(QHeaderView.Stretch)
+        view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        view.setMinimumHeight(h)
+        view.setMaximumHeight(h)
+        view.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        view.setAlternatingRowColors(True)
+
+    def _refresh_table_view(self, view: QTableView) -> None:
+        try:
+            view.doItemsLayout()
+            view.viewport().update()
+        except Exception:
+            pass
+
+    def _notify_model_changed(self, model: "LegendItemsTableModel") -> None:
+        try:
+            model.layoutChanged.emit()
+            if model.rowCount() > 0:
+                top = model.index(0, 0)
+                bottom = model.index(model.rowCount() - 1, model.columnCount() - 1)
+                model.dataChanged.emit(top, bottom, [Qt.DisplayRole, Qt.EditRole])
+        except Exception:
+            pass
 
     def _schedule_after_insert(self, view: QTableView) -> None:
         def _apply() -> None:
             try:
-                view.reset()
+                model = view.model()
+                if model:
+                    try:
+                        model.beginResetModel()
+                        model.endResetModel()
+                    except Exception:
+                        pass
             except Exception:
                 pass
             try:
                 view.viewport().update()
+            except Exception:
+                pass
+            try:
+                view.resizeRowsToContents()
             except Exception:
                 pass
             try:
@@ -531,6 +682,13 @@ class LegendPage(QWidget):
         except Exception:
             return default
 
+    def _block_for_model(self, model: "LegendItemsTableModel") -> str:
+        if model is self.bt_model:
+            return "bt"
+        if model is self.mt_model:
+            return "mt"
+        return ""
+
     def _default_row(self, bloque: str) -> dict:
         return dict(self.bt_model.default_row if bloque == "bt" else self.mt_model.default_row)
 
@@ -542,31 +700,45 @@ class LegendPage(QWidget):
         except Exception:
             pass
 
-    def _update_bt_add_controls(self) -> None:
-        if not hasattr(self, "spin_bt_add"):
+    def _on_bt_ramales_changed(self, value: int) -> None:
+        if not isinstance(self.project_data, dict):
             return
         current = self._to_int(self.project_data.get("bt_ramales", 1))
-        remaining = max(0, 20 - current)
-        if remaining <= 0:
-            self.spin_bt_add.setEnabled(False)
-            self.btn_add_ramales_bt.setEnabled(False)
-            self.spin_bt_add.setMaximum(1)
-            self.spin_bt_add.setValue(1)
+        if value == current:
+            if self.bt_model.rowCount() == 0 and value >= 1:
+                row = self._default_row("bt")
+                row["ramal"] = 1
+                self._suspend_updates = True
+                self.bt_model.add_rows([row])
+                self._suspend_updates = False
+                self.project_data["bt_items"] = self.bt_model.items
+                self._fit_table_to_contents_view(self.bt_view)
+                self._set_dirty(True)
             return
-        self.spin_bt_add.setEnabled(True)
-        self.btn_add_ramales_bt.setEnabled(True)
-        self.spin_bt_add.setMaximum(remaining)
-        if self.spin_bt_add.value() > remaining:
-            self.spin_bt_add.setValue(remaining)
+        if value > current:
+            self._add_ramales_bulk("bt", value - current)
+        else:
+            self._trim_ramales_to("bt", value)
 
-    def _add_ramales_bt_bulk(self) -> None:
-        try:
-            count = self.spin_bt_add.value() if hasattr(self, "spin_bt_add") else 1
-            self._add_ramales_bulk("bt", count)
-        except Exception:
-            msg = traceback.format_exc()
-            self._write_error_log(msg)
-            QMessageBox.critical(self, "LEGEND", f"ERROR AL AGREGAR RAMALES:\n{msg}")
+    def _on_mt_ramales_changed(self, value: int) -> None:
+        if not isinstance(self.project_data, dict):
+            return
+        current = self._to_int(self.project_data.get("mt_ramales", 1))
+        if value == current:
+            if self.mt_model.rowCount() == 0 and value >= 1:
+                row = self._default_row("mt")
+                row["ramal"] = 1
+                self._suspend_updates = True
+                self.mt_model.add_rows([row])
+                self._suspend_updates = False
+                self.project_data["mt_items"] = self.mt_model.items
+                self._fit_table_to_contents_view(self.mt_view)
+                self._set_dirty(True)
+            return
+        if value > current:
+            self._add_ramales_bulk("mt", value - current)
+        else:
+            self._trim_ramales_to("mt", value)
 
     def _add_ramales_bulk(self, bloque: str, count: int) -> None:
         try:
@@ -608,21 +780,16 @@ class LegendPage(QWidget):
                 new_rows_all.extend(new_rows)
                 temp_items.extend(new_rows)
                 n += 1
-            view.setUpdatesEnabled(False)
-            model.blockSignals(True)
             self._suspend_updates = True
             model.add_rows(new_rows_all)
             self._suspend_updates = False
-            model.blockSignals(False)
-            view.setUpdatesEnabled(True)
-            self._schedule_after_insert(view)
+            self._write_error_log(f"[ADD_RAMALES] rows={model.rowCount()} items={len(model.items)}")
             self.project_data[key_items] = model.items
             self.project_data[key_ramales] = n
             if bloque == "bt":
                 self.spin_bt.setValue(n)
                 self._write_error_log("[ADD_RAMALES] BT add_rows OK")
                 self._fit_table_to_contents_view(self.bt_view)
-                self._update_bt_add_controls()
             else:
                 self.spin_mt.setValue(n)
                 self._write_error_log("[ADD_RAMALES] MT add_rows OK")
@@ -659,14 +826,10 @@ class LegendPage(QWidget):
                 nr["evap_qty"] = 0
                 nr["evap_modelo"] = ""
                 new_rows.append(nr)
-        view.setUpdatesEnabled(False)
-        model.blockSignals(True)
         self._suspend_updates = True
         model.add_rows(new_rows)
         self._suspend_updates = False
-        model.blockSignals(False)
-        view.setUpdatesEnabled(True)
-        self._schedule_after_insert(view)
+        self._write_error_log(f"[ADD_RAMALES] rows={model.rowCount()} items={len(model.items)}")
         self.project_data[key_items] = model.items
         self.project_data[key_ramales] = n2
         if bloque == "bt":
@@ -723,6 +886,38 @@ class LegendPage(QWidget):
             self._fit_table_to_contents_view(self.mt_view)
         self._set_dirty(True)
 
+    def _trim_ramales_to(self, bloque: str, target: int) -> None:
+        if not isinstance(self.project_data, dict):
+            return
+        key_items = "bt_items" if bloque == "bt" else "mt_items"
+        key_ramales = "bt_ramales" if bloque == "bt" else "mt_ramales"
+        model = self.bt_model if bloque == "bt" else self.mt_model
+        view = self.bt_view if bloque == "bt" else self.mt_view
+        items = [r for r in model.items if isinstance(r, dict)]
+        target = max(1, min(20, self._to_int(target)))
+        if items:
+            new_items = items[:target]
+        else:
+            new_items = []
+        if not new_items and target >= 1:
+            row = self._default_row(bloque)
+            row["ramal"] = 1
+            new_items = [row]
+        model.set_items(new_items)
+        self.project_data[key_items] = model.items
+        self.project_data[key_ramales] = target
+        if bloque == "bt":
+            self.spin_bt.blockSignals(True)
+            self.spin_bt.setValue(target)
+            self.spin_bt.blockSignals(False)
+            self._fit_table_to_contents_view(self.bt_view)
+        else:
+            self.spin_mt.blockSignals(True)
+            self.spin_mt.setValue(target)
+            self.spin_mt.blockSignals(False)
+            self._fit_table_to_contents_view(self.mt_view)
+        self._renumber_ramales(bloque)
+
     def _recalc_totals(self) -> None:
         def _sum(model: "LegendItemsTableModel") -> float:
             total = 0.0
@@ -741,19 +936,18 @@ class LegendPage(QWidget):
         self.lbl_total_general.setText(f"TOTAL GENERAL: {fmt(self.total_bt + self.total_mt)}")
 
     def _table_key_press(self, event, model: "LegendItemsTableModel", view: QTableView) -> None:
-        if event.matches(event.StandardKey.Copy):
+        if event.matches(QKeySequence.StandardKey.Copy):
             self._copy_selection(model, view)
+            event.accept()
             return
-        if event.matches(event.StandardKey.Paste):
+        if event.matches(QKeySequence.StandardKey.Paste):
             self._paste_selection(model, view)
-            return
-        if event.matches(event.StandardKey.Duplicate):
-            self._dup_selection(model, view)
+            event.accept()
             return
         QTableView.keyPressEvent(view, event)
 
     def _copy_selection(self, model: "LegendItemsTableModel", view: QTableView) -> None:
-        rows = sorted({i.row() for i in view.selectionModel().selectedRows()})
+        rows = self._selected_row_indices(view)
         if not rows:
             return
         lines = []
@@ -764,27 +958,20 @@ class LegendPage(QWidget):
         QGuiApplication.clipboard().setText("\n".join(lines))
 
     def _paste_selection(self, model: "LegendItemsTableModel", view: QTableView) -> None:
-        text = QGuiApplication.clipboard().text()
-        if not text:
-            return
-        for line in text.splitlines():
-            parts = line.split("\t")
-            row = model.default_row.copy()
-            for idx, key in enumerate(model.headers):
-                if idx < len(parts):
-                    row[key] = parts[idx]
-            model.add_row(row)
-        self._fit_table_to_contents_view(view)
-        self._set_dirty(True)
+        self._paste_selection_at(model, view)
 
     def _dup_selection(self, model: "LegendItemsTableModel", view: QTableView) -> None:
-        rows = sorted({i.row() for i in view.selectionModel().selectedRows()})
+        rows = self._selected_row_indices(view)
         if not rows:
             return
         for r in rows:
             model.dup_row(r)
         self._fit_table_to_contents_view(view)
-        self._set_dirty(True)
+        bloque = self._block_for_model(model)
+        if bloque:
+            self._renumber_ramales(bloque)
+        else:
+            self._set_dirty(True)
 
     def _duplicate_ramal_dialog(self, bloque: str) -> None:
         key_ramales = "bt_ramales" if bloque == "bt" else "mt_ramales"
@@ -980,13 +1167,25 @@ class LegendItemsTableModel(QAbstractTableModel):
                 row = norm
             self.items.append(row)
         self.endInsertRows()
-        try:
-            top = self.index(start, 0)
-            bottom = self.index(end, self.columnCount() - 1)
-            self.dataChanged.emit(top, bottom, [Qt.DisplayRole, Qt.EditRole])
-            self.layoutChanged.emit()
-        except Exception:
-            pass
+
+    def insert_rows_at(self, index: int, rows: List[dict]) -> None:
+        if not rows:
+            return
+        index = max(0, min(index, len(self.items)))
+        start = index
+        end = start + len(rows) - 1
+        self.beginInsertRows(QModelIndex(), start, end)
+        insert_list: List[dict] = []
+        for row in rows:
+            if not row:
+                row = dict(self.default_row)
+            else:
+                norm = dict(self.default_row)
+                norm.update(row)
+                row = norm
+            insert_list.append(row)
+        self.items[index:index] = insert_list
+        self.endInsertRows()
 
     def del_row(self, idx: int) -> None:
         if 0 <= idx < len(self.items):
