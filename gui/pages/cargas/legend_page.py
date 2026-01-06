@@ -5,7 +5,7 @@ from typing import Any, Callable, Dict, List
 import traceback
 
 from PySide6.QtCore import Qt, QAbstractTableModel, QModelIndex, QTimer
-from PySide6.QtGui import QGuiApplication, QKeySequence, QShortcut, QIntValidator
+from PySide6.QtGui import QGuiApplication, QKeySequence, QShortcut, QIntValidator, QColor
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -26,14 +26,19 @@ from PySide6.QtWidgets import (
     QScrollArea,
     QHeaderView,
     QMenu,
+    QDialog,
+    QTableWidget,
+    QTableWidgetItem,
 )
 
 try:
     from logic.legend_jd import LegendJDService
     from logic.legend_jd.project_service import LegendProjectService
+    from logic.legend_jd.legend_exporter import build_legend_workbook
 except Exception as exc:  # pragma: no cover
     LegendJDService = None  # type: ignore
     LegendProjectService = None  # type: ignore
+    build_legend_workbook = None  # type: ignore
     _IMPORT_ERROR = exc
 else:
     _IMPORT_ERROR = None
@@ -60,6 +65,94 @@ PROJ_COLUMNS = [
     "evap_qty",
     "familia",
 ]
+
+
+class LegendPreviewDialog(QDialog):
+    def __init__(self, wb, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("VISTA PREVIA LEGEND")
+        self.resize(1100, 700)
+        layout = QVBoxLayout(self)
+        self.table = QTableWidget()
+        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table.setSelectionMode(QAbstractItemView.NoSelection)
+        self.table.setShowGrid(True)
+        layout.addWidget(self.table, 1)
+
+        ws = wb.active
+        try:
+            from openpyxl.utils import range_boundaries, get_column_letter
+        except Exception:
+            return
+        dim = ws.calculate_dimension()
+        min_col, min_row, max_col, max_row = range_boundaries(dim)
+        rows = max_row - min_row + 1
+        cols = max_col - min_col + 1
+        self.table.setRowCount(rows)
+        self.table.setColumnCount(cols)
+
+        # tamaños de columnas/filas
+        for c in range(min_col, max_col + 1):
+            letter = get_column_letter(c)
+            width = ws.column_dimensions[letter].width
+            if width:
+                self.table.setColumnWidth(c - min_col, int(width * 7 + 12))
+        for r in range(min_row, max_row + 1):
+            height = ws.row_dimensions[r].height
+            if height:
+                self.table.setRowHeight(r - min_row, int(height * 1.33))
+
+        # merges
+        for merge in ws.merged_cells.ranges:
+            if merge.min_row < min_row or merge.max_row > max_row:
+                continue
+            r = merge.min_row - min_row
+            c = merge.min_col - min_col
+            self.table.setSpan(r, c, merge.max_row - merge.min_row + 1, merge.max_col - merge.min_col + 1)
+
+        # celdas
+        for r in range(min_row, max_row + 1):
+            for c in range(min_col, max_col + 1):
+                cell = ws.cell(r, c)
+                text = "" if cell.value is None else str(cell.value)
+                item = QTableWidgetItem(text)
+
+                # fuente
+                if cell.font:
+                    f = item.font()
+                    f.setBold(bool(cell.font.bold))
+                    f.setItalic(bool(cell.font.italic))
+                    if cell.font.sz:
+                        try:
+                            f.setPointSize(int(cell.font.sz))
+                        except Exception:
+                            pass
+                    item.setFont(f)
+                    if cell.font.color and cell.font.color.type == "rgb":
+                        try:
+                            item.setForeground(QColor(f"#{cell.font.color.rgb[-6:]}"))
+                        except Exception:
+                            pass
+
+                # fondo
+                if cell.fill and cell.fill.patternType == "solid" and cell.fill.fgColor and cell.fill.fgColor.type == "rgb":
+                    try:
+                        item.setBackground(QColor(f"#{cell.fill.fgColor.rgb[-6:]}"))
+                    except Exception:
+                        pass
+
+                # alineación
+                align = cell.alignment
+                if align and align.horizontal:
+                    h = align.horizontal
+                    if h == "center":
+                        item.setTextAlignment(Qt.AlignCenter)
+                    elif h == "right":
+                        item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+                    else:
+                        item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+
+                self.table.setItem(r - min_row, c - min_col, item)
 
 
 class LegendPage(QWidget):
@@ -105,7 +198,11 @@ class LegendPage(QWidget):
         self.btn_open_proj = QPushButton("ABRIR PROYECTO...")
         self.btn_new_proj = QPushButton("NUEVO PROYECTO")
         self.btn_save_proj = QPushButton("GUARDAR")
+        self.btn_preview = QPushButton("VISUALIZAR LEGEND")
+        self.btn_export = QPushButton("EXPORTAR LEGEND")
         self.btn_save_proj.setEnabled(False)
+        self.btn_preview.setEnabled(False)
+        self.btn_export.setEnabled(False)
         self.lbl_proj_folder = QLabel("CARPETA: --")
         self.lbl_proj_folder.setToolTip("")
         self.lbl_total_general = QLabel("TOTAL GENERAL: 0.0")
@@ -113,6 +210,8 @@ class LegendPage(QWidget):
         proj_hdr.addWidget(self.btn_open_proj)
         proj_hdr.addWidget(self.btn_new_proj)
         proj_hdr.addWidget(self.btn_save_proj)
+        proj_hdr.addWidget(self.btn_preview)
+        proj_hdr.addWidget(self.btn_export)
         proj_hdr.addWidget(self.lbl_proj_folder, 1)
         proj_hdr.addWidget(self.lbl_total_general)
         proj_outer.addLayout(proj_hdr)
@@ -246,6 +345,8 @@ class LegendPage(QWidget):
         self.btn_open_proj.clicked.connect(self._on_open_project)
         self.btn_new_proj.clicked.connect(self._on_new_project)
         self.btn_save_proj.clicked.connect(self._on_save_project)
+        self.btn_preview.clicked.connect(self._on_preview_legend)
+        self.btn_export.clicked.connect(self._on_export_legend)
 
         self.bt_model = LegendItemsTableModel([])
         self.mt_model = LegendItemsTableModel([])
@@ -403,6 +504,8 @@ class LegendPage(QWidget):
         self.project_data = LegendProjectService.load(self.project_dir)
         self._render_project()
         self.btn_save_proj.setEnabled(True)
+        self.btn_preview.setEnabled(True)
+        self.btn_export.setEnabled(True)
         self.lbl_proj_folder.setText(f"CARPETA: {self.project_dir}")
         self.lbl_proj_folder.setToolTip(str(self.project_dir))
         self._set_dirty(True)
@@ -470,10 +573,68 @@ class LegendPage(QWidget):
             self.lbl_proj_folder.setText(f"CARPETA: {dir_path}")
             self.lbl_proj_folder.setToolTip(str(dir_path))
             self.btn_save_proj.setEnabled(True)
+            self.btn_preview.setEnabled(True)
+            self.btn_export.setEnabled(True)
             self._render_project()
             self._set_dirty(False)
         except Exception as exc:
             QMessageBox.critical(self, "LEGEND", f"No se pudo cargar proyecto:\n{exc}")
+
+    def _collect_project_data(self) -> Dict[str, Any]:
+        data = dict(self.project_data) if isinstance(self.project_data, dict) else {}
+        data["bt_items"] = list(self.bt_model.items)
+        data["mt_items"] = list(self.mt_model.items)
+        specs = data.get("specs", {}) if isinstance(data, dict) else {}
+        for k, widget in self.spec_fields.items():
+            if isinstance(widget, QComboBox):
+                specs[k] = widget.currentText()
+            else:
+                specs[k] = widget.text()
+        data["specs"] = specs
+        return data
+
+    def _on_preview_legend(self) -> None:
+        if not build_legend_workbook:
+            QMessageBox.warning(self, "LEGEND", "Exportador no disponible.")
+            return
+        template_path = self._resolve_legend_template()
+        if not template_path:
+            QMessageBox.warning(self, "LEGEND", "No se encontró la plantilla legend_template.xlsx en data/legend/plantillas/")
+            return
+        try:
+            wb = build_legend_workbook(template_path, self._collect_project_data())
+            dlg = LegendPreviewDialog(wb, self)
+            dlg.exec()
+        except Exception as exc:
+            QMessageBox.critical(self, "LEGEND", f"No se pudo generar vista previa:\n{exc}")
+
+    def _on_export_legend(self) -> None:
+        if not build_legend_workbook:
+            QMessageBox.warning(self, "LEGEND", "Exportador no disponible.")
+            return
+        template_path = self._resolve_legend_template()
+        if not template_path:
+            QMessageBox.warning(self, "LEGEND", "No se encontró la plantilla legend_template.xlsx en data/legend/plantillas/")
+            return
+        path, _ = QFileDialog.getSaveFileName(self, "Exportar Legend", str(Path.cwd()), "Excel (*.xlsx)")
+        if not path:
+            return
+        try:
+            wb = build_legend_workbook(template_path, self._collect_project_data())
+            wb.save(path)
+            QMessageBox.information(self, "LEGEND", "EXPORTACIÓN LISTA.")
+        except Exception as exc:
+            QMessageBox.critical(self, "LEGEND", f"No se pudo exportar:\n{exc}")
+
+    def _resolve_legend_template(self) -> Path | None:
+        candidates = [
+            Path("data/LEGEND/plantillas/legend_template.xlsx"),
+            Path("data/legend/plantillas/legend_template.xlsx"),
+        ]
+        for p in candidates:
+            if p.exists():
+                return p
+        return None
     def _on_spec_changed(self, key: str) -> None:
         if not isinstance(self.project_data, dict):
             self.project_data = {}
