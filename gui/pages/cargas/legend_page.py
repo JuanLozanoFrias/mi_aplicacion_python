@@ -598,8 +598,8 @@ class LegendPage(QWidget):
         if not build_legend_workbook:
             QMessageBox.warning(self, "LEGEND", "Exportador no disponible.")
             return
-        if not isinstance(self.project_data, dict) or not self.project_data:
-            QMessageBox.information(self, "LEGEND", "ABRA O CREE UN PROYECTO PARA VISUALIZAR.")
+        if not self._has_any_legend_data():
+            QMessageBox.information(self, "LEGEND", "NO HAY DATOS PARA VISUALIZAR.")
             return
         template_path = self._resolve_legend_template()
         if not template_path:
@@ -616,8 +616,8 @@ class LegendPage(QWidget):
         if not build_legend_workbook:
             QMessageBox.warning(self, "LEGEND", "Exportador no disponible.")
             return
-        if not isinstance(self.project_data, dict) or not self.project_data:
-            QMessageBox.information(self, "LEGEND", "ABRA O CREE UN PROYECTO PARA EXPORTAR.")
+        if not self._has_any_legend_data():
+            QMessageBox.information(self, "LEGEND", "NO HAY DATOS PARA EXPORTAR.")
             return
         template_path = self._resolve_legend_template()
         if not template_path:
@@ -642,6 +642,18 @@ class LegendPage(QWidget):
             if p.exists():
                 return p
         return None
+
+    def _has_any_legend_data(self) -> bool:
+        try:
+            if self.bt_model.items or self.mt_model.items:
+                return True
+        except Exception:
+            pass
+        try:
+            specs = self.project_data.get("specs", {}) if isinstance(self.project_data, dict) else {}
+            return any(str(v).strip() for v in specs.values())
+        except Exception:
+            return False
     def _on_spec_changed(self, key: str) -> None:
         if not isinstance(self.project_data, dict):
             self.project_data = {}
