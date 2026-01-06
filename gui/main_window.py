@@ -5,8 +5,8 @@ from PySide6.QtWidgets import (
     QFrame, QListWidget, QListWidgetItem, QStackedWidget,
     QGraphicsDropShadowEffect, QLabel, QPushButton, QSizePolicy, QSpacerItem
 )
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor
+from PySide6.QtCore import Qt, QSize, QRect
+from PySide6.QtGui import QColor, QPixmap, QPainter
 from PySide6.QtSvgWidgets import QSvgWidget
 
 from gui.pages.carga_page import CargaPage
@@ -15,6 +15,30 @@ from gui.pages.cargas.legend_page import LegendPage
 from gui.pages.materiales_page import MaterialesPage
 from gui.pages.carga_electrica.carga_electrica_page import CargaElectricaPage
 from gui.pages.creditos_page import CreditosPage
+
+
+class _WelcomeImage(QFrame):
+    def __init__(self, pixmap: QPixmap, parent=None):
+        super().__init__(parent)
+        self._pix = pixmap
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        if self._pix.isNull():
+            return
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.SmoothPixmapTransform, True)
+        target = self.rect()
+        scaled = self._pix.scaled(
+            target.size(),
+            Qt.KeepAspectRatioByExpanding,
+            Qt.SmoothTransformation,
+        )
+        sx = max(0, (scaled.width() - target.width()) // 2)
+        sy = max(0, (scaled.height() - target.height()) // 2)
+        source = QRect(sx, sy, target.width(), target.height())
+        painter.drawPixmap(target, scaled, source)
 
 
 class ElectroCalcApp(QMainWindow):
@@ -183,6 +207,11 @@ QListWidget::item:selected:hover {
         self.stack = QStackedWidget()
         self.pages = []
         self._sections = {}
+        self._welcome_index = None
+
+        welcome_page = self._create_welcome_page()
+        self._welcome_index = self.stack.count()
+        self.stack.addWidget(welcome_page)
 
         def add_nav_item(text: str, page: QWidget | None, *, header: bool = False, indent: bool = False, section: str | None = None):
             prefix = "    " if indent else ""
@@ -192,7 +221,7 @@ QListWidget::item:selected:hover {
                 item.setData(Qt.UserRole + 1, "section")
                 item.setFlags(Qt.ItemIsEnabled)
             else:
-                idx = len(self.pages) if page is not None else None
+                idx = len(self.pages) + 1 if page is not None else None
                 item.setData(Qt.UserRole, idx)
                 if section:
                     self._sections.setdefault(section, []).append(self.nav.count())
@@ -218,8 +247,10 @@ QListWidget::item:selected:hover {
         main_layout = QVBoxLayout(main)
         main_layout.setContentsMargins(12, 12, 12, 12)
         main_layout.setSpacing(12)
+        self._main_layout = main_layout
 
-        main_layout.addWidget(self._create_top_bar())
+        self._top_bar = self._create_top_bar()
+        main_layout.addWidget(self._top_bar)
 
         main_layout.addWidget(self.stack, 1)
         root.addWidget(main, 1)
@@ -230,12 +261,7 @@ QListWidget::item:selected:hover {
 
         self.nav.currentRowChanged.connect(self._on_nav_changed)
         self.nav.itemClicked.connect(self._on_nav_clicked)
-        # seleccionar primer elemento útil
-        for i in range(self.nav.count()):
-            idx = self.nav.item(i).data(Qt.UserRole)
-            if idx is not None:
-                self.nav.setCurrentRow(i)
-                break
+        self._show_welcome()
 
     # ------------------------------------------------------------------
     #  Header superior
@@ -261,6 +287,8 @@ QListWidget::item:selected:hover {
         idx = item.data(Qt.UserRole)
         if idx is None:
             return
+        if self._welcome_index is not None and idx != self._welcome_index:
+            self._set_welcome_mode(False)
         self.stack.setCurrentIndex(idx)
 
     def _on_nav_clicked(self, item: QListWidgetItem):
@@ -320,6 +348,7 @@ QListWidget::item:selected:hover {
             "QFrame{background:#111827;border:1px solid #1f2937;border-radius:16px;}")
         logo_frame.setGraphicsEffect(QGraphicsDropShadowEffect(
             blurRadius=18, xOffset=0, yOffset=6, color=QColor(0, 0, 0, 180)))
+        logo_frame.setCursor(Qt.PointingHandCursor)
         lf_layout = QVBoxLayout(logo_frame)
         lf_layout.setAlignment(Qt.AlignCenter)
 
@@ -328,6 +357,7 @@ QListWidget::item:selected:hover {
         if svg_path:
             svg = QSvgWidget(str(svg_path))
             svg.setFixedSize(150, 150)
+            svg.setAttribute(Qt.WA_TransparentForMouseEvents, True)
             lf_layout.addWidget(svg)
         else:
             placeholder = QLabel("E")
@@ -337,4 +367,49 @@ QListWidget::item:selected:hover {
 
         p_layout.addWidget(logo_frame, alignment=Qt.AlignHCenter)
         p_layout.addStretch()
+        logo_frame.mousePressEvent = lambda event: self._show_welcome()
         return profile
+
+    def _find_resource(self, filename: str) -> Path | None:
+        return next((p / "resources" / filename for p in Path(__file__).resolve().parents
+                     if (p / "resources" / filename).exists()), None)
+
+    def _create_welcome_page(self) -> QWidget:
+        page = QFrame()
+        layout = QVBoxLayout(page)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+
+        img_path = self._find_resource("bienvenido.png")
+        if img_path:
+            pix = QPixmap(str(img_path))
+            if not pix.isNull():
+                layout.addWidget(_WelcomeImage(pix), 1)
+                return page
+
+        label = QLabel("BIENVENIDO")
+        label.setAlignment(Qt.AlignCenter)
+        label.setStyleSheet("font-size:24px;font-weight:800;color:#0f172a;")
+        layout.addWidget(label, 1)
+        return page
+
+    def _show_welcome(self) -> None:
+        if self._welcome_index is None:
+            return
+        self._set_welcome_mode(True)
+        self.nav.blockSignals(True)
+        self.nav.setCurrentRow(-1)
+        self.nav.clearSelection()
+        self.nav.blockSignals(False)
+        self.stack.setCurrentIndex(self._welcome_index)
+
+    def _set_welcome_mode(self, enabled: bool) -> None:
+        if hasattr(self, "_top_bar") and self._top_bar is not None:
+            self._top_bar.setVisible(not enabled)
+        if hasattr(self, "_main_layout") and self._main_layout is not None:
+            if enabled:
+                self._main_layout.setContentsMargins(0, 0, 0, 0)
+                self._main_layout.setSpacing(0)
+            else:
+                self._main_layout.setContentsMargins(12, 12, 12, 12)
+                self._main_layout.setSpacing(12)
