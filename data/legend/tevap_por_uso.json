@@ -1,0 +1,36 @@
+{
+  "BT": {
+    "HELADOS": -28,
+    "PESCADO": -28,
+    "POLLO FRIZADO": -28,
+    "CONGELADOS": -28,
+    "IC": -28,
+    "CC": -28
+  },
+  "MT": {
+    "CARNE": 15,
+    "POLLO": 15,
+    "CERDO": 15,
+    "C. FRIAS": 15,
+    "DELI": 20,
+    "COMIDAS": 20,
+    "COCINA": 20,
+    "PANADERIA": 20,
+    "BEBIDAS": 20,
+    "VARIOS": 20,
+    "LACTEOS": 25,
+    "FRUVER": 25,
+    "PREP": 32,
+    "PREP CARNE": 32,
+    "PREP POLLO": 32,
+    "REPOSTERIA": 20
+  },
+  "_meta": {
+    "units": "F",
+    "notes": [
+      "Este archivo define Tevap por USO para BT y MT.",
+      "Si un uso no existe aquí, se debe usar el default del config.json (tevap_bt / tevap_mt).",
+      "Normalizar claves: strip + upper + colapsar espacios."
+    ]
+  }
+}

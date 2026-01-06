@@ -1,6 +1,7 @@
 ﻿from __future__ import annotations
 
 from pathlib import Path
+import json
 from typing import Any, Callable, Dict, List
 import traceback
 
@@ -597,6 +598,9 @@ class LegendPage(QWidget):
         if not build_legend_workbook:
             QMessageBox.warning(self, "LEGEND", "Exportador no disponible.")
             return
+        if not isinstance(self.project_data, dict) or not self.project_data:
+            QMessageBox.information(self, "LEGEND", "ABRA O CREE UN PROYECTO PARA VISUALIZAR.")
+            return
         template_path = self._resolve_legend_template()
         if not template_path:
             QMessageBox.warning(self, "LEGEND", "No se encontró la plantilla legend_template.xlsx en data/legend/plantillas/")
@@ -611,6 +615,9 @@ class LegendPage(QWidget):
     def _on_export_legend(self) -> None:
         if not build_legend_workbook:
             QMessageBox.warning(self, "LEGEND", "Exportador no disponible.")
+            return
+        if not isinstance(self.project_data, dict) or not self.project_data:
+            QMessageBox.information(self, "LEGEND", "ABRA O CREE UN PROYECTO PARA EXPORTAR.")
             return
         template_path = self._resolve_legend_template()
         if not template_path:
@@ -1425,10 +1432,36 @@ class LegendPage(QWidget):
             usos.get("MT", []) if isinstance(usos, dict) else [],
             key=lambda x: str(x).upper(),
         )
+        tevap_bt, tevap_mt, def_bt, def_mt = self._load_tevap_maps()
+        self.bt_model.set_tevap_map(tevap_bt, def_bt)
+        self.mt_model.set_tevap_map(tevap_mt, def_mt)
         self._apply_combo_column_widths(self.bt_view)
         self._apply_combo_column_widths(self.mt_view)
         self._refresh_combo_editors(self.bt_view)
         self._refresh_combo_editors(self.mt_view)
+
+    def _load_tevap_maps(self) -> tuple[Dict[str, float], Dict[str, float], float, float]:
+        tevap_bt: Dict[str, float] = {}
+        tevap_mt: Dict[str, float] = {}
+        def_bt = -22.0
+        def_mt = 15.0
+        config_path = Path("data/legend/config.json")
+        if config_path.exists():
+            try:
+                cfg = json.loads(config_path.read_text(encoding="utf-8"))
+                def_bt = float(cfg.get("tevap_bt", def_bt))
+                def_mt = float(cfg.get("tevap_mt", def_mt))
+            except Exception:
+                pass
+        tevap_path = Path("data/legend/tevap_por_uso.json")
+        if tevap_path.exists():
+            try:
+                data = json.loads(tevap_path.read_text(encoding="utf-8"))
+                tevap_bt = data.get("BT", {}) if isinstance(data, dict) else {}
+                tevap_mt = data.get("MT", {}) if isinstance(data, dict) else {}
+            except Exception:
+                pass
+        return tevap_bt, tevap_mt, def_bt, def_mt
 
     def _apply_combo_column_widths(self, view: QTableView) -> None:
         # Mantener mismas columnas y tamaños en BT/MT, basado en el mayor texto de ambos
@@ -1628,6 +1661,8 @@ class LegendItemsTableModel(QAbstractTableModel):
         self._btu_map: Dict[str, float] = {}
         self._cold_engine = None
         self._usage_map: Dict[str, str] = {}
+        self._tevap_map: Dict[str, float] = {}
+        self._tevap_default: float = 0.0
         self._limit_cb: Callable[[str, float], None] | None = None
         self.default_row = {
             "loop": 1,
@@ -1933,6 +1968,21 @@ class LegendItemsTableModel(QAbstractTableModel):
         self._usage_map = usage_map or {}
         self.recompute_all()
 
+    def set_tevap_map(self, tevap_map: Dict[str, float], default_val: float) -> None:
+        norm: Dict[str, float] = {}
+        for k, v in (tevap_map or {}).items():
+            key = " ".join(str(k or "").strip().upper().split())
+            try:
+                norm[key] = float(v)
+            except Exception:
+                continue
+        self._tevap_map = norm
+        try:
+            self._tevap_default = float(default_val)
+        except Exception:
+            self._tevap_default = 0.0
+        self.recompute_all()
+
     def recompute_all(self) -> None:
         if not self.items:
             return
@@ -1970,6 +2020,10 @@ class LegendItemsTableModel(QAbstractTableModel):
         u = " ".join(str(usage or "").strip().upper().split())
         return self._usage_map.get(u, u)
 
+    def _tevap_for_usage(self, usage: str) -> float:
+        u = self._map_usage(usage)
+        return float(self._tevap_map.get(u, self._tevap_default))
+
     def _recompute_row(self, row: int, emit: bool = True) -> None:
         if row < 0 or row >= len(self.items):
             return
@@ -1992,6 +2046,7 @@ class LegendItemsTableModel(QAbstractTableModel):
             evap_qty_out = 0
             if largo > 0 and ancho > 0 and alto > 0:
                 uso = self._map_usage(item.get("uso", ""))
+                item["tevap_f"] = self._tevap_for_usage(uso)
                 evap_qty = int(self._parse_float(item.get("evap_qty", 0)))
                 n_evap = evap_qty if evap_qty > 0 else None
                 fam_raw = " ".join(str(item.get("familia", "")).strip().upper().split())
@@ -2031,11 +2086,13 @@ class LegendItemsTableModel(QAbstractTableModel):
             item["largo_m"] = largo_int
             item["dim_m"] = largo_int
             btu_hr = btu_ft * largo_int
+            item["tevap_f"] = self._tevap_for_usage(item.get("uso", ""))
             item["evap_modelo"] = ""
             if int(self._parse_float(item.get("evap_qty", 0))) <= 0:
                 item["evap_qty"] = self._auto_evap_qty_furniture(row, largo_int)
         else:
             btu_hr = btu_ft * (largo * 3.28084)
+            item["tevap_f"] = self._tevap_for_usage(item.get("uso", ""))
             item["evap_modelo"] = ""
             if int(self._parse_float(item.get("evap_qty", 0))) <= 0:
                 item["evap_qty"] = self._auto_evap_qty_furniture(row, largo)
