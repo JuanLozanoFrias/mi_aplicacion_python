@@ -1308,7 +1308,7 @@ class LegendPage(QWidget):
 
         self.total_bt = _sum(self.bt_model)
         self.total_mt = _sum(self.mt_model)
-        fmt = lambda v: f"{v:,.1f}"
+        fmt = lambda v: f"{int(round(v)):,}"
         self.lbl_total_bt.setText(f"TOTAL BT (BTU/H): {fmt(self.total_bt)}")
         self.lbl_total_mt.setText(f"TOTAL MT (BTU/H): {fmt(self.total_mt)}")
         self.lbl_total_general.setText(f"TOTAL GENERAL: {fmt(self.total_bt + self.total_mt)}")
@@ -1727,9 +1727,17 @@ class LegendItemsTableModel(QAbstractTableModel):
             if key == "largo_m":
                 return item.get("largo_m", item.get("dim_m", ""))
             if key == "btu_ft":
-                return item.get("btu_ft", item.get("btu_hr_ft", ""))
+                val = item.get("btu_ft", item.get("btu_hr_ft", ""))
+                try:
+                    return int(round(float(val)))
+                except Exception:
+                    return val
             if key == "btu_hr":
-                return item.get("btu_hr", item.get("carga_btu_h", ""))
+                val = item.get("btu_hr", item.get("carga_btu_h", ""))
+                try:
+                    return int(round(float(val)))
+                except Exception:
+                    return val
             if key == "dim_ft":
                 return self._dim_ft_text(index.row())
             if key == "familia" and not self._row_is_cuarto(index.row()):

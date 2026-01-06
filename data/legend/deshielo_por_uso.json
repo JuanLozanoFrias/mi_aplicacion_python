@@ -1,0 +1,21 @@
+{
+  "BT": {
+    "CC": "DESHIELO",
+    "IC": "DESHIELO",
+    "PESCADO": "DESHIELO",
+    "POLLO FRIZADO": "DESHIELO"
+  },
+  "MT": {
+    "CARNE": "DESHIELO",
+    "POLLO": "DESHIELO",
+    "CERDO": "DESHIELO",
+    "DELI": "NO",
+    "C. FRIAS": "NO",
+    "LACTEOS": "NO",
+    "BEBIDAS": "NO",
+    "FRUVER": "NO",
+    "PREP": "NO",
+    "VARIOS": "NO",
+    "PANADERIA": "NO"
+  }
+}
