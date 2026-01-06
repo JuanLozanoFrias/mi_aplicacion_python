@@ -921,29 +921,29 @@ class LegendPage(QWidget):
 
     def _fit_table_to_contents_view(self, view: QTableView) -> None:
         model = view.model()
-        row_count = model.rowCount() if model else 0
-        header_h = view.horizontalHeader().height()
-        if model and row_count > 0:
-            try:
-                view.resizeRowsToContents()
-            except Exception:
-                pass
-            total_rows_h = view.verticalHeader().length()
-        else:
-            total_rows_h = view.verticalHeader().defaultSectionSize()
-        scroll_h = view.horizontalScrollBar().sizeHint().height()
-        h = header_h + total_rows_h + view.frameWidth() * 2 + scroll_h
         header = view.horizontalHeader()
         if model:
             for col in range(model.columnCount()):
                 header.setSectionResizeMode(col, QHeaderView.Interactive)
         view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        view.setFixedHeight(h)
         view.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         view.setAlternatingRowColors(True)
         self._apply_combo_column_widths(view)
         self._apply_dim_spans(view, model)
+        try:
+            view.resizeRowsToContents()
+        except Exception:
+            pass
+        row_count = model.rowCount() if model else 0
+        header_h = view.horizontalHeader().height()
+        if model and row_count > 0:
+            total_rows_h = sum(view.rowHeight(i) for i in range(row_count))
+        else:
+            total_rows_h = view.verticalHeader().defaultSectionSize()
+        scroll_h = view.horizontalScrollBar().sizeHint().height()
+        h = header_h + total_rows_h + view.frameWidth() * 2 + scroll_h
+        view.setFixedHeight(h)
         try:
             view.scrollToTop()
         except Exception:
