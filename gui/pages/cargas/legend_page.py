@@ -201,7 +201,7 @@ class LegendPage(QWidget):
         self.btn_save_proj = QPushButton("GUARDAR")
         self.btn_preview = QPushButton("VISUALIZAR LEGEND")
         self.btn_export = QPushButton("EXPORTAR LEGEND")
-        self.btn_save_proj.setEnabled(False)
+        self.btn_save_proj.setEnabled(True)
         self.btn_preview.setEnabled(True)
         self.btn_export.setEnabled(True)
         self.lbl_proj_folder = QLabel("CARPETA: --")
@@ -551,6 +551,7 @@ class LegendPage(QWidget):
 
     def _on_save_project(self) -> None:
         if not LegendProjectService:
+            QMessageBox.warning(self, "LEGEND", "Servicio de proyecto no disponible.")
             return
         if not self.project_dir:
             dir_path = QFileDialog.getExistingDirectory(self, "Selecciona carpeta para guardar", str(Path.cwd()))
@@ -559,18 +560,13 @@ class LegendPage(QWidget):
             self.project_dir = Path(dir_path)
             self.lbl_proj_folder.setText(f"CARPETA: {self.project_dir}")
             self.lbl_proj_folder.setToolTip(str(self.project_dir))
-        self.project_data["bt_items"] = self.bt_model.items
-        self.project_data["mt_items"] = self.mt_model.items
-        specs = self.project_data.get("specs", {}) if isinstance(self.project_data, dict) else {}
-        for k, widget in self.spec_fields.items():
-            if isinstance(widget, QComboBox):
-                specs[k] = widget.currentText()
-            else:
-                specs[k] = widget.text()
-        self.project_data["specs"] = specs
-        LegendProjectService.save(self.project_dir, self.project_data)
-        QMessageBox.information(self, "LEGEND", "GUARDADO OK.")
-        self._set_dirty(False)
+        try:
+            self.project_data = self._collect_project_data()
+            LegendProjectService.save(self.project_dir, self.project_data)
+            QMessageBox.information(self, "LEGEND", "GUARDADO OK.")
+            self._set_dirty(False)
+        except Exception as exc:
+            QMessageBox.critical(self, "LEGEND", f"No se pudo guardar:\n{exc}")
 
     def _load_project(self, dir_path: Path) -> None:
         if not LegendProjectService:
