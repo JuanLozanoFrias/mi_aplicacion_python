@@ -202,8 +202,8 @@ class LegendPage(QWidget):
         self.btn_preview = QPushButton("VISUALIZAR LEGEND")
         self.btn_export = QPushButton("EXPORTAR LEGEND")
         self.btn_save_proj.setEnabled(False)
-        self.btn_preview.setEnabled(False)
-        self.btn_export.setEnabled(False)
+        self.btn_preview.setEnabled(True)
+        self.btn_export.setEnabled(True)
         self.lbl_proj_folder = QLabel("CARPETA: --")
         self.lbl_proj_folder.setToolTip("")
         self.lbl_total_general = QLabel("TOTAL GENERAL: 0.0")
@@ -608,6 +608,9 @@ class LegendPage(QWidget):
         try:
             wb = build_legend_workbook(template_path, self._collect_project_data())
             dlg = LegendPreviewDialog(wb, self)
+            dlg.setWindowModality(Qt.ApplicationModal)
+            dlg.raise_()
+            dlg.activateWindow()
             dlg.exec()
         except Exception as exc:
             QMessageBox.critical(self, "LEGEND", f"No se pudo generar vista previa:\n{exc}")
