@@ -550,8 +550,15 @@ class LegendPage(QWidget):
         self.mt_model.set_usage_map(usage_map)
 
     def _on_save_project(self) -> None:
-        if not LegendProjectService or not self.project_dir:
+        if not LegendProjectService:
             return
+        if not self.project_dir:
+            dir_path = QFileDialog.getExistingDirectory(self, "Selecciona carpeta para guardar", str(Path.cwd()))
+            if not dir_path:
+                return
+            self.project_dir = Path(dir_path)
+            self.lbl_proj_folder.setText(f"CARPETA: {self.project_dir}")
+            self.lbl_proj_folder.setToolTip(str(self.project_dir))
         self.project_data["bt_items"] = self.bt_model.items
         self.project_data["mt_items"] = self.mt_model.items
         specs = self.project_data.get("specs", {}) if isinstance(self.project_data, dict) else {}
@@ -914,18 +921,18 @@ class LegendPage(QWidget):
                 view.resizeRowsToContents()
             except Exception:
                 pass
-            total_rows_h = sum(view.rowHeight(i) for i in range(row_count))
+            total_rows_h = view.verticalHeader().length()
         else:
             total_rows_h = view.verticalHeader().defaultSectionSize()
-        h = header_h + total_rows_h + view.frameWidth() * 2 + 6
+        scroll_h = view.horizontalScrollBar().sizeHint().height()
+        h = header_h + total_rows_h + view.frameWidth() * 2 + scroll_h
         header = view.horizontalHeader()
         if model:
             for col in range(model.columnCount()):
                 header.setSectionResizeMode(col, QHeaderView.Interactive)
         view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        view.setMinimumHeight(h)
-        view.setMaximumHeight(h)
+        view.setFixedHeight(h)
         view.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         view.setAlternatingRowColors(True)
         self._apply_combo_column_widths(view)
@@ -2115,6 +2122,7 @@ class LegendItemsTableModel(QAbstractTableModel):
         item["btu_hr"] = btu_hr
         item["btu_hr_ft"] = btu_ft
         item["carga_btu_h"] = btu_hr
+        item["dim_ft"] = self._dim_ft_text(row)
         if emit:
             try:
                 col_ft = self.headers.index("btu_ft")
