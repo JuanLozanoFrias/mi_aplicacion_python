@@ -66,12 +66,44 @@ def _normalize_row(row: Dict[str, Any]) -> Dict[str, Any]:
 
 class LegendProjectService:
     @staticmethod
+    def _normalize_payload(data: Dict[str, Any]) -> Dict[str, Any]:
+        meta = DEFAULT_META.copy()
+        meta.update(data.get("meta", {}))
+        specs = DEFAULT_SPECS.copy()
+        specs.update(data.get("specs", {}))
+        bt_items = [_normalize_row(r) for r in data.get("bt_items", []) if isinstance(r, dict)]
+        mt_items = [_normalize_row(r) for r in data.get("mt_items", []) if isinstance(r, dict)]
+        bt_ramales = int(data.get("bt_ramales", 1) or 1)
+        mt_ramales = int(data.get("mt_ramales", 1) or 1)
+        return {
+            "meta": meta,
+            "specs": specs,
+            "bt_items": bt_items,
+            "mt_items": mt_items,
+            "bt_ramales": bt_ramales,
+            "mt_ramales": mt_ramales,
+        }
+
+    @staticmethod
     def _path(project_dir: Path) -> Path:
         return Path(project_dir) / DEFAULT_FILE
 
     @staticmethod
     def load(project_dir: Path) -> Dict[str, Any]:
         project_dir = Path(project_dir)
+        if project_dir.is_file():
+            try:
+                data = json.loads(project_dir.read_text(encoding="utf-8"))
+                return LegendProjectService._normalize_payload(data)
+            except Exception:
+                return {
+                    "meta": DEFAULT_META.copy(),
+                    "specs": DEFAULT_SPECS.copy(),
+                    "bt_items": [],
+                    "mt_items": [],
+                    "bt_ramales": 1,
+                    "mt_ramales": 1,
+                }
         if not project_dir.exists():
             project_dir.mkdir(parents=True, exist_ok=True)
         path = LegendProjectService._path(project_dir)
@@ -95,22 +127,32 @@ class LegendProjectService:
                 "bt_ramales": 1,
                 "mt_ramales": 1,
             }
-        meta = DEFAULT_META.copy()
-        meta.update(data.get("meta", {}))
-        specs = DEFAULT_SPECS.copy()
-        specs.update(data.get("specs", {}))
-        bt_items = [_normalize_row(r) for r in data.get("bt_items", []) if isinstance(r, dict)]
-        mt_items = [_normalize_row(r) for r in data.get("mt_items", []) if isinstance(r, dict)]
-        bt_ramales = int(data.get("bt_ramales", 1) or 1)
-        mt_ramales = int(data.get("mt_ramales", 1) or 1)
-        return {
-            "meta": meta,
-            "specs": specs,
-            "bt_items": bt_items,
-            "mt_items": mt_items,
-            "bt_ramales": bt_ramales,
-            "mt_ramales": mt_ramales,
-        }
+        return LegendProjectService._normalize_payload(data)
+
+    @staticmethod
+    def load_file(path: Path) -> Dict[str, Any]:
+        path = Path(path)
+        if not path.exists():
+            return {
+                "meta": DEFAULT_META.copy(),
+                "specs": DEFAULT_SPECS.copy(),
+                "bt_items": [],
+                "mt_items": [],
+                "bt_ramales": 1,
+                "mt_ramales": 1,
+            }
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            return {
+                "meta": DEFAULT_META.copy(),
+                "specs": DEFAULT_SPECS.copy(),
+                "bt_items": [],
+                "mt_items": [],
+                "bt_ramales": 1,
+                "mt_ramales": 1,
+            }
+        return LegendProjectService._normalize_payload(data)
 
     @staticmethod
     def save(project_dir: Path, payload: Dict[str, Any]) -> None:

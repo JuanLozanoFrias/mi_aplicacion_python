@@ -490,10 +490,15 @@ class LegendPage(QWidget):
     def _on_open_project(self) -> None:
         if self._dirty and not self._confirm_discard():
             return
-        dir_path = QFileDialog.getExistingDirectory(self, "Selecciona carpeta de proyecto", str(Path.cwd()))
-        if not dir_path or not LegendProjectService:
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Abrir proyecto Legend",
+            str(Path.cwd()),
+            "Legend Project (*.json)",
+        )
+        if not file_path or not LegendProjectService:
             return
-        self._load_project(Path(dir_path))
+        self._load_project(Path(file_path))
 
     def _on_new_project(self) -> None:
         if self._dirty and not self._confirm_discard():
@@ -572,10 +577,16 @@ class LegendPage(QWidget):
         if not LegendProjectService:
             return
         try:
-            self.project_dir = dir_path
-            self.project_data = LegendProjectService.load(dir_path)
-            self.lbl_proj_folder.setText(f"CARPETA: {dir_path}")
-            self.lbl_proj_folder.setToolTip(str(dir_path))
+            if dir_path.is_file():
+                self.project_dir = dir_path.parent
+                self.project_data = LegendProjectService.load_file(dir_path)
+                self.lbl_proj_folder.setText(f"CARPETA: {self.project_dir}")
+                self.lbl_proj_folder.setToolTip(str(self.project_dir))
+            else:
+                self.project_dir = dir_path
+                self.project_data = LegendProjectService.load(dir_path)
+                self.lbl_proj_folder.setText(f"CARPETA: {dir_path}")
+                self.lbl_proj_folder.setToolTip(str(dir_path))
             self.btn_save_proj.setEnabled(True)
             self.btn_preview.setEnabled(True)
             self.btn_export.setEnabled(True)
