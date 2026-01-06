@@ -5,7 +5,7 @@ from typing import Any, Callable, Dict, List
 import traceback
 
 from PySide6.QtCore import Qt, QAbstractTableModel, QModelIndex, QTimer
-from PySide6.QtGui import QGuiApplication, QKeySequence, QShortcut
+from PySide6.QtGui import QGuiApplication, QKeySequence, QShortcut, QIntValidator
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -38,22 +38,27 @@ except Exception as exc:  # pragma: no cover
 else:
     _IMPORT_ERROR = None
 
+try:
+    from logic.cuartos_frios_engine import ColdRoomEngine, ColdRoomInputs
+except Exception:
+    ColdRoomEngine = None  # type: ignore
+    ColdRoomInputs = None  # type: ignore
+
 
 PROJ_COLUMNS = [
     "loop",
     "ramal",
-    "dim_m",
     "equipo",
     "uso",
-    "carga_btu_h",
-    "tevap_f",
-    "evap_qty",
+    "largo_m",
+    "ancho_m",
+    "alto_m",
+    "dim_ft",
+    "btu_ft",
+    "btu_hr",
     "evap_modelo",
-    "control",
-    "succion",
-    "liquida",
-    "direccion",
-    "deshielo",
+    "evap_qty",
+    "familia",
 ]
 
 
@@ -71,6 +76,9 @@ class LegendPage(QWidget):
         self._equipos_mt: List[str] = []
         self._usos_bt: List[str] = []
         self._usos_mt: List[str] = []
+        self._equipos_btu_ft: Dict[str, float] = {}
+        self._familia_options = ["AUTO", "FRONTAL BAJA", "FRONTAL MEDIA", "DUAL"]
+        self._cold_engine = None
 
         outer = QVBoxLayout(self)
         outer.setContentsMargins(12, 12, 12, 12)
@@ -162,13 +170,24 @@ class LegendPage(QWidget):
         self.spec_fields["ciudad"] = ciudad_edit
         _add_single("CIUDAD", ciudad_edit)
 
-        # TIPO DE SISTEMA
+        # VENDEDOR
+        vendedor_edit = QLineEdit()
+        vendedor_edit.textEdited.connect(lambda txt, w=vendedor_edit: self._on_spec_changed_upper("vendedor", w, txt))
+        self.spec_fields["vendedor"] = vendedor_edit
+        _add_single("VENDEDOR", vendedor_edit)
+
+        # TIPO DE SISTEMA + DISTRIBUCIÓN TUBERÍA
         tipo_cb = QComboBox()
         tipo_cb.addItems(["", "RACK", "WATERLOOP"])
         tipo_cb.setEditable(False)
         tipo_cb.currentTextChanged.connect(lambda _t: self._on_spec_changed("tipo_sistema"))
         self.spec_fields["tipo_sistema"] = tipo_cb
-        _add_single("TIPO DE SISTEMA", tipo_cb)
+        distrib_cb = QComboBox()
+        distrib_cb.addItems(["", "AMERICANA", "LOOP"])
+        distrib_cb.setEditable(False)
+        distrib_cb.currentTextChanged.connect(lambda _t: self._on_spec_changed("distribucion_tuberia"))
+        self.spec_fields["distribucion_tuberia"] = distrib_cb
+        _add_double("TIPO DE SISTEMA", tipo_cb, "DISTRIBUCIÓN TUBERÍA", distrib_cb)
         # TCOND F/C
         self.tcond_f_edit = QLineEdit()
         self.tcond_c_edit = QLineEdit()
@@ -206,6 +225,19 @@ class LegendPage(QWidget):
         self.spec_fields["controlador"] = self.controlador_cb
         _add_double("REFRIGERANTE", self.refrigerante_cb, "CONTROLADOR", self.controlador_cb)
 
+        # Deshielos + Expansión
+        self.deshielos_cb = QComboBox()
+        self.deshielos_cb.addItems(["", "ELÉCTRICO", "GAS CALIENTE", "GAS TIBIO"])
+        self.deshielos_cb.setEditable(False)
+        self.expansion_cb = QComboBox()
+        self.expansion_cb.addItems(["", "TERMOSTÁTICA", "ELECTRÓNICA"])
+        self.expansion_cb.setEditable(False)
+        self.deshielos_cb.currentTextChanged.connect(lambda _t: self._on_spec_changed("deshielos"))
+        self.expansion_cb.currentTextChanged.connect(lambda _t: self._on_spec_changed("expansion"))
+        self.spec_fields["deshielos"] = self.deshielos_cb
+        self.spec_fields["expansion"] = self.expansion_cb
+        _add_double("DESHIELOS", self.deshielos_cb, "EXPANSIÓN", self.expansion_cb)
+
         specs_widget = QWidget()
         specs_widget.setLayout(specs_layout)
         proj_outer.addWidget(QLabel("ESPECIFICACIONES TECNICAS"))
@@ -217,6 +249,10 @@ class LegendPage(QWidget):
 
         self.bt_model = LegendItemsTableModel([])
         self.mt_model = LegendItemsTableModel([])
+        self.bt_model.set_limit_callback(self._on_dim_limit)
+        self.mt_model.set_limit_callback(self._on_dim_limit)
+        self._init_cold_engine()
+        self._apply_usage_map()
 
         self.bt_view = QTableView()
         self.bt_view.setModel(self.bt_model)
@@ -228,9 +264,9 @@ class LegendPage(QWidget):
             "QTableView::item:selected { background: #eaf2ff; color: #0f172a; }"
         )
         self.bt_view.horizontalHeader().setStretchLastSection(True)
-        self.bt_view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.bt_view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.bt_view.verticalHeader().setVisible(False)
-        self.bt_view.verticalHeader().setDefaultSectionSize(24)
+        self.bt_view.verticalHeader().setDefaultSectionSize(28)
         self.bt_view.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
         self.bt_view.setContextMenuPolicy(Qt.CustomContextMenu)
         self.bt_view.customContextMenuRequested.connect(
@@ -240,6 +276,10 @@ class LegendPage(QWidget):
         self.bt_model.dataChanged.connect(self._mark_dirty_and_totals)
         self.bt_model.rowsInserted.connect(self._mark_dirty_and_totals)
         self.bt_model.rowsRemoved.connect(self._mark_dirty_and_totals)
+        self.bt_model.modelReset.connect(lambda *_: self._apply_dim_spans(self.bt_view, self.bt_model))
+        self.bt_model.rowsInserted.connect(lambda *_: self._apply_dim_spans(self.bt_view, self.bt_model))
+        self.bt_model.rowsRemoved.connect(lambda *_: self._apply_dim_spans(self.bt_view, self.bt_model))
+        self.bt_model.dataChanged.connect(lambda *_: self._apply_dim_spans(self.bt_view, self.bt_model))
         self.bt_view.keyPressEvent = lambda event, v=self.bt_view: self._table_key_press(event, self.bt_model, v)
         self._install_shortcuts(self.bt_view, self.bt_model)
         self.bt_model.rowsInserted.connect(lambda *_: self._ensure_combo_editors(self.bt_view))
@@ -255,9 +295,9 @@ class LegendPage(QWidget):
             "QTableView::item:selected { background: #eaf2ff; color: #0f172a; }"
         )
         self.mt_view.horizontalHeader().setStretchLastSection(True)
-        self.mt_view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.mt_view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.mt_view.verticalHeader().setVisible(False)
-        self.mt_view.verticalHeader().setDefaultSectionSize(24)
+        self.mt_view.verticalHeader().setDefaultSectionSize(28)
         self.mt_view.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
         self.mt_view.setContextMenuPolicy(Qt.CustomContextMenu)
         self.mt_view.customContextMenuRequested.connect(
@@ -267,6 +307,10 @@ class LegendPage(QWidget):
         self.mt_model.dataChanged.connect(self._mark_dirty_and_totals)
         self.mt_model.rowsInserted.connect(self._mark_dirty_and_totals)
         self.mt_model.rowsRemoved.connect(self._mark_dirty_and_totals)
+        self.mt_model.modelReset.connect(lambda *_: self._apply_dim_spans(self.mt_view, self.mt_model))
+        self.mt_model.rowsInserted.connect(lambda *_: self._apply_dim_spans(self.mt_view, self.mt_model))
+        self.mt_model.rowsRemoved.connect(lambda *_: self._apply_dim_spans(self.mt_view, self.mt_model))
+        self.mt_model.dataChanged.connect(lambda *_: self._apply_dim_spans(self.mt_view, self.mt_model))
         self.mt_view.keyPressEvent = lambda event, v=self.mt_view: self._table_key_press(event, self.mt_model, v)
         self._install_shortcuts(self.mt_view, self.mt_model)
         self.mt_model.rowsInserted.connect(lambda *_: self._ensure_combo_editors(self.mt_view))
@@ -277,14 +321,24 @@ class LegendPage(QWidget):
         self._equipos_mt_delegate = ComboDelegate(lambda: self._equipos_mt, editable=True, parent=self)
         self._usos_bt_delegate = ComboDelegate(lambda: self._usos_bt, editable=True, parent=self)
         self._usos_mt_delegate = ComboDelegate(lambda: self._usos_mt, editable=True, parent=self)
+        self._familia_delegate = ComboDelegate(lambda: self._familia_options, editable=False, parent=self)
+        self._dim_delegate = DimDelegate(parent=self)
         col_equipo = PROJ_COLUMNS.index("equipo")
         col_uso = PROJ_COLUMNS.index("uso")
+        col_largo = PROJ_COLUMNS.index("largo_m")
+        col_familia = PROJ_COLUMNS.index("familia")
         self.bt_view.setItemDelegateForColumn(col_equipo, self._equipos_bt_delegate)
         self.mt_view.setItemDelegateForColumn(col_equipo, self._equipos_mt_delegate)
         self.bt_view.setItemDelegateForColumn(col_uso, self._usos_bt_delegate)
         self.mt_view.setItemDelegateForColumn(col_uso, self._usos_mt_delegate)
+        self.bt_view.setItemDelegateForColumn(col_familia, self._familia_delegate)
+        self.mt_view.setItemDelegateForColumn(col_familia, self._familia_delegate)
+        self.bt_view.setItemDelegateForColumn(col_largo, self._dim_delegate)
+        self.mt_view.setItemDelegateForColumn(col_largo, self._dim_delegate)
         self._ensure_combo_editors(self.bt_view)
         self._ensure_combo_editors(self.mt_view)
+        self._apply_dim_spans(self.bt_view, self.bt_model)
+        self._apply_dim_spans(self.mt_view, self.mt_model)
         # Ramales y tablas BT
         self.spin_bt = QSpinBox()
         self.spin_bt.setRange(1, 20)
@@ -353,6 +407,44 @@ class LegendPage(QWidget):
         self.lbl_proj_folder.setToolTip(str(self.project_dir))
         self._set_dirty(True)
 
+    def _init_cold_engine(self) -> None:
+        if not ColdRoomEngine:
+            return
+        try:
+            data_path = Path("data/cuartos_frios/cuartos_frios_data.json")
+            self._cold_engine = ColdRoomEngine(data_path)
+            self.bt_model.set_cold_engine(self._cold_engine)
+            self.mt_model.set_cold_engine(self._cold_engine)
+        except Exception:
+            self._cold_engine = None
+
+    def _apply_usage_map(self) -> None:
+        usage_map = {
+            "IC": "HELADOS",
+            "HELADO": "HELADOS",
+            "HELADOS": "HELADOS",
+            "CC": "COMIDA CONGELADA",
+            "COMIDA CONGELADA": "COMIDA CONGELADA",
+            "PESCADO": "COMIDA CONGELADA",
+            "POLLO FRIZADO": "COMIDA CONGELADA",
+            "CARNE": "CARNES",
+            "CERDO": "CARNES",
+            "POLLO": "CARNES",
+            "CARNES": "CARNES",
+            "BEBIDAS": "LACTEOS",
+            "C. FRIAS": "LACTEOS",
+            "C.FRIAS": "LACTEOS",
+            "DELI": "LACTEOS",
+            "LACTEOS": "LACTEOS",
+            "PANADERIA": "LACTEOS",
+            "VARIOS": "LACTEOS",
+            "PREP": "PROCESO",
+            "FRUVER": "PROCESO",
+            "PROCESO": "PROCESO",
+        }
+        self.bt_model.set_usage_map(usage_map)
+        self.mt_model.set_usage_map(usage_map)
+
     def _on_save_project(self) -> None:
         if not LegendProjectService or not self.project_dir:
             return
@@ -392,6 +484,8 @@ class LegendPage(QWidget):
         else:
             specs[key] = widget.text() if widget else ""
         self.project_data["specs"] = specs
+        if key == "distribucion_tuberia":
+            self._update_loop_column_visibility()
         self._set_dirty(True)
 
     def _on_spec_changed_upper(self, key: str, widget: QLineEdit, text: str) -> None:
@@ -438,6 +532,7 @@ class LegendPage(QWidget):
             else:
                 widget.setText(val)
             widget.blockSignals(False)
+        self._update_loop_column_visibility()
         f_val = specs.get("tcond_f")
         c_val = specs.get("tcond_c")
         if f_val and not c_val:
@@ -464,6 +559,8 @@ class LegendPage(QWidget):
         self.spin_mt.blockSignals(False)
         self.bt_model.set_items(bt_items)
         self.mt_model.set_items(mt_items)
+        self.bt_model.recompute_all()
+        self.mt_model.recompute_all()
         self._fit_table_to_contents_view(self.bt_view)
         self._fit_table_to_contents_view(self.mt_view)
         self._recalc_totals()
@@ -635,13 +732,14 @@ class LegendPage(QWidget):
         if model:
             for col in range(model.columnCount()):
                 header.setSectionResizeMode(col, QHeaderView.Interactive)
-        view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         view.setMinimumHeight(h)
         view.setMaximumHeight(h)
         view.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         view.setAlternatingRowColors(True)
         self._apply_combo_column_widths(view)
+        self._apply_dim_spans(view, model)
 
     def _refresh_table_view(self, view: QTableView) -> None:
         try:
@@ -695,6 +793,26 @@ class LegendPage(QWidget):
     def _set_dirty(self, value: bool) -> None:
         self._dirty = value
         self._recalc_totals()
+
+    def _on_dim_limit(self, label: str, max_val: float) -> None:
+        QMessageBox.warning(
+            self,
+            "Dimensión fuera de rango",
+            f"{label} máximo {max_val:.2f} m.\nUSE CUADRO DE CARGAS CUARTOS INDUSTRIALES.",
+        )
+
+    def _update_loop_column_visibility(self) -> None:
+        try:
+            distrib = ""
+            widget = self.spec_fields.get("distribucion_tuberia")
+            if isinstance(widget, QComboBox):
+                distrib = widget.currentText().strip().upper()
+            col_loop = PROJ_COLUMNS.index("loop")
+            show_loop = distrib == "LOOP"
+            self.bt_view.setColumnHidden(col_loop, not show_loop)
+            self.mt_view.setColumnHidden(col_loop, not show_loop)
+        except Exception:
+            pass
 
     def _confirm_discard(self) -> bool:
         resp = QMessageBox.question(
@@ -802,10 +920,13 @@ class LegendPage(QWidget):
                     for r in base_rows:
                         nr = dict(r)
                         nr["ramal"] = n + 1
-                        nr["dim_m"] = ""
-                        nr["carga_btu_h"] = 0
+                        nr["largo_m"] = ""
+                        nr["ancho_m"] = ""
+                        nr["alto_m"] = ""
+                        nr["btu_hr"] = 0
                         nr["evap_qty"] = 0
                         nr["evap_modelo"] = ""
+                        nr["familia"] = r.get("familia", "AUTO")
                         new_rows.append(nr)
                 new_rows_all.extend(new_rows)
                 temp_items.extend(new_rows)
@@ -851,10 +972,13 @@ class LegendPage(QWidget):
             for r in base_rows:
                 nr = dict(r)
                 nr["ramal"] = n2
-                nr["dim_m"] = ""
-                nr["carga_btu_h"] = 0
+                nr["largo_m"] = ""
+                nr["ancho_m"] = ""
+                nr["alto_m"] = ""
+                nr["btu_hr"] = 0
                 nr["evap_qty"] = 0
                 nr["evap_modelo"] = ""
+                nr["familia"] = r.get("familia", "AUTO")
                 new_rows.append(nr)
         self._suspend_updates = True
         model.add_rows(new_rows)
@@ -953,7 +1077,7 @@ class LegendPage(QWidget):
             total = 0.0
             for r in model.items:
                 try:
-                    total += float(r.get("carga_btu_h", 0) or 0)
+                    total += float(r.get("btu_hr", r.get("carga_btu_h", 0)) or 0)
                 except Exception:
                     pass
             return total
@@ -1026,10 +1150,13 @@ class LegendPage(QWidget):
         for r in base_rows:
             nr = dict(r)
             nr["ramal"] = dest
-            nr["dim_m"] = ""
-            nr["carga_btu_h"] = 0
+            nr["largo_m"] = ""
+            nr["ancho_m"] = ""
+            nr["alto_m"] = ""
+            nr["btu_hr"] = 0
             nr["evap_qty"] = 0
             nr["evap_modelo"] = ""
+            nr["familia"] = r.get("familia", "AUTO")
             new_rows.append(nr)
         if not new_rows:
             base = self._default_row(bloque)
@@ -1072,6 +1199,19 @@ class LegendPage(QWidget):
         equipos = data.get("equipos", []) if isinstance(data, dict) else []
         equipos_bt = data.get("equipos_bt", []) if isinstance(data, dict) else []
         equipos_mt = data.get("equipos_mt", []) if isinstance(data, dict) else []
+        btu_map: Dict[str, float] = {}
+        for e in equipos:
+            try:
+                name = getattr(e, "equipo", "")
+                val = float(getattr(e, "btu_hr_ft", 0.0) or 0.0)
+                key = self._normalize_equipo_name(name)
+                if key:
+                    btu_map[key] = val
+            except Exception:
+                continue
+        self._equipos_btu_ft = btu_map
+        self.bt_model.set_btu_map(self._equipos_btu_ft)
+        self.mt_model.set_btu_map(self._equipos_btu_ft)
         if equipos_bt:
             self._equipos_bt = sorted(
                 [getattr(e, "equipo", "") for e in equipos_bt if getattr(e, "equipo", "")],
@@ -1108,13 +1248,14 @@ class LegendPage(QWidget):
             return
         col_equipo = PROJ_COLUMNS.index("equipo")
         col_uso = PROJ_COLUMNS.index("uso")
+        col_familia = PROJ_COLUMNS.index("familia")
         fm = view.fontMetrics()
 
         def _max_width(texts: List[str], header_text: str) -> int:
             max_w = fm.horizontalAdvance(header_text)
             for t in texts:
                 max_w = max(max_w, fm.horizontalAdvance(str(t)))
-            return max_w + 36  # padding + combo arrow
+            return max_w + 70  # padding + combo arrow
 
         if view is self.bt_view:
             uso_texts = self._usos_bt
@@ -1122,10 +1263,53 @@ class LegendPage(QWidget):
         else:
             uso_texts = self._usos_mt
             equipo_texts = self._equipos_mt
+        # incluye valores actuales en la tabla para evitar cortes
+        if model.rowCount() > 0:
+            for row in range(model.rowCount()):
+                try:
+                    idx_eq = model.index(row, col_equipo)
+                    idx_uso = model.index(row, col_uso)
+                    val_eq = idx_eq.data(Qt.DisplayRole)
+                    val_uso = idx_uso.data(Qt.DisplayRole)
+                    if val_eq:
+                        equipo_texts = list(equipo_texts) + [str(val_eq)]
+                    if val_uso:
+                        uso_texts = list(uso_texts) + [str(val_uso)]
+                except Exception:
+                    pass
         equipo_w = _max_width(equipo_texts, "EQUIPO")
         uso_w = _max_width(uso_texts, "USO")
-        view.setColumnWidth(col_equipo, max(120, equipo_w))
-        view.setColumnWidth(col_uso, max(100, uso_w))
+        familia_w = _max_width(self._familia_options, "FAMILIA")
+        view.setColumnWidth(col_equipo, max(140, equipo_w))
+        view.setColumnWidth(col_uso, max(120, uso_w))
+        view.setColumnWidth(col_familia, max(140, familia_w))
+        self._refresh_combo_editors(view)
+
+    def _normalize_equipo_name(self, text: str) -> str:
+        return " ".join(str(text or "").strip().upper().split())
+
+    def _is_cuarto(self, equipo: str) -> bool:
+        return "CUARTO" in (equipo or "").upper()
+
+    def _apply_dim_spans(self, view: QTableView, model: "LegendItemsTableModel" | None) -> None:
+        if not view or not model:
+            return
+        try:
+            col_largo = PROJ_COLUMNS.index("largo_m")
+        except ValueError:
+            return
+        view.clearSpans()
+        for row in range(model.rowCount()):
+            try:
+                equipo = str(model.items[row].get("equipo", ""))
+            except Exception:
+                equipo = ""
+            if not self._is_cuarto(equipo):
+                view.setSpan(row, col_largo, 1, 3)
+        try:
+            self._refresh_combo_editors(view)
+        except Exception:
+            pass
 
     def _ensure_combo_editors(self, view: QTableView) -> None:
         model = view.model()
@@ -1133,10 +1317,17 @@ class LegendPage(QWidget):
             return
         col_equipo = PROJ_COLUMNS.index("equipo")
         col_uso = PROJ_COLUMNS.index("uso")
+        col_familia = PROJ_COLUMNS.index("familia")
         for row in range(model.rowCount()):
             for col in (col_equipo, col_uso):
                 idx = model.index(row, col)
                 view.openPersistentEditor(idx)
+            try:
+                if hasattr(model, "_row_is_cuarto") and model._row_is_cuarto(row):
+                    idx = model.index(row, col_familia)
+                    view.openPersistentEditor(idx)
+            except Exception:
+                pass
 
     def _refresh_combo_editors(self, view: QTableView) -> None:
         model = view.model()
@@ -1144,11 +1335,19 @@ class LegendPage(QWidget):
             return
         col_equipo = PROJ_COLUMNS.index("equipo")
         col_uso = PROJ_COLUMNS.index("uso")
+        col_familia = PROJ_COLUMNS.index("familia")
         for row in range(model.rowCount()):
             for col in (col_equipo, col_uso):
                 idx = model.index(row, col)
                 view.closePersistentEditor(idx)
                 view.openPersistentEditor(idx)
+            try:
+                idx_f = model.index(row, col_familia)
+                view.closePersistentEditor(idx_f)
+                if hasattr(model, "_row_is_cuarto") and model._row_is_cuarto(row):
+                    view.openPersistentEditor(idx_f)
+            except Exception:
+                pass
 
 
 class ComboDelegate(QStyledItemDelegate):
@@ -1165,11 +1364,9 @@ class ComboDelegate(QStyledItemDelegate):
         cb.setEditable(self.editable)
         cb.addItems(items)
         cb.setInsertPolicy(QComboBox.NoInsert)
-        cb.setStyleSheet(
-            "QComboBox { background: #ffffff; color: #0f172a; }"
-            "QComboBox QAbstractItemView { background: #ffffff; color: #0f172a; selection-background-color: #dbeafe; selection-color: #0f172a; }"
+        cb.view().setStyleSheet(
+            "background: #ffffff; color: #0f172a; selection-background-color: #dbeafe; selection-color: #0f172a;"
         )
-        cb.view().setStyleSheet("background: #ffffff; color: #0f172a;")
         cb.setMaxVisibleItems(max(len(items), 10))
         return cb
 
@@ -1191,29 +1388,62 @@ class ComboDelegate(QStyledItemDelegate):
             return
         super().setModelData(editor, model, index)
 
+    def updateEditorGeometry(self, editor, option, index):
+        if editor:
+            editor.setGeometry(option.rect)
+        else:
+            super().updateEditorGeometry(editor, option, index)
+
+
+class DimDelegate(QStyledItemDelegate):
+    def createEditor(self, parent, option, index):
+        model = index.model()
+        editor = QLineEdit(parent)
+        editor.setAlignment(Qt.AlignCenter)
+        try:
+            if hasattr(model, "_row_is_multipuerta") and model._row_is_multipuerta(index.row()):
+                editor.setValidator(QIntValidator(0, 9999, editor))
+        except Exception:
+            pass
+        return editor
+
+    def updateEditorGeometry(self, editor, option, index):
+        if editor:
+            editor.setGeometry(option.rect)
+        else:
+            super().updateEditorGeometry(editor, option, index)
+
 
 class LegendItemsTableModel(QAbstractTableModel):
     headers = PROJ_COLUMNS
+    MAX_LW_M = 12.8
+    MAX_H_M = 3.7
 
     def __init__(self, items: List[dict] | None = None):
         super().__init__()
         self.items: List[dict] = items or []
+        self._btu_map: Dict[str, float] = {}
+        self._cold_engine = None
+        self._usage_map: Dict[str, str] = {}
+        self._limit_cb: Callable[[str, float], None] | None = None
         self.default_row = {
             "loop": 1,
             "ramal": 1,
-            "dim_m": "",
+            "largo_m": "",
+            "ancho_m": "",
+            "alto_m": "",
+            "dim_ft": "",
             "equipo": "",
             "uso": "",
-            "carga_btu_h": 0.0,
-            "tevap_f": 0.0,
+            "btu_ft": 0.0,
+            "btu_hr": 0.0,
             "evap_qty": 0,
             "evap_modelo": "",
-            "control": "",
-            "succion": "",
-            "liquida": "",
-            "direccion": "",
-            "deshielo": "",
+            "familia": "AUTO",
         }
+
+    def set_limit_callback(self, cb: Callable[[str, float], None] | None) -> None:
+        self._limit_cb = cb
 
     def rowCount(self, parent=QModelIndex()):
         return len(self.items)
@@ -1226,11 +1456,26 @@ class LegendItemsTableModel(QAbstractTableModel):
             return None
         item = self.items[index.row()]
         key = self.headers[index.column()]
-        val = item.get(key, "")
         if role in (Qt.DisplayRole, Qt.EditRole):
-            return val
+            if key == "largo_m":
+                return item.get("largo_m", item.get("dim_m", ""))
+            if key == "btu_ft":
+                return item.get("btu_ft", item.get("btu_hr_ft", ""))
+            if key == "btu_hr":
+                return item.get("btu_hr", item.get("carga_btu_h", ""))
+            if key == "dim_ft":
+                return self._dim_ft_text(index.row())
+            if key == "familia" and not self._row_is_cuarto(index.row()):
+                return ""
+            if key in ("ancho_m", "alto_m") and not self._row_is_cuarto(index.row()):
+                return ""
+            return item.get(key, "")
         if role == Qt.TextAlignmentRole:
-            if key in ("loop", "ramal", "dim_m", "carga_btu_h", "tevap_f", "evap_qty"):
+            if key in ("largo_m", "ancho_m", "alto_m") and not self._row_is_cuarto(index.row()):
+                return Qt.AlignHCenter | Qt.AlignVCenter
+            if key == "dim_ft":
+                return Qt.AlignHCenter | Qt.AlignVCenter
+            if key in ("loop", "ramal", "largo_m", "ancho_m", "alto_m", "btu_ft", "btu_hr", "evap_qty"):
                 return Qt.AlignRight | Qt.AlignVCenter
             return Qt.AlignLeft | Qt.AlignVCenter
         return None
@@ -1238,7 +1483,40 @@ class LegendItemsTableModel(QAbstractTableModel):
     def setData(self, index: QModelIndex, value, role=Qt.EditRole):
         if role == Qt.EditRole and index.isValid():
             key = self.headers[index.column()]
-            self.items[index.row()][key] = value
+            if key in ("largo_m", "ancho_m", "alto_m"):
+                val = self._parse_float(value)
+                max_val = self.MAX_LW_M if key in ("largo_m", "ancho_m") else self.MAX_H_M
+                if val > max_val:
+                    val = max_val
+                    if self._limit_cb:
+                        label = "LARGO" if key == "largo_m" else "ANCHO" if key == "ancho_m" else "ALTO"
+                        self._limit_cb(label, max_val)
+                if key == "largo_m":
+                    self.items[index.row()]["largo_m"] = val
+                    self.items[index.row()]["dim_m"] = val
+                else:
+                    self.items[index.row()][key] = val
+                self.dataChanged.emit(index, index, [Qt.DisplayRole, Qt.EditRole])
+                self._recompute_row(index.row())
+                return True
+            if key in ("ancho_m", "alto_m", "uso", "evap_qty", "familia"):
+                self.items[index.row()][key] = value
+                self.dataChanged.emit(index, index, [Qt.DisplayRole, Qt.EditRole])
+                self._recompute_row(index.row())
+                return True
+            if key == "equipo":
+                self.items[index.row()][key] = value
+                self.dataChanged.emit(index, index, [Qt.DisplayRole, Qt.EditRole])
+                self._recompute_row(index.row())
+                return True
+            elif key == "btu_hr":
+                self.items[index.row()]["btu_hr"] = value
+                self.items[index.row()]["carga_btu_h"] = value
+            elif key == "btu_ft":
+                self.items[index.row()]["btu_ft"] = value
+                self.items[index.row()]["btu_hr_ft"] = value
+            else:
+                self.items[index.row()][key] = value
             self.dataChanged.emit(index, index, [Qt.DisplayRole, Qt.EditRole])
             return True
         return False
@@ -1246,12 +1524,84 @@ class LegendItemsTableModel(QAbstractTableModel):
     def flags(self, index: QModelIndex):
         if not index.isValid():
             return Qt.ItemIsEnabled
+        key = self.headers[index.column()]
+        if key in ("btu_ft", "btu_hr", "dim_ft"):
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        if key == "familia" and not self._row_is_cuarto(index.row()):
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+        if key in ("ancho_m", "alto_m") and not self._row_is_cuarto(index.row()):
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
         return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
 
     def headerData(self, section: int, orientation, role=Qt.DisplayRole):
         if role == Qt.DisplayRole and orientation == Qt.Horizontal:
-            return self.headers[section].upper()
+            key = self.headers[section]
+            if key == "largo_m":
+                return "LARGO"
+            if key == "ancho_m":
+                return "ANCHO"
+            if key == "alto_m":
+                return "ALTO"
+            if key == "btu_ft":
+                return "BTU/FT"
+            if key == "btu_hr":
+                return "BTU/HR"
+            if key == "dim_ft":
+                return "DIMENSIONES FT"
+            if key == "evap_modelo":
+                return "MODELO"
+            if key == "evap_qty":
+                return "# EVAPORADORES"
+            if key == "familia":
+                return "FAMILIA"
+            return key.upper()
         return None
+
+    def _row_is_cuarto(self, row: int) -> bool:
+        try:
+            equipo = str(self.items[row].get("equipo", "")).upper()
+            return "CUARTO" in equipo
+        except Exception:
+            return False
+
+    def _row_is_multipuerta(self, row: int) -> bool:
+        try:
+            equipo = str(self.items[row].get("equipo", "")).upper()
+            if "MULTIPUERTA" not in equipo:
+                return False
+            return "CONGEL" in equipo or "REFRIG" in equipo or "CONSERV" in equipo
+        except Exception:
+            return False
+
+    def _m_to_ft_round(self, m: float) -> int:
+        try:
+            if self._cold_engine and hasattr(self._cold_engine, "m_to_ft_round"):
+                return int(self._cold_engine.m_to_ft_round(m))
+        except Exception:
+            pass
+        return int(round(m * 3.28))
+
+    def _dim_ft_text(self, row: int) -> str:
+        if row < 0 or row >= len(self.items):
+            return ""
+        item = self.items[row]
+        largo = self._parse_float(item.get("largo_m", item.get("dim_m", 0)))
+        if self._row_is_cuarto(row):
+            ancho = self._parse_float(item.get("ancho_m", 0))
+            alto = self._parse_float(item.get("alto_m", 0))
+            if largo <= 0 or ancho <= 0 or alto <= 0:
+                return ""
+            l_ft = self._m_to_ft_round(largo)
+            w_ft = self._m_to_ft_round(ancho)
+            h_ft = self._m_to_ft_round(alto)
+            return f"{l_ft}x{w_ft}x{h_ft}"
+        if self._row_is_multipuerta(row):
+            puertas = int(round(largo)) if largo > 0 else 0
+            return f"{puertas} PUERTAS" if puertas > 0 else ""
+        if largo <= 0:
+            return ""
+        ft = largo * 3.28084
+        return f"{ft:.2f}"
 
     def add_row(self, row: dict) -> None:
         self.beginInsertRows(QModelIndex(), len(self.items), len(self.items))
@@ -1263,6 +1613,7 @@ class LegendItemsTableModel(QAbstractTableModel):
             row = norm
         self.items.append(row)
         self.endInsertRows()
+        self._recompute_row(len(self.items) - 1)
 
     def add_rows(self, rows: List[dict]) -> None:
         if not rows:
@@ -1279,6 +1630,8 @@ class LegendItemsTableModel(QAbstractTableModel):
                 row = norm
             self.items.append(row)
         self.endInsertRows()
+        for r in range(start, end + 1):
+            self._recompute_row(r)
 
     def insert_rows_at(self, index: int, rows: List[dict]) -> None:
         if not rows:
@@ -1298,6 +1651,8 @@ class LegendItemsTableModel(QAbstractTableModel):
             insert_list.append(row)
         self.items[index:index] = insert_list
         self.endInsertRows()
+        for r in range(start, end + 1):
+            self._recompute_row(r)
 
     def del_row(self, idx: int) -> None:
         if 0 <= idx < len(self.items):
@@ -1316,6 +1671,139 @@ class LegendItemsTableModel(QAbstractTableModel):
             items = []
         self.items = [r for r in items if isinstance(r, dict)]
         self.endResetModel()
+        self.recompute_all()
+
+    def set_btu_map(self, btu_map: Dict[str, float]) -> None:
+        self._btu_map = btu_map or {}
+        self.recompute_all()
+
+    def set_cold_engine(self, engine) -> None:
+        self._cold_engine = engine
+        self.recompute_all()
+
+    def set_usage_map(self, usage_map: Dict[str, str]) -> None:
+        self._usage_map = usage_map or {}
+        self.recompute_all()
+
+    def recompute_all(self) -> None:
+        if not self.items:
+            return
+        for i in range(len(self.items)):
+            self._recompute_row(i, emit=False)
+        try:
+            col_ft = self.headers.index("btu_ft")
+            col_hr = self.headers.index("btu_hr")
+            col_model = self.headers.index("evap_modelo")
+            col_qty = self.headers.index("evap_qty")
+            col_dim = self.headers.index("dim_ft")
+            col_start = min(col_ft, col_hr, col_model, col_qty, col_dim)
+            col_end = max(col_ft, col_hr, col_model, col_qty, col_dim)
+            top = self.index(0, col_start)
+            bottom = self.index(len(self.items) - 1, col_end)
+            self.dataChanged.emit(top, bottom, [Qt.DisplayRole, Qt.EditRole])
+        except Exception:
+            pass
+
+    def _normalize_equipo(self, text: str) -> str:
+        return " ".join(str(text or "").strip().upper().split())
+
+    def _parse_float(self, val) -> float:
+        if val is None:
+            return 0.0
+        if isinstance(val, (int, float)):
+            return float(val)
+        try:
+            s = str(val).strip().replace(",", ".")
+            return float(s) if s else 0.0
+        except Exception:
+            return 0.0
+
+    def _map_usage(self, usage: str) -> str:
+        u = " ".join(str(usage or "").strip().upper().split())
+        return self._usage_map.get(u, u)
+
+    def _recompute_row(self, row: int, emit: bool = True) -> None:
+        if row < 0 or row >= len(self.items):
+            return
+        item = self.items[row]
+        equipo = self._normalize_equipo(item.get("equipo", ""))
+        btu_ft = float(self._btu_map.get(equipo, 0.0))
+        largo = min(self._parse_float(item.get("largo_m", item.get("dim_m", 0))), self.MAX_LW_M)
+        item["largo_m"] = largo
+        item["dim_m"] = largo
+        if self._row_is_cuarto(row) and self._cold_engine and ColdRoomInputs:
+            ancho = min(self._parse_float(item.get("ancho_m", 0)), self.MAX_LW_M)
+            alto = min(self._parse_float(item.get("alto_m", 0)), self.MAX_H_M)
+            item["ancho_m"] = ancho
+            item["alto_m"] = alto
+            evap_model = ""
+            evap_qty_out = 0
+            if largo > 0 and ancho > 0 and alto > 0:
+                uso = self._map_usage(item.get("uso", ""))
+                evap_qty = int(self._parse_float(item.get("evap_qty", 0)))
+                n_evap = evap_qty if evap_qty > 0 else None
+                fam_raw = " ".join(str(item.get("familia", "")).strip().upper().split())
+                fam_override = None
+                if fam_raw and fam_raw != "AUTO":
+                    if "BAJA" in fam_raw:
+                        fam_override = "frontal_wef"
+                    elif "MEDIA" in fam_raw:
+                        fam_override = "frontal_wefm"
+                    elif "DUAL" in fam_raw:
+                        fam_override = "dual"
+                try:
+                    inp = ColdRoomInputs(
+                        length_m=largo,
+                        width_m=ancho,
+                        height_m=alto,
+                        usage=uso,
+                        n_evaporators=n_evap,
+                        family_override=fam_override,
+                    )
+                    res = self._cold_engine.compute(inp)
+                    if res and res.valid:
+                        btu_hr = float(res.load_btu_hr or 0.0)
+                        evap_model = str(res.evap_model or "")
+                        evap_qty_out = int(res.n_used or n_evap or 0)
+                    else:
+                        btu_hr = 0.0
+                except Exception:
+                    btu_hr = 0.0
+            else:
+                btu_hr = 0.0
+            btu_ft = 0.0
+            item["evap_modelo"] = evap_model
+            item["evap_qty"] = evap_qty_out
+        elif self._row_is_multipuerta(row):
+            largo_int = int(round(largo))
+            item["largo_m"] = largo_int
+            item["dim_m"] = largo_int
+            btu_hr = btu_ft * largo_int
+            item["evap_modelo"] = ""
+            item["evap_qty"] = 0
+        else:
+            btu_hr = btu_ft * (largo * 3.28084)
+            item["evap_modelo"] = ""
+            item["evap_qty"] = 0
+        item["btu_ft"] = btu_ft
+        item["btu_hr"] = btu_hr
+        item["btu_hr_ft"] = btu_ft
+        item["carga_btu_h"] = btu_hr
+        if emit:
+            try:
+                col_ft = self.headers.index("btu_ft")
+                col_hr = self.headers.index("btu_hr")
+                col_model = self.headers.index("evap_modelo")
+                col_qty = self.headers.index("evap_qty")
+                col_l = self.headers.index("largo_m")
+                col_dim = self.headers.index("dim_ft")
+                col_start = min(col_l, col_ft, col_hr, col_model, col_qty, col_dim)
+                col_end = max(col_l, col_ft, col_hr, col_model, col_qty, col_dim)
+                top = self.index(row, col_start)
+                bottom = self.index(row, col_end)
+                self.dataChanged.emit(top, bottom, [Qt.DisplayRole, Qt.EditRole])
+            except Exception:
+                pass
 
 
 if __name__ == "__main__":

@@ -19,34 +19,48 @@ DEFAULT_SPECS = {
     "tcond": "",
     "refrigerante": "",
     "controlador": "",
+    "deshielos": "",
+    "expansion": "",
+    "distribucion_tuberia": "",
+    "vendedor": "",
 }
 
 DEFAULT_ROW = {
     "loop": 1,
     "ramal": 1,
-    "dim_m": "",
+    "largo_m": "",
+    "ancho_m": "",
+    "alto_m": "",
+    "dim_ft": "",
     "equipo": "",
     "uso": "",
-    "carga_btu_h": 0.0,
-    "tevap_f": 0.0,
+    "btu_ft": 0.0,
+    "btu_hr": 0.0,
     "evap_qty": 0,
     "evap_modelo": "",
-    "control": "",
-    "succion": "",
-    "liquida": "",
-    "direccion": "",
-    "deshielo": "",
+    "familia": "AUTO",
 }
 
 
 def _normalize_row(row: Dict[str, Any]) -> Dict[str, Any]:
     out = DEFAULT_ROW.copy()
-    # Compat: permitir datos antiguos con clave "tevap"
     compat = dict(row)
-    if "tevap_f" not in compat and "tevap" in compat:
-        compat["tevap_f"] = compat.get("tevap")
+    if "largo_m" not in compat and "dim_m" in compat:
+        compat["largo_m"] = compat.get("dim_m")
+    if "largo_m" not in compat and "largo" in compat:
+        compat["largo_m"] = compat.get("largo")
+    if "ancho_m" not in compat and "ancho" in compat:
+        compat["ancho_m"] = compat.get("ancho")
+    if "alto_m" not in compat and "alto" in compat:
+        compat["alto_m"] = compat.get("alto")
+    if "btu_hr" not in compat and "carga_btu_h" in compat:
+        compat["btu_hr"] = compat.get("carga_btu_h")
+    if "btu_ft" not in compat and "btu_hr_ft" in compat:
+        compat["btu_ft"] = compat.get("btu_hr_ft")
     for k in out.keys():
         out[k] = compat.get(k, out[k])
+    out["dim_m"] = out.get("largo_m", "")
+    out["carga_btu_h"] = out.get("btu_hr", 0.0)
     return out
 
 

@@ -110,24 +110,60 @@ def load_equipos(dir_path: Path) -> Tuple[List[EquipoCatalogItem], bool]:
 def load_equipos_split(dir_path: Path) -> Tuple[Dict[str, List[EquipoCatalogItem]], bool]:
     info = _load_analysis_info(dir_path)
     info_items = info.get("equipos", [])
-    if not isinstance(info_items, list):
-        return {"BT": [], "MT": []}, False
-    split = _split_equipos_by_row(info_items)
     out: Dict[str, List[EquipoCatalogItem]] = {"BT": [], "MT": []}
-    for key in ("BT", "MT"):
-        seen: set[str] = set()
-        for d in split.get(key, []):
+    seen_bt: set[str] = set()
+    seen_mt: set[str] = set()
+
+    if isinstance(info_items, list):
+        split = _split_equipos_by_row(info_items)
+        for d in split.get("BT", []):
             try:
                 nombre = str(d.get("equipo", "")).strip()
                 if not nombre:
                     continue
                 u = nombre.upper()
-                if u in seen:
+                if u in seen_bt:
                     continue
-                seen.add(u)
-                out[key].append(EquipoCatalogItem(nombre, float(d.get("btu_hr_ft", 0.0))))
+                seen_bt.add(u)
+                out["BT"].append(EquipoCatalogItem(nombre, float(d.get("btu_hr_ft", 0.0))))
             except Exception:
                 continue
+        for d in split.get("MT", []):
+            try:
+                nombre = str(d.get("equipo", "")).strip()
+                if not nombre:
+                    continue
+                u = nombre.upper()
+                if u in seen_mt:
+                    continue
+                seen_mt.add(u)
+                out["MT"].append(EquipoCatalogItem(nombre, float(d.get("btu_hr_ft", 0.0))))
+            except Exception:
+                continue
+
+    # Mezclar equipos.json con clasificación simple por texto
+    data = _safe_read_json(dir_path / "equipos.json") or []
+    if isinstance(data, list):
+        for d in data:
+            try:
+                nombre = str(d.get("equipo", "")).strip()
+                if not nombre:
+                    continue
+                u = nombre.upper()
+                bt = "CONGEL" in u
+                mt = "CONSERV" in u
+                if not bt and not mt:
+                    bt = True
+                    mt = True
+                if bt and u not in seen_bt:
+                    seen_bt.add(u)
+                    out["BT"].append(EquipoCatalogItem(nombre, float(d.get("btu_hr_ft", 0.0))))
+                if mt and u not in seen_mt:
+                    seen_mt.add(u)
+                    out["MT"].append(EquipoCatalogItem(nombre, float(d.get("btu_hr_ft", 0.0))))
+            except Exception:
+                continue
+
     found = bool(out.get("BT")) or bool(out.get("MT"))
     return out, found
 

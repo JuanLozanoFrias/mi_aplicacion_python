@@ -10,5 +10,8 @@
   {
     "equipo": "CUARTO FRIO CONGELACION",
     "btu_hr_ft": 1500
+  },
+  {
+    "equipo": "CUARTO FRIO CONSERVACION"
   }
 ]
