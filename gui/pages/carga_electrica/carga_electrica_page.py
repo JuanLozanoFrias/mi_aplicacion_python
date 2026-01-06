@@ -86,6 +86,7 @@ class CargaElectricaPage(QWidget):
         self._metros_tension = {}
         self._metros_economico = {}
         self._legend_book_path: Path | None = None
+        self._last_legend_sheets: List[str] = []
         self._preview_timer = QTimer(self)
         self._preview_timer.setSingleShot(True)
         self._preview_timer.timeout.connect(self._update_preview_now)
@@ -247,8 +248,6 @@ class CargaElectricaPage(QWidget):
         self.table.setColumnWidth(2, 100)
 
     def _default_book(self) -> Path:
-        if self._legend_book_path and self._legend_book_path.exists():
-            return self._legend_book_path
         base_dir = Path(__file__).resolve().parents[3] / "data"
         candidates = [
             base_dir / "CUADRO DE CARGAS -INDIVIDUAL JUAN LOZANO.xlsx",
@@ -565,13 +564,44 @@ class CargaElectricaPage(QWidget):
         self._apply_result_widths()
 
     # ------------------------------------------------------------------ datos / catalogos
-    def _load_catalogos(self) -> None:
-        book = self._default_book()
+    def _load_catalogos(self, book: Path | None = None, *, preserve_on_fail: bool = False) -> bool:
+        book = book or self._default_book()
         if not book.exists():
-            return
+            if not preserve_on_fail:
+                self._equipos = []
+                self._usos = []
+                self._unidades = []
+                self._medidas_por_equipo = {}
+            return False
         import pandas as pd
         try:
-            df_muebles = pd.read_excel(book, sheet_name="MUEBLES")
+            xls = pd.ExcelFile(book)
+            self._last_legend_sheets = list(xls.sheet_names)
+
+            def _pick_sheet(names: List[str], keys: List[str]) -> str | None:
+                for name in names:
+                    up = str(name).upper()
+                    for k in keys:
+                        if k in up:
+                            return name
+                return None
+
+            muebles_sheet = None
+            if "MUEBLES" in self._last_legend_sheets:
+                muebles_sheet = "MUEBLES"
+            if not muebles_sheet:
+                muebles_sheet = _pick_sheet(self._last_legend_sheets, ["MUEB", "EQUIP"])
+
+            unidades_sheet = None
+            if "UNIDADES" in self._last_legend_sheets:
+                unidades_sheet = "UNIDADES"
+            if not unidades_sheet:
+                unidades_sheet = _pick_sheet(self._last_legend_sheets, ["UNID"])
+
+            if not muebles_sheet or not unidades_sheet:
+                raise ValueError("Faltan hojas de MUEBLES/UNIDADES en el archivo.")
+
+            df_muebles = pd.read_excel(book, sheet_name=muebles_sheet)
             df_muebles.columns = [str(c).strip() for c in df_muebles.columns]
 
             def pick_col(df, target: str) -> str:
@@ -592,20 +622,23 @@ class CargaElectricaPage(QWidget):
             for k, vals in list(self._medidas_por_equipo.items()):
                 self._medidas_por_equipo[k] = sorted(set(vals))
 
-            df_uni = pd.read_excel(book, sheet_name="UNIDADES", header=None)
+            df_uni = pd.read_excel(book, sheet_name=unidades_sheet, header=None)
             col_uni = df_uni.columns[2] if len(df_uni.columns) > 2 else df_uni.columns[0]
             self._unidades = sorted(set(str(x).strip() for x in df_uni[col_uni].dropna().unique() if str(x).strip()))
 
             if hasattr(self, "status"):
                 self.status.setText(f"Catalogos: {len(self._equipos)} equipos, {len(self._usos)} usos, {len(self._unidades)} unidades.")
             self._apply_column_widths()
+            return True
         except Exception as e:
-            self._equipos = []
-            self._usos = []
-            self._unidades = []
-            self._medidas_por_equipo = {}
+            if not preserve_on_fail:
+                self._equipos = []
+                self._usos = []
+                self._unidades = []
+                self._medidas_por_equipo = {}
             if hasattr(self, "status"):
                 self.status.setText(f"Error cargando catalogos: {e}")
+            return False
 
     # ------------------------------------------------------------------ tabla entrada
     def _gen_table(self) -> None:
@@ -872,21 +905,193 @@ class CargaElectricaPage(QWidget):
         self.status.setText("Proyecto nuevo iniciado.")
 
     def _load_legend(self) -> None:
-        base = self._legend_book_path or self._default_book()
-        start_dir = str(base.parent) if base else str(Path(__file__).resolve().parents[3] / "data")
-        file_path, _ = QFileDialog.getOpenFileName(
-            self,
-            "Selecciona archivo LEGEND",
-            start_dir,
-            "Excel (*.xlsx *.xlsm)",
-        )
-        if not file_path:
+        base_dir = Path(__file__).resolve().parents[3] / "data"
+        path, _ = QFileDialog.getOpenFileName(self, "Cargar legend", str(base_dir), "Excel (*.xlsx *.xlsm)")
+        if not path:
             return
-        self._legend_book_path = Path(file_path)
-        self._load_catalogos()
-        if hasattr(self, "status"):
-            self.status.setText(f"LEGEND cargado: {self._legend_book_path.name}")
-        QMessageBox.information(self, "Legend", f"LEGEND cargado:\n{self._legend_book_path}")
+        try:
+            import pandas as pd
+            df = pd.read_excel(path, header=None)
+
+            # Proyecto en I3 (fila 3, col I -> idx 2,8)
+            try:
+                proj_cell = df.iloc[2, 8]
+                proj_name = str(proj_cell).strip()
+                if proj_name and proj_name.lower() != "nan":
+                    self.proj_edit.setText(proj_name.upper())
+            except Exception:
+                pass
+
+            # mapear columnas por encabezados dinamicos (filas 8/9 -> idx 7/8)
+            def norm(text: str) -> str:
+                return self._norm(text)
+
+            headers8 = [norm(df.iloc[7, c]) if 7 < len(df.index) else "" for c in range(df.shape[1])]
+            headers9 = [norm(df.iloc[8, c]) if 8 < len(df.index) else "" for c in range(df.shape[1])]
+
+            def find_col(targets):
+                for c in range(df.shape[1]):
+                    h8 = headers8[c]
+                    h9 = headers9[c]
+                    if any(t == h8 or t == h9 for t in targets):
+                        return c
+                    if any(t in h8 for t in targets) or any(t in h9 for t in targets):
+                        return c
+                return None
+
+            col_equipo = find_col(["EQUIPO"])
+            col_uso = find_col(["USO"])
+            col_dim = find_col(["DIM", "DIM(FT)", "DIM FT", "DIMENSION FT", "DIM (FT)", "DIMENSION"])
+            col_desh = find_col(["DESHIELO", "HG"])
+            # evaporador headers (pueden venir combinados, buscamos en fila 9)
+            col_evap_model = None
+            col_evap_qty = None
+            for c in range(df.shape[1]):
+                h8 = headers8[c]
+                h9 = headers9[c]
+                left_h8 = headers8[c - 1] if c > 0 else ""
+                if "MODE" in h9 and ("EVAP" in h8 or "EVAP" in h9 or "EVAP" in left_h8):
+                    col_evap_model = c
+                if ("CANT" in h9 or "QTY" in h9) and ("EVAP" in h8 or "EVAP" in h9 or "EVAP" in left_h8):
+                    col_evap_qty = c
+            col_dist = find_col(["DISTANCIA", "DIST"])
+            # compresor model (puede venir con header en fila 8 o 9)
+            col_comp_model = None
+            for c in range(df.shape[1]):
+                h8 = headers8[c]
+                h9 = headers9[c]
+                if "MODE" in h9 and ("COMPRES" in h8 or "COMPRES" in h9):
+                    col_comp_model = c
+
+            legend_rows = []
+            for idx, row in df.iterrows():
+                if idx < 9:
+                    continue
+                equipo = str(row.iloc[col_equipo]).strip() if col_equipo is not None and len(row) > col_equipo else ""
+                if not equipo or equipo.lower() == "nan":
+                    continue
+                uso_raw = str(row.iloc[col_uso]).strip() if col_uso is not None and len(row) > col_uso else ""
+                uso_norm = norm(uso_raw)
+                if "AUTOARGOS" in uso_norm:
+                    uso = "AUTOSERVICIO ARGOS"
+                elif uso_norm == "LACTEOS" or "LACT" in uso_norm:
+                    uso = "LACTEOS"
+                elif uso_norm == "PASILLO":
+                    uso = "PASILLO"
+                else:
+                    uso = uso_raw
+                desh_raw = str(row.iloc[col_desh]).strip() if col_desh is not None and len(row) > col_desh else ""
+                desh_norm = norm(desh_raw)
+                if "ELECTR" in desh_norm:
+                    desh_final = "RESISTENCIAS"
+                elif "TIEM" in desh_norm:
+                    desh_final = "TIEMPO"
+                elif "GAS" in desh_norm or "HG" in desh_norm:
+                    desh_final = "GAS CALIENTE"
+                else:
+                    desh_final = ""
+                # dimensiones
+                try:
+                    length_ft = float(str(row.iloc[col_dim]).replace(",", ".")) if col_dim is not None and len(row) > col_dim else 0.0
+                except Exception:
+                    length_ft = 0.0
+                length_m = max(0.0, length_ft * 0.3048)
+                try:
+                    dist_val = float(str(row.iloc[col_dist]).replace(",", ".")) if col_dist is not None and len(row) > col_dist else 0.0
+                except Exception:
+                    dist_val = 0.0
+
+                # evaporadores
+                try:
+                    qty_evap = int(pd.to_numeric(row.iloc[col_evap_qty], errors="coerce")) if col_evap_qty is not None and len(row) > col_evap_qty else 1
+                except Exception:
+                    qty_evap = 1
+                qty_evap = max(1, qty_evap)
+                modelo_evap = str(row.iloc[col_evap_model]).strip() if col_evap_model is not None and len(row) > col_evap_model else ""
+                if modelo_evap.lower() == "nan" or modelo_evap in ("0", "0.0"):
+                    modelo_evap = ""
+
+                # compresor
+                comp_model = str(row.iloc[col_comp_model]).strip() if col_comp_model is not None and len(row) > col_comp_model else ""
+                tiene_unidad = bool(comp_model)
+
+                eq_upper = equipo.upper()
+                modules: list[tuple[str, str, str, str, bool, str, float]] = []
+
+                if "CUARTO" in eq_upper:
+                    dim_val = modelo_evap if modelo_evap else ""
+                    for _ in range(qty_evap):
+                        modules.append((equipo, uso, dim_val, desh_final, tiene_unidad, comp_model, dist_val))
+                elif "MULTIPUERTA" in eq_upper:
+                    try:
+                        puertas = int(round(length_ft))
+                    except Exception:
+                        puertas = qty_evap
+                    modules_doors = self._split_doors_modules(equipo, puertas)
+                    for dim in modules_doors:
+                        modules.append((equipo, uso, dim, desh_final, tiene_unidad, comp_model, dist_val))
+                elif "AUTOSERV" in eq_upper:
+                    mods = self._split_autoservicio(length_ft)
+                    for dim in mods:
+                        modules.append((equipo, uso, dim, desh_final, tiene_unidad, comp_model, dist_val))
+                else:
+                    # usar cantidad de evaporadores para modular
+                    if qty_evap > 1 and length_m > 0:
+                        per_m = length_m / qty_evap
+                        for _ in range(qty_evap):
+                            dim = self._choose_dimension(equipo, per_m / 0.3048, 1)
+                            modules.append((equipo, uso, dim, desh_final, tiene_unidad, comp_model, dist_val))
+                    else:
+                        mods = self._split_length_generic(equipo, length_m)
+                        if mods:
+                            for dim in mods:
+                                modules.append((equipo, uso, dim, desh_final, tiene_unidad, comp_model, dist_val))
+                        else:
+                            dim = self._choose_dimension(equipo, length_ft, 1)
+                            modules.append((equipo, uso, dim, desh_final, tiene_unidad, comp_model, dist_val))
+
+                for m in modules:
+                    legend_rows.append(m)
+
+            total_rows = len(legend_rows)
+            if total_rows == 0:
+                QMessageBox.information(self, "Legend", "No se encontraron filas validas en el legend.")
+                return
+
+            self.ramales_spin.setValue(total_rows)
+            self._gen_table()
+            for idx, (eq, uso, dim, desc, tiene_u, ref_u, dist_val) in enumerate(legend_rows):
+                widgets = [self.sel_table.cellWidget(idx, i) for i in range(9)]
+                eq_combo, uso_combo, med_combo, desc_combo, tiene_combo, uni_combo, niv_spin, dist_edit, sec_edit = widgets
+                if isinstance(eq_combo, QComboBox):
+                    self._set_combo_text(eq_combo, eq)
+                    self._on_equipo_changed(idx, eq_combo.currentText(), med_combo if isinstance(med_combo, QComboBox) else QComboBox())
+                if isinstance(uso_combo, QComboBox):
+                    self._set_combo_text(uso_combo, uso)
+                if isinstance(med_combo, QComboBox):
+                    med_combo.setMinimumContentsLength(14)
+                    med_combo.setSizeAdjustPolicy(QComboBox.AdjustToContents)
+                    self._set_combo_text(med_combo, dim)
+                if isinstance(desc_combo, QComboBox):
+                    self._set_combo_text(desc_combo, desc)
+                if isinstance(tiene_combo, QComboBox):
+                    self._set_combo_text(tiene_combo, "SI" if tiene_u else "NO")
+                if isinstance(uni_combo, QComboBox):
+                    if tiene_u and ref_u:
+                        self._set_combo_text(uni_combo, ref_u)
+                    else:
+                        uni_combo.setCurrentIndex(0)
+                if isinstance(dist_edit, QLineEdit):
+                    dist_edit.setText(str(dist_val) if dist_val else "")
+                if isinstance(sec_edit, QLineEdit):
+                    sec_edit.setText("")
+            self._adjust_medida_column()
+            self.sel_table.resizeColumnsToContents()
+            self._auto_height(self.sel_table)
+            self._schedule_preview()
+            QMessageBox.information(self, "Legend", "Legend cargado en la tabla.")
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"No se pudo cargar el legend: {e}")
 
     # ------------------------------------------------------------------ copiar / pegar
     def _copy_row(self) -> None:
