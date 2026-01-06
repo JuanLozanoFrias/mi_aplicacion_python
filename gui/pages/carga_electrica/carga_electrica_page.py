@@ -21,7 +21,6 @@ from PySide6.QtWidgets import (
 from PySide6.QtGui import QKeySequence, QShortcut, QPainter, QFont, QColor
 
 from logic.carga_electrica.cuadro_cargas import recalcular, ResultadoRamal, SeleccionRamal, CargaFase
-from logic.legend_jd import LegendJDService
 from .biblioteca_carga import BibliotecaCargaDialog
 
 # Lista fija de usos (tomada de la columna H de DATOS, pero embebida para no depender del Excel).
@@ -86,6 +85,7 @@ class CargaElectricaPage(QWidget):
         self._tabla4 = []
         self._metros_tension = {}
         self._metros_economico = {}
+        self._legend_book_path: Path | None = None
         self._preview_timer = QTimer(self)
         self._preview_timer.setSingleShot(True)
         self._preview_timer.timeout.connect(self._update_preview_now)
@@ -247,6 +247,8 @@ class CargaElectricaPage(QWidget):
         self.table.setColumnWidth(2, 100)
 
     def _default_book(self) -> Path:
+        if self._legend_book_path and self._legend_book_path.exists():
+            return self._legend_book_path
         base_dir = Path(__file__).resolve().parents[3] / "data"
         candidates = [
             base_dir / "CUADRO DE CARGAS -INDIVIDUAL JUAN LOZANO.xlsx",
@@ -870,28 +872,21 @@ class CargaElectricaPage(QWidget):
         self.status.setText("Proyecto nuevo iniciado.")
 
     def _load_legend(self) -> None:
-        svc = LegendJDService()
-        try:
-            data = svc.load_all()
-        except Exception as e:
-            QMessageBox.critical(self, "Legend", f"No se pudo cargar LEGEND: {e}")
-            return
-
-        cfg = data.get("config")
-        if cfg and getattr(cfg, "proyecto", None):
-            self.proj_edit.setText(str(cfg.proyecto).upper())
-
-        usos = data.get("usos", {})
-        usos_bt = usos.get("BT", [])
-        usos_mt = usos.get("MT", [])
-        summary = (
-            f"Carpeta: {data.get('sources', {}).get('folder')}\n"
-            f"Archivos: {', '.join(data.get('sources', {}).get('files_found', [])) or 'ninguno'}\n"
-            f"Equipos: {len(data.get('equipos', []))} | Usos BT: {len(usos_bt)} | Usos MT: {len(usos_mt)}\n"
-            f"Variadores: {len(data.get('variadores', []))} | WCR: {len(data.get('wcr', []))}\n"
-            f"Plantillas: {{ {', '.join(f'{k}:{len(v)}' for k, v in data.get('plantillas', {}).items())} }}"
+        base = self._legend_book_path or self._default_book()
+        start_dir = str(base.parent) if base else str(Path(__file__).resolve().parents[3] / "data")
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Selecciona archivo LEGEND",
+            start_dir,
+            "Excel (*.xlsx *.xlsm)",
         )
-        QMessageBox.information(self, "Legend", summary)
+        if not file_path:
+            return
+        self._legend_book_path = Path(file_path)
+        self._load_catalogos()
+        if hasattr(self, "status"):
+            self.status.setText(f"LEGEND cargado: {self._legend_book_path.name}")
+        QMessageBox.information(self, "Legend", f"LEGEND cargado:\n{self._legend_book_path}")
 
     # ------------------------------------------------------------------ copiar / pegar
     def _copy_row(self) -> None:
