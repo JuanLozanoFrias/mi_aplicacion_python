@@ -726,8 +726,15 @@ class LegendPage(QWidget):
         model = view.model()
         row_count = model.rowCount() if model else 0
         header_h = view.horizontalHeader().height()
-        row_h = view.verticalHeader().defaultSectionSize()
-        h = header_h + (row_h * max(row_count, 1)) + view.frameWidth() * 2 + 6
+        if model and row_count > 0:
+            try:
+                view.resizeRowsToContents()
+            except Exception:
+                pass
+            total_rows_h = sum(view.rowHeight(i) for i in range(row_count))
+        else:
+            total_rows_h = view.verticalHeader().defaultSectionSize()
+        h = header_h + total_rows_h + view.frameWidth() * 2 + 6
         header = view.horizontalHeader()
         if model:
             for col in range(model.columnCount()):
@@ -740,6 +747,10 @@ class LegendPage(QWidget):
         view.setAlternatingRowColors(True)
         self._apply_combo_column_widths(view)
         self._apply_dim_spans(view, model)
+        try:
+            view.scrollToTop()
+        except Exception:
+            pass
 
     def _refresh_table_view(self, view: QTableView) -> None:
         try:
@@ -863,6 +874,14 @@ class LegendPage(QWidget):
                 self._fit_table_to_contents_view(self.bt_view)
                 self._set_dirty(True)
             return
+        if value > current and self.bt_model.rowCount() == 0:
+            row = self._default_row("bt")
+            row["ramal"] = 1
+            self._suspend_updates = True
+            self.bt_model.add_rows([row])
+            self._suspend_updates = False
+            self.project_data["bt_items"] = self.bt_model.items
+            current = 1
         if value > current:
             self._add_ramales_bulk("bt", value - current)
         else:
@@ -883,6 +902,14 @@ class LegendPage(QWidget):
                 self._fit_table_to_contents_view(self.mt_view)
                 self._set_dirty(True)
             return
+        if value > current and self.mt_model.rowCount() == 0:
+            row = self._default_row("mt")
+            row["ramal"] = 1
+            self._suspend_updates = True
+            self.mt_model.add_rows([row])
+            self._suspend_updates = False
+            self.project_data["mt_items"] = self.mt_model.items
+            current = 1
         if value > current:
             self._add_ramales_bulk("mt", value - current)
         else:
@@ -1243,47 +1270,62 @@ class LegendPage(QWidget):
         self._refresh_combo_editors(self.mt_view)
 
     def _apply_combo_column_widths(self, view: QTableView) -> None:
-        model = view.model()
-        if not model:
+        # Mantener mismas columnas y tamaños en BT/MT, basado en el mayor texto de ambos
+        self._sync_table_column_widths()
+        try:
+            self._refresh_combo_editors(view)
+        except Exception:
+            pass
+
+    def _sync_table_column_widths(self) -> None:
+        if not self.bt_view or not self.mt_view:
             return
-        col_equipo = PROJ_COLUMNS.index("equipo")
-        col_uso = PROJ_COLUMNS.index("uso")
-        col_familia = PROJ_COLUMNS.index("familia")
-        fm = view.fontMetrics()
+        bt_model = self.bt_view.model()
+        mt_model = self.mt_view.model()
+        if not bt_model or not mt_model:
+            return
+        fm = self.bt_view.fontMetrics()
 
-        def _max_width(texts: List[str], header_text: str) -> int:
-            max_w = fm.horizontalAdvance(header_text)
-            for t in texts:
-                max_w = max(max_w, fm.horizontalAdvance(str(t)))
-            return max_w + 70  # padding + combo arrow
+        equipos_all = list(self._equipos_bt) + list(self._equipos_mt)
+        usos_all = list(self._usos_bt) + list(self._usos_mt)
 
-        if view is self.bt_view:
-            uso_texts = self._usos_bt
-            equipo_texts = self._equipos_bt
-        else:
-            uso_texts = self._usos_mt
-            equipo_texts = self._equipos_mt
-        # incluye valores actuales en la tabla para evitar cortes
-        if model.rowCount() > 0:
-            for row in range(model.rowCount()):
-                try:
-                    idx_eq = model.index(row, col_equipo)
-                    idx_uso = model.index(row, col_uso)
-                    val_eq = idx_eq.data(Qt.DisplayRole)
-                    val_uso = idx_uso.data(Qt.DisplayRole)
-                    if val_eq:
-                        equipo_texts = list(equipo_texts) + [str(val_eq)]
-                    if val_uso:
-                        uso_texts = list(uso_texts) + [str(val_uso)]
-                except Exception:
-                    pass
-        equipo_w = _max_width(equipo_texts, "EQUIPO")
-        uso_w = _max_width(uso_texts, "USO")
-        familia_w = _max_width(self._familia_options, "FAMILIA")
-        view.setColumnWidth(col_equipo, max(140, equipo_w))
-        view.setColumnWidth(col_uso, max(120, uso_w))
-        view.setColumnWidth(col_familia, max(140, familia_w))
-        self._refresh_combo_editors(view)
+        min_widths = {
+            "equipo": 140,
+            "uso": 120,
+            "familia": 140,
+        }
+        combo_cols = {"equipo", "uso", "familia"}
+
+        for col in range(len(PROJ_COLUMNS)):
+            key = PROJ_COLUMNS[col]
+            header_text = bt_model.headerData(col, Qt.Horizontal, Qt.DisplayRole) or ""
+            max_w = fm.horizontalAdvance(str(header_text))
+
+            if key == "equipo":
+                for t in equipos_all:
+                    max_w = max(max_w, fm.horizontalAdvance(str(t)))
+            elif key == "uso":
+                for t in usos_all:
+                    max_w = max(max_w, fm.horizontalAdvance(str(t)))
+            elif key == "familia":
+                for t in self._familia_options:
+                    max_w = max(max_w, fm.horizontalAdvance(str(t)))
+
+            for model in (bt_model, mt_model):
+                for row in range(model.rowCount()):
+                    try:
+                        val = model.index(row, col).data(Qt.DisplayRole)
+                    except Exception:
+                        val = None
+                    if val:
+                        max_w = max(max_w, fm.horizontalAdvance(str(val)))
+
+            pad = 70 if key in combo_cols else 24
+            width = max_w + pad
+            if key in min_widths:
+                width = max(width, min_widths[key])
+            self.bt_view.setColumnWidth(col, width)
+            self.mt_view.setColumnWidth(col, width)
 
     def _normalize_equipo_name(self, text: str) -> str:
         return " ".join(str(text or "").strip().upper().split())
@@ -1485,12 +1527,13 @@ class LegendItemsTableModel(QAbstractTableModel):
             key = self.headers[index.column()]
             if key in ("largo_m", "ancho_m", "alto_m"):
                 val = self._parse_float(value)
-                max_val = self.MAX_LW_M if key in ("largo_m", "ancho_m") else self.MAX_H_M
-                if val > max_val:
-                    val = max_val
-                    if self._limit_cb:
-                        label = "LARGO" if key == "largo_m" else "ANCHO" if key == "ancho_m" else "ALTO"
-                        self._limit_cb(label, max_val)
+                if self._row_is_cuarto(index.row()):
+                    max_val = self.MAX_LW_M if key in ("largo_m", "ancho_m") else self.MAX_H_M
+                    if val > max_val:
+                        val = max_val
+                        if self._limit_cb:
+                            label = "LARGO" if key == "largo_m" else "ANCHO" if key == "ancho_m" else "ALTO"
+                            self._limit_cb(label, max_val)
                 if key == "largo_m":
                     self.items[index.row()]["largo_m"] = val
                     self.items[index.row()]["dim_m"] = val
@@ -1580,6 +1623,50 @@ class LegendItemsTableModel(QAbstractTableModel):
         except Exception:
             pass
         return int(round(m * 3.28))
+
+    def _auto_evap_qty_furniture(self, row: int, largo_m: float) -> int:
+        if largo_m <= 0:
+            return 0
+        if self._row_is_multipuerta(row):
+            doors = int(round(largo_m))
+            if doors <= 0:
+                return 0
+            if doors == 1:
+                return 1
+            # Preferir juegos de 4, luego 3 y 2 (evitar 1 si se puede)
+            max4 = doors // 4
+            for n4 in range(max4, -1, -1):
+                rem4 = doors - (4 * n4)
+                if rem4 == 0:
+                    return n4
+                max3 = rem4 // 3
+                for n3 in range(max3, -1, -1):
+                    rem = rem4 - (3 * n3)
+                    if rem == 0:
+                        return n4 + n3
+                    if rem % 2 == 0:
+                        n2 = rem // 2
+                        return n4 + n3 + n2
+            return doors
+        # Preferencias en metros (misma lógica que Carga Eléctrica)
+        preferred = [3.75, 2.5, 1.9]
+        rem = largo_m
+        modules = 0
+        limit = 0
+        while rem > 0.2 and limit < 200:
+            pick = None
+            for p in preferred:
+                if p <= rem + 0.05:
+                    pick = p
+                    break
+            if pick is None:
+                pick = preferred[-1]
+            rem -= pick
+            modules += 1
+            limit += 1
+        if modules == 0:
+            modules = 1
+        return modules
 
     def _dim_ft_text(self, row: int) -> str:
         if row < 0 or row >= len(self.items):
@@ -1728,7 +1815,11 @@ class LegendItemsTableModel(QAbstractTableModel):
         item = self.items[row]
         equipo = self._normalize_equipo(item.get("equipo", ""))
         btu_ft = float(self._btu_map.get(equipo, 0.0))
-        largo = min(self._parse_float(item.get("largo_m", item.get("dim_m", 0))), self.MAX_LW_M)
+        raw_largo = self._parse_float(item.get("largo_m", item.get("dim_m", 0)))
+        if self._row_is_cuarto(row):
+            largo = min(raw_largo, self.MAX_LW_M)
+        else:
+            largo = raw_largo
         item["largo_m"] = largo
         item["dim_m"] = largo
         if self._row_is_cuarto(row) and self._cold_engine and ColdRoomInputs:
@@ -1780,11 +1871,13 @@ class LegendItemsTableModel(QAbstractTableModel):
             item["dim_m"] = largo_int
             btu_hr = btu_ft * largo_int
             item["evap_modelo"] = ""
-            item["evap_qty"] = 0
+            if int(self._parse_float(item.get("evap_qty", 0))) <= 0:
+                item["evap_qty"] = self._auto_evap_qty_furniture(row, largo_int)
         else:
             btu_hr = btu_ft * (largo * 3.28084)
             item["evap_modelo"] = ""
-            item["evap_qty"] = 0
+            if int(self._parse_float(item.get("evap_qty", 0))) <= 0:
+                item["evap_qty"] = self._auto_evap_qty_furniture(row, largo)
         item["btu_ft"] = btu_ft
         item["btu_hr"] = btu_hr
         item["btu_hr_ft"] = btu_ft
