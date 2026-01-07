@@ -3,12 +3,15 @@ from __future__ import annotations
 from copy import copy
 from pathlib import Path
 import re
+import os
+import tempfile
+import zipfile
+import xml.etree.ElementTree as ET
 from typing import Any, Dict, Iterable, List, Tuple
 
 import json
 from openpyxl import load_workbook
 from openpyxl.cell.cell import MergedCell
-from openpyxl.drawing.image import Image as XLImage
 from openpyxl.styles import Border, PatternFill, Side
 from openpyxl.utils import get_column_letter
 import unicodedata
@@ -132,25 +135,6 @@ def _merge_span(ws, row: int, col: int) -> Tuple[int, int] | None:
     return None
 
 
-def _add_logo(ws) -> None:
-    base = Path(__file__).resolve()
-    logo_path = None
-    for p in base.parents:
-        candidate = p / "resources" / "logo.png"
-        if candidate.exists():
-            logo_path = candidate
-            break
-    if not logo_path:
-        return
-    try:
-        img = XLImage(str(logo_path))
-        img.width = 220
-        img.height = 80
-        ws.add_image(img, "A1")
-    except Exception:
-        pass
-
-
 def _apply_borders(ws, min_row: int, max_row: int, min_col: int, max_col: int) -> None:
     thin = Side(border_style="thin", color="000000")
     thick = Side(border_style="medium", color="000000")
@@ -161,6 +145,103 @@ def _apply_borders(ws, min_row: int, max_row: int, min_col: int, max_col: int) -
             top = thick if r == min_row else thin
             bottom = thick if r == max_row else thin
             ws.cell(r, c).border = Border(left=left, right=right, top=top, bottom=bottom)
+
+
+def _ensure_sheet_drawing(sheet_xml: bytes) -> bytes:
+    ns_main = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+    ns_rel = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+    ET.register_namespace("", ns_main)
+    ET.register_namespace("r", ns_rel)
+    root = ET.fromstring(sheet_xml)
+    tag = f"{{{ns_main}}}drawing"
+    has_drawing = root.find(tag) is not None
+    if not has_drawing:
+        drawing = ET.SubElement(root, tag)
+        drawing.set(f"{{{ns_rel}}}id", "rId1")
+    return ET.tostring(root, encoding="utf-8", xml_declaration=True)
+
+
+def _ensure_sheet_rels(rels_xml: bytes | None) -> bytes:
+    ns_pkg = "http://schemas.openxmlformats.org/package/2006/relationships"
+    ET.register_namespace("", ns_pkg)
+    if rels_xml:
+        root = ET.fromstring(rels_xml)
+    else:
+        root = ET.Element(f"{{{ns_pkg}}}Relationships")
+    has_rel = False
+    for rel in root.findall(f"{{{ns_pkg}}}Relationship"):
+        if rel.get("Type", "").endswith("/drawing"):
+            has_rel = True
+            break
+    if not has_rel:
+        rel = ET.SubElement(root, f"{{{ns_pkg}}}Relationship")
+        rel.set("Id", "rId1")
+        rel.set("Type", "http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing")
+        rel.set("Target", "../drawings/drawing1.xml")
+    return ET.tostring(root, encoding="utf-8", xml_declaration=True)
+
+
+def _merge_content_types(out_xml: bytes, tpl_xml: bytes) -> bytes:
+    ns = "http://schemas.openxmlformats.org/package/2006/content-types"
+    ET.register_namespace("", ns)
+    out_root = ET.fromstring(out_xml)
+    tpl_root = ET.fromstring(tpl_xml)
+    out_defaults = {(el.get("Extension"), el.get("ContentType")) for el in out_root.findall(f"{{{ns}}}Default")}
+    out_overrides = {(el.get("PartName"), el.get("ContentType")) for el in out_root.findall(f"{{{ns}}}Override")}
+    for el in tpl_root.findall(f"{{{ns}}}Default"):
+        key = (el.get("Extension"), el.get("ContentType"))
+        if key not in out_defaults:
+            out_root.append(el)
+            out_defaults.add(key)
+    for el in tpl_root.findall(f"{{{ns}}}Override"):
+        key = (el.get("PartName"), el.get("ContentType"))
+        if key not in out_overrides:
+            out_root.append(el)
+            out_overrides.add(key)
+    return ET.tostring(out_root, encoding="utf-8", xml_declaration=True)
+
+
+def restore_template_assets(template_path: Path, output_path: Path, logo_override: Path | None = None) -> bool:
+    try:
+        with zipfile.ZipFile(template_path) as ztpl, zipfile.ZipFile(output_path) as zout:
+            tpl_names = ztpl.namelist()
+            media_names = [n for n in tpl_names if n.startswith("xl/media/")]
+            drawing_names = [n for n in tpl_names if n.startswith("xl/drawings/")]
+            sheet_xml = zout.read("xl/worksheets/sheet1.xml")
+            new_sheet_xml = _ensure_sheet_drawing(sheet_xml)
+            rels_path = "xl/worksheets/_rels/sheet1.xml.rels"
+            rels_xml = zout.read(rels_path) if rels_path in zout.namelist() else None
+            new_rels_xml = _ensure_sheet_rels(rels_xml)
+            ct_xml = zout.read("[Content_Types].xml")
+            tpl_ct_xml = ztpl.read("[Content_Types].xml")
+            new_ct_xml = _merge_content_types(ct_xml, tpl_ct_xml)
+
+            tmp_fd, tmp_name = tempfile.mkstemp(suffix=".xlsx")
+            os.close(tmp_fd)
+            Path(tmp_name).unlink(missing_ok=True)
+            tmp_path = Path(tmp_name)
+            with zipfile.ZipFile(tmp_path, "w") as znew:
+                for item in zout.infolist():
+                    name = item.filename
+                    if name in ("xl/worksheets/sheet1.xml", rels_path, "[Content_Types].xml"):
+                        continue
+                    if name.startswith("xl/media/") or name.startswith("xl/drawings/"):
+                        continue
+                    znew.writestr(item, zout.read(name))
+                znew.writestr("xl/worksheets/sheet1.xml", new_sheet_xml)
+                znew.writestr(rels_path, new_rels_xml)
+                znew.writestr("[Content_Types].xml", new_ct_xml)
+                for name in media_names:
+                    if logo_override and media_names and name == media_names[0]:
+                        znew.writestr(name, logo_override.read_bytes())
+                    else:
+                        znew.writestr(name, ztpl.read(name))
+                for name in drawing_names:
+                    znew.writestr(name, ztpl.read(name))
+        output_path.write_bytes(tmp_path.read_bytes())
+        return True
+    except Exception:
+        return False
 
 
 def _normalize_rows(items: Iterable[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -224,7 +305,9 @@ def _make_block_rows(
         total += btu_hr
         model = str(it.get("evap_modelo", "") or "")
         if model:
-            model = re.sub(r"(?i)\s*-?\s*FRONTAL\b", "", model).strip(" -")
+            model = re.sub(r"(?i)\s*-?\s*(DUAL|FRONTAL)\b", "", model)
+            model = re.sub(r"\s{2,}", " ", model)
+            model = model.strip(" -")
         uso = str(it.get("uso", "") or "")
         uso_key = _norm_label(uso)
         flag = deshielo_map.get(uso_key)
@@ -257,7 +340,6 @@ def _make_block_rows(
 def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
     wb = load_workbook(template_path)
     ws = wb.active
-    _add_logo(ws)
 
     specs = project_data.get("specs", {}) if isinstance(project_data, dict) else {}
 
@@ -318,7 +400,8 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
     mt_rows, mt_total = _make_block_rows(mt_items, default_deshielo, deshielo_por_uso.get("MT", {}))
 
     cur = start_row
-    total_ranges: List[Tuple[int, int, int, int]] = []
+    total_ranges: List[Tuple[int, int, int]] = []
+    spacer_rows: List[int] = []
 
     def _is_deshielo_por_tiempo(val: Any) -> bool:
         return _norm_label(val) in ("DESHIELO POR TIEMPO", "POR TIEMPO", "NO")
@@ -369,7 +452,7 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
                 dcell.font = dcell.font.copy(color="000000" if is_pt else "FF0000")
             cur += 1
 
-    def _write_total(label: str, total: float) -> None:
+    def _write_total(label: str, total: float, *, add_spacer: bool) -> None:
         nonlocal cur
         _copy_row_style(ws, total_style_row, cur, max_col)
         _set_row_height(ws, cur, total_row_height)
@@ -377,8 +460,8 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
         end_col = deshielo_span[1] if deshielo_span else (deshielo_col or max_col)
         if btu_col and btu_col > label_col + 1:
             ws.merge_cells(start_row=cur, start_column=label_col, end_row=cur, end_column=btu_col - 1)
-        if btu_col and end_col and end_col >= btu_col:
-            ws.merge_cells(start_row=cur, start_column=btu_col, end_row=cur, end_column=end_col)
+        if tevap_col and end_col and end_col >= tevap_col:
+            ws.merge_cells(start_row=cur, start_column=tevap_col, end_row=cur, end_column=end_col)
         _safe_set(ws, cur, label_col, label)
         if btu_col:
             _safe_set(ws, cur, btu_col, int(round(total)))
@@ -386,27 +469,37 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
         for c in range(1, max_col + 1):
             ws.cell(cur, c).fill = clear_fill
         if btu_col:
-            total_ranges.append((cur, label_col, btu_col, end_col))
-        cur += 2  # espacio
+            total_ranges.append((cur, label_col, btu_col - 1))
+            total_ranges.append((cur, btu_col, btu_col))
+        if tevap_col and end_col and end_col >= tevap_col:
+            total_ranges.append((cur, tevap_col, end_col))
+        if add_spacer:
+            spacer_row = cur + 1
+            ws.merge_cells(start_row=spacer_row, start_column=1, end_row=spacer_row, end_column=max_col)
+            spacer_rows.append(spacer_row)
+            cur += 2
+        else:
+            cur += 1
 
     bt_start = cur
     _write_rows(bt_rows)
     bt_end = cur - 1
     if bt_rows:
         _set_block_label("BAJA", bt_start, bt_end)
-    _write_total("CARGA TOTAL BAJA", bt_total)
+    _write_total("CARGA TOTAL BAJA", bt_total, add_spacer=True)
     mt_start = cur
     _write_rows(mt_rows)
     mt_end = cur - 1
     if mt_rows:
         _set_block_label("MEDIA", mt_start, mt_end)
-    _write_total("CARGA TOTAL MEDIA", mt_total)
+    _write_total("CARGA TOTAL MEDIA", mt_total, add_spacer=False)
 
     last_row = cur - 1
     if header_row and last_row >= header_row:
         _apply_borders(ws, header_row, last_row, 1, max_col)
-        for row_idx, label_col, btu_col, end_col in total_ranges:
-            _apply_borders(ws, row_idx, row_idx, label_col, btu_col - 1)
-            _apply_borders(ws, row_idx, row_idx, btu_col, end_col)
+        for row_idx, min_col, max_col in total_ranges:
+            _apply_borders(ws, row_idx, row_idx, min_col, max_col)
+        for row_idx in spacer_rows:
+            _apply_borders(ws, row_idx, row_idx, 1, max_col)
     ws.calculate_dimension()
     return wb

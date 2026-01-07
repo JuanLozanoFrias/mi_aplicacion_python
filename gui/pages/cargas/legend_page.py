@@ -2,6 +2,8 @@
 
 from pathlib import Path
 import json
+import os
+import tempfile
 from typing import Any, Callable, Dict, List
 import traceback
 
@@ -35,11 +37,12 @@ from PySide6.QtWidgets import (
 try:
     from logic.legend_jd import LegendJDService
     from logic.legend_jd.project_service import LegendProjectService
-    from logic.legend_jd.legend_exporter import build_legend_workbook
+    from logic.legend_jd.legend_exporter import build_legend_workbook, restore_template_assets
 except Exception as exc:  # pragma: no cover
     LegendJDService = None  # type: ignore
     LegendProjectService = None  # type: ignore
     build_legend_workbook = None  # type: ignore
+    restore_template_assets = None  # type: ignore
     _IMPORT_ERROR = exc
 else:
     _IMPORT_ERROR = None
@@ -645,7 +648,17 @@ class LegendPage(QWidget):
             return
         try:
             wb = build_legend_workbook(template_path, self._collect_project_data())
-            wb.save(path)
+            tmp_fd, tmp_name = tempfile.mkstemp(suffix=".xlsx")
+            os.close(tmp_fd)
+            Path(tmp_name).unlink(missing_ok=True)
+            tmp_path = Path(tmp_name)
+            wb.save(tmp_path)
+            if restore_template_assets:
+                logo_path = template_path.parent / "logo.png"
+                ok = restore_template_assets(template_path, tmp_path, logo_path if logo_path.exists() else None)
+                if not ok:
+                    QMessageBox.warning(self, "LEGEND", "No se pudo restaurar el logo del template.")
+            Path(path).write_bytes(tmp_path.read_bytes())
             QMessageBox.information(self, "LEGEND", "EXPORTACIÓN LISTA.")
         except Exception as exc:
             QMessageBox.critical(self, "LEGEND", f"No se pudo exportar:\n{exc}")
