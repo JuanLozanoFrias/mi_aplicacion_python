@@ -1,0 +1,365 @@
+{
+  "schema": "legend_eev_orifice_tables_v1",
+  "generated_from": {
+    "workbook": "EE ALKOSTO BOLIVAR.xlsm",
+    "workbook_sheet": "Hoja3",
+    "named_ranges": [
+      "CO2CONG",
+      "CO2LAC",
+      "CO2CARNE",
+      "FRCONG",
+      "FRLAC",
+      "FRCARNE"
+    ],
+    "generated_at": "2026-01-07T19:18:02.621922Z"
+  },
+  "units": {
+    "capacity": "BTU/h",
+    "tevap": "°F"
+  },
+  "refrigerant_family_map": {
+    "R-744": "CO2",
+    "CO2": "CO2",
+    "default": "FR"
+  },
+  "tables": {
+    "CO2": {
+      "CONG": [
+        {
+          "orifice": 1,
+          "cap_100_btu_hr": 6616.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 4631.2
+        },
+        {
+          "orifice": 2,
+          "cap_100_btu_hr": 11650.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 8154.999999999999
+        },
+        {
+          "orifice": 3,
+          "cap_100_btu_hr": 17820.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 12474.0
+        },
+        {
+          "orifice": 4,
+          "cap_100_btu_hr": 34590.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 24213.0
+        },
+        {
+          "orifice": 5,
+          "cap_100_btu_hr": 48130.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 33691.0
+        },
+        {
+          "orifice": 6,
+          "cap_100_btu_hr": 85770.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 60038.99999999999
+        },
+        {
+          "orifice": 7,
+          "cap_100_btu_hr": 139200.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 97440.0
+        },
+        {
+          "orifice": 8,
+          "cap_100_btu_hr": 188100.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 131670.0
+        }
+      ],
+      "LAC": [
+        {
+          "orifice": 1,
+          "cap_100_btu_hr": 3495.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 2446.5
+        },
+        {
+          "orifice": 2,
+          "cap_100_btu_hr": 6156.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 4309.2
+        },
+        {
+          "orifice": 3,
+          "cap_100_btu_hr": 9413.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 6589.099999999999
+        },
+        {
+          "orifice": 4,
+          "cap_100_btu_hr": 18270.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 12789.0
+        },
+        {
+          "orifice": 5,
+          "cap_100_btu_hr": 25430.0,
+          "selection_factor": 0.8,
+          "cap_selection_btu_hr": 20344.0
+        },
+        {
+          "orifice": 6,
+          "cap_100_btu_hr": 45330.0,
+          "selection_factor": 0.8,
+          "cap_selection_btu_hr": 36264.0
+        },
+        {
+          "orifice": 7,
+          "cap_100_btu_hr": 73600.0,
+          "selection_factor": 0.8,
+          "cap_selection_btu_hr": 58880.0
+        },
+        {
+          "orifice": 8,
+          "cap_100_btu_hr": 99610.0,
+          "selection_factor": 0.8,
+          "cap_selection_btu_hr": 79688.0
+        }
+      ],
+      "CARNE": [
+        {
+          "orifice": 1,
+          "cap_100_btu_hr": 4062.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 2843.3999999999996
+        },
+        {
+          "orifice": 2,
+          "cap_100_btu_hr": 7155.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 5008.5
+        },
+        {
+          "orifice": 3,
+          "cap_100_btu_hr": 10940.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 7657.999999999999
+        },
+        {
+          "orifice": 4,
+          "cap_100_btu_hr": 21240.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 14867.999999999998
+        },
+        {
+          "orifice": 5,
+          "cap_100_btu_hr": 29550.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 20685.0
+        },
+        {
+          "orifice": 6,
+          "cap_100_btu_hr": 52680.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 36876.0
+        },
+        {
+          "orifice": 7,
+          "cap_100_btu_hr": 85540.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 59877.99999999999
+        },
+        {
+          "orifice": 8,
+          "cap_100_btu_hr": 115800.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 81060.0
+        }
+      ]
+    },
+    "FR": {
+      "CONG": [
+        {
+          "orifice": 1,
+          "cap_100_btu_hr": 2132.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 1492.3999999999999
+        },
+        {
+          "orifice": 2,
+          "cap_100_btu_hr": 3756.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 2629.2
+        },
+        {
+          "orifice": 3,
+          "cap_100_btu_hr": 5744.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 4020.7999999999997
+        },
+        {
+          "orifice": 4,
+          "cap_100_btu_hr": 11140.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 7797.999999999999
+        },
+        {
+          "orifice": 5,
+          "cap_100_btu_hr": 15490.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 10843.0
+        },
+        {
+          "orifice": 6,
+          "cap_100_btu_hr": 27540.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 19278.0
+        },
+        {
+          "orifice": 7,
+          "cap_100_btu_hr": 44620.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 31233.999999999996
+        },
+        {
+          "orifice": 8,
+          "cap_100_btu_hr": 60110.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 42077.0
+        }
+      ],
+      "LAC": [
+        {
+          "orifice": 1,
+          "cap_100_btu_hr": 2229.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 1560.3
+        },
+        {
+          "orifice": 2,
+          "cap_100_btu_hr": 3927.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 2748.8999999999996
+        },
+        {
+          "orifice": 3,
+          "cap_100_btu_hr": 6004.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 4202.8
+        },
+        {
+          "orifice": 4,
+          "cap_100_btu_hr": 11660.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 8161.999999999999
+        },
+        {
+          "orifice": 5,
+          "cap_100_btu_hr": 16220.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 11354.0
+        },
+        {
+          "orifice": 6,
+          "cap_100_btu_hr": 28870.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 20209.0
+        },
+        {
+          "orifice": 7,
+          "cap_100_btu_hr": 46830.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 32781.0
+        },
+        {
+          "orifice": 8,
+          "cap_100_btu_hr": 63520.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 44464.0
+        }
+      ],
+      "CARNE": [
+        {
+          "orifice": 1,
+          "cap_100_btu_hr": 2236.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 1565.1999999999998
+        },
+        {
+          "orifice": 2,
+          "cap_100_btu_hr": 3939.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 2757.2999999999997
+        },
+        {
+          "orifice": 3,
+          "cap_100_btu_hr": 6023.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 4216.099999999999
+        },
+        {
+          "orifice": 4,
+          "cap_100_btu_hr": 11690.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 8182.999999999999
+        },
+        {
+          "orifice": 5,
+          "cap_100_btu_hr": 16270.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 11389.0
+        },
+        {
+          "orifice": 6,
+          "cap_100_btu_hr": 28950.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 20265.0
+        },
+        {
+          "orifice": 7,
+          "cap_100_btu_hr": 46960.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 32872.0
+        },
+        {
+          "orifice": 8,
+          "cap_100_btu_hr": 63400.0,
+          "selection_factor": 0.7,
+          "cap_selection_btu_hr": 44380.0
+        }
+      ]
+    }
+  },
+  "selection_rules": [
+    {
+      "when": {
+        "refrigerant_family": "CO2",
+        "tevap_f_lt": 0
+      },
+      "use_table": "CO2.CONG"
+    },
+    {
+      "when": {
+        "refrigerant_family": "CO2",
+        "tevap_f_gte": 0
+      },
+      "use_table": "CO2.LAC"
+    },
+    {
+      "when": {
+        "refrigerant_family": "FR",
+        "tevap_f_lt": 0
+      },
+      "use_table": "FR.CONG"
+    },
+    {
+      "when": {
+        "refrigerant_family": "FR",
+        "tevap_f_gte": 0
+      },
+      "use_table": "FR.LAC"
+    }
+  ],
+  "notes": [
+    "En el Excel, la selección usa VLOOKUP(..., tabla, 3) o sea la columna de 'Capacidad' (capacidad de selección) y no la de 100%.",
+    "La tabla CO2.CARNE y FR.CARNE existe en el Excel pero NO se usa en las fórmulas de selección de orificio (solo se usa CONG vs LAC por signo de Tevap)."
+  ]
+}

@@ -1,0 +1,279 @@
+{
+  "schema": "eev_danfoss_catalog_v3",
+  "brand": "Danfoss",
+  "generated_from": {
+    "workbook": "EE ALKOSTO BOLIVAR.xlsm",
+    "generated_at": "2026-01-07T19:18:02.622222Z"
+  },
+  "families": {
+    "AKVP": {
+      "display_name": "AKVP (AKV pulsante)",
+      "orifice_parts": [
+        {
+          "model": "AKV 10P1",
+          "description": "Cuerpo valvula expansion pulsante AKVP, orificio  #1",
+          "orifice": 1,
+          "qty_rule": "count_valves_by_orifice"
+        },
+        {
+          "model": "AKV 10P2",
+          "description": "Cuerpo valvula expansion pulsante AKVP, orificio  #2",
+          "orifice": 2,
+          "qty_rule": "count_valves_by_orifice"
+        },
+        {
+          "model": "AKV 10P3",
+          "description": "Cuerpo valvula expansion pulsante AKVP, orificio  #3",
+          "orifice": 3,
+          "qty_rule": "count_valves_by_orifice"
+        },
+        {
+          "model": "AKV 10P4",
+          "description": "Cuerpo valvula expansion pulsante AKVP, orificio  #4",
+          "orifice": 4,
+          "qty_rule": "count_valves_by_orifice"
+        },
+        {
+          "model": "AKV 10P5",
+          "description": "Cuerpo valvula expansion pulsante AKVP, orificio  #5",
+          "orifice": 5,
+          "qty_rule": "count_valves_by_orifice"
+        },
+        {
+          "model": "AKV 10P6",
+          "description": "Cuerpo valvula expansion pulsante AKVP, orificio  #6",
+          "orifice": 6,
+          "qty_rule": "count_valves_by_orifice"
+        },
+        {
+          "model": "AKV 10P7",
+          "description": "Cuerpo valvula expansion pulsante AKVP, orificio  #7",
+          "orifice": 7,
+          "qty_rule": "count_valves_by_orifice"
+        },
+        {
+          "model": "AKV 10P8",
+          "description": "Cuerpo valvula expansion pulsante AKVP, orificio  #8",
+          "orifice": 8,
+          "qty_rule": "count_valves_by_orifice"
+        }
+      ],
+      "common_parts": [
+        {
+          "model": "BF220BS",
+          "description": "Bobina Clip-On 220Vac, 10W, IP 67 1m cable",
+          "qty": {
+            "type": "per_valve",
+            "multiplier": 1
+          }
+        },
+        {
+          "model": "AK-CC 55_S",
+          "description": "Controlador sobrecalentamiento una valvula AKV",
+          "qty": {
+            "type": "per_valve",
+            "multiplier": 1
+          }
+        },
+        {
+          "model": "AK-UI 55_B",
+          "description": "Display LED blanco con conexión Bluetooth®",
+          "qty": {
+            "type": "per_valve",
+            "multiplier": 1
+          }
+        },
+        {
+          "model": "AKS 12",
+          "description": "Sensor temp. bulbo cilindrico inox PT1000, 5.5m",
+          "qty": {
+            "type": "rule",
+            "rule": "sensors_per_valve"
+          }
+        },
+        {
+          "model": "AKS 2050_59",
+          "description": "Transmisor presion radiometrico -1 a 59 Bar",
+          "qty": {
+            "type": "per_ramal",
+            "multiplier": 1
+          }
+        },
+        {
+          "model": "Pg 9",
+          "description": "Plug conexión 4 puntos transmisor AKS 32R",
+          "qty": {
+            "type": "per_transducer",
+            "multiplier": 1
+          }
+        }
+      ],
+      "system_parts": [
+        {
+          "model": "AK-SM 880",
+          "description": "Sistema maestro con interfaz HMI full license",
+          "qty": {
+            "type": "fixed",
+            "value": 1,
+            "when": "at_least_one_valve"
+          }
+        }
+      ]
+    },
+    "CCM": {
+      "display_name": "CCM",
+      "parts_per_valve": [
+        {
+          "model": "CCM 10",
+          "description": "CCM 10",
+          "qty": {
+            "type": "per_valve",
+            "multiplier": 1
+          }
+        },
+        {
+          "model": "Conector",
+          "description": "Conector",
+          "qty": {
+            "type": "per_valve",
+            "multiplier": 1
+          }
+        },
+        {
+          "model": "AK-CC750",
+          "description": "AK-CC750",
+          "qty": {
+            "type": "per_valve",
+            "multiplier": 1
+          }
+        },
+        {
+          "model": "AK-PS075",
+          "description": "AK-PS075",
+          "qty": {
+            "type": "per_valve",
+            "multiplier": 2
+          }
+        },
+        {
+          "model": "EKA 164B",
+          "description": "EKA 164B",
+          "qty": {
+            "type": "per_valve",
+            "multiplier": 1
+          }
+        },
+        {
+          "model": "Cable",
+          "description": "Cable",
+          "qty": {
+            "type": "per_valve",
+            "multiplier": 1
+          }
+        },
+        {
+          "model": "AK-XM 208",
+          "description": "AK-XM 208",
+          "qty": {
+            "type": "per_valve",
+            "multiplier": 1
+          }
+        },
+        {
+          "model": "AKS 12",
+          "description": "AKS 12",
+          "qty": {
+            "type": "per_valve",
+            "multiplier": 1
+          }
+        },
+        {
+          "model": "AKS 2050_5",
+          "description": "AKS 2050_5",
+          "qty": {
+            "type": "per_valve",
+            "multiplier": 1
+          }
+        },
+        {
+          "model": "Pg 9",
+          "description": "Pg 9",
+          "qty": {
+            "type": "per_valve",
+            "multiplier": 1
+          }
+        }
+      ],
+      "system_parts": [
+        {
+          "model": "AK-SM 880",
+          "description": "Sistema maestro con interfaz HMI full license",
+          "qty": {
+            "type": "fixed",
+            "value": 1,
+            "when": "at_least_one_valve"
+          }
+        }
+      ]
+    }
+  },
+  "rules": {
+    "valve_family_by_load_per_valve_btu_hr": [
+      {
+        "lt": 131000,
+        "family": "AKVP"
+      },
+      {
+        "gte": 131000,
+        "family": "CCM"
+      }
+    ],
+    "sensors_per_valve": {
+      "if_tevap_f_gte": 20,
+      "qty_if_gte": 3,
+      "qty_if_lt": 4
+    },
+    "boxes_per_ramal": 1,
+    "transducer_counting": {
+      "method": "per_unique_group",
+      "group_keys": [
+        "SUCCION",
+        "LOOP",
+        "RAMAL"
+      ],
+      "notes": "En el Excel, el TRANSDUCER (columna Q) se cuenta 1 vez por grupo de ramal aunque haya filas duplicadas del mismo ramal."
+    },
+    "co2_leak_detector": {
+      "include_if": {
+        "refrigerant_family": "CO2",
+        "requires_at_least_one_valve": true
+      },
+      "bom_item": {
+        "model": "DGS-IR CO2 5m+B&L",
+        "description": "Detector basic fugas para CO2 incluido B&L"
+      },
+      "qty": {
+        "base": 2,
+        "per_room_row": 1,
+        "row_scope": "all_bt_mt_rows",
+        "row_filter": {
+          "is_room": true
+        },
+        "note": "Recomendado: qty = 2 + count(rows where is_room==true). En el Excel esto se aproximaba con 2 + count_nonblank(MODELO) porque allí MODELO solo estaba lleno en cuartos/ramales de cuartos."
+      },
+      "qty_excel_compat": {
+        "base": 2,
+        "per_row_with_model": 1,
+        "row_scope": "all_bt_mt_rows",
+        "model_field": "modelo",
+        "note": "Replica Excel: =2+20-(COUNTBLANK(K10:K11)+COUNTBLANK(K14:K31)) => 2 + count_nonblank(modelo) en filas BT/MT."
+      }
+    }
+  },
+  "notes": [
+    "Partes y descripciones tomadas del bloque de resumen en Hoja1 (columnas AJ:AL) y del costeo en Hoja2.",
+    "La familia CCM no aparece en el resumen de Hoja1 en este proyecto (todas las filas resultan AKVP), pero se incluye el kit base a partir de Hoja2.",
+    "v2: se agregó detector de fugas CO2 (DGS-IR CO2 5m+B&L) con regla de cantidad base+por modelo, según Excel EE ALKOSTO BOLIVAR.xlsm (Hoja1).",
+    "v3: Ajusta regla del detector CO2 para que dependa de CUARTOS (is_room) en vez de cualquier fila con modelo, para evitar sobreconteo si la app llena MODELO en muebles."
+  ]
+}
