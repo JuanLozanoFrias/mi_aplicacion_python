@@ -297,6 +297,7 @@ def _make_block_rows(
     items: List[Dict[str, Any]],
     default_deshielo: str,
     deshielo_map: Dict[str, str],
+    ramal_offset: int = 0,
 ) -> Tuple[List[Dict[str, Any]], float]:
     rows = []
     total = 0.0
@@ -320,10 +321,13 @@ def _make_block_rows(
             deshielo_val = str(it.get("deshielo", "") or "")
             if not deshielo_val:
                 deshielo_val = "DESHIELO POR TIEMPO"
+        ramal_val = _to_int(it.get("ramal", ""))
+        if ramal_offset:
+            ramal_val += ramal_offset
         rows.append(
             {
                 "loop": _to_int(it.get("loop", "")),
-                "ramal": _to_int(it.get("ramal", "")),
+                "ramal": ramal_val,
                 "dim_ft": it.get("dim_ft", ""),
                 "equipo": it.get("equipo", ""),
                 "uso": uso,
@@ -396,8 +400,15 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
     bt_items = _normalize_rows(project_data.get("bt_items", []))
     mt_items = _normalize_rows(project_data.get("mt_items", []))
 
-    bt_rows, bt_total = _make_block_rows(bt_items, default_deshielo, deshielo_por_uso.get("BT", {}))
-    mt_rows, mt_total = _make_block_rows(mt_items, default_deshielo, deshielo_por_uso.get("MT", {}))
+    bt_count = _to_int(project_data.get("bt_ramales", 0))
+    if bt_count <= 0:
+        bt_count = max((_to_int(r.get("ramal", 0)) for r in bt_items), default=0)
+    bt_rows, bt_total = _make_block_rows(
+        bt_items, default_deshielo, deshielo_por_uso.get("BT", {}), ramal_offset=0
+    )
+    mt_rows, mt_total = _make_block_rows(
+        mt_items, default_deshielo, deshielo_por_uso.get("MT", {}), ramal_offset=bt_count
+    )
 
     cur = start_row
     total_ranges: List[Tuple[int, int, int]] = []
@@ -414,6 +425,38 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
         cell.value = label
         cell.alignment = cell.alignment.copy(horizontal="center", vertical="center")
 
+    def _merge_loop_block_empty(start: int, end: int) -> None:
+        if not loop_col or start > end:
+            return
+        for r in range(start, end + 1):
+            ws.cell(r, loop_col).value = ""
+        if end > start:
+            ws.merge_cells(start_row=start, start_column=loop_col, end_row=end, end_column=loop_col)
+        cell = ws.cell(start, loop_col)
+        cell.alignment = cell.alignment.copy(horizontal="center", vertical="center")
+
+    def _merge_loop_ranges(start: int, end: int) -> None:
+        if not loop_col or start > end:
+            return
+        row = start
+        while row <= end:
+            val = ws.cell(row, loop_col).value
+            if val is None or str(val).strip() == "":
+                row += 1
+                continue
+            next_row = row + 1
+            while next_row <= end:
+                next_val = ws.cell(next_row, loop_col).value
+                if next_val == val:
+                    next_row += 1
+                    continue
+                break
+            if next_row - row > 1:
+                ws.merge_cells(start_row=row, start_column=loop_col, end_row=next_row - 1, end_column=loop_col)
+                cell = ws.cell(row, loop_col)
+                cell.alignment = cell.alignment.copy(horizontal="center", vertical="center")
+            row = next_row
+
     def _write_rows(rows: List[Dict[str, Any]]) -> None:
         nonlocal cur
         for row in rows:
@@ -425,6 +468,8 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
                 ws.merge_cells(start_row=cur, start_column=deshielo_span[0], end_row=cur, end_column=deshielo_span[1])
             if loop_col:
                 _safe_set(ws, cur, loop_col, row.get("loop", ""))
+                lcell = ws.cell(cur, loop_col)
+                lcell.alignment = lcell.alignment.copy(horizontal="center", vertical="center")
             if ramal_col:
                 _safe_set(ws, cur, ramal_col, row.get("ramal", ""))
             if dim_col:
@@ -486,12 +531,20 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
     bt_end = cur - 1
     if bt_rows:
         _set_block_label("BAJA", bt_start, bt_end)
+        if _norm_label(specs.get("distribucion_tuberia", "")) == "AMERICANA":
+            _merge_loop_block_empty(bt_start, bt_end)
+        else:
+            _merge_loop_ranges(bt_start, bt_end)
     _write_total("CARGA TOTAL BAJA", bt_total, add_spacer=True)
     mt_start = cur
     _write_rows(mt_rows)
     mt_end = cur - 1
     if mt_rows:
         _set_block_label("MEDIA", mt_start, mt_end)
+        if _norm_label(specs.get("distribucion_tuberia", "")) == "AMERICANA":
+            _merge_loop_block_empty(mt_start, mt_end)
+        else:
+            _merge_loop_ranges(mt_start, mt_end)
     _write_total("CARGA TOTAL MEDIA", mt_total, add_spacer=False)
 
     last_row = cur - 1

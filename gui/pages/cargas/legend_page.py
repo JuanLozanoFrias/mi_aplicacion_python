@@ -353,7 +353,7 @@ class LegendPage(QWidget):
         self.btn_export.clicked.connect(self._on_export_legend)
 
         self.bt_model = LegendItemsTableModel([])
-        self.mt_model = LegendItemsTableModel([])
+        self.mt_model = LegendItemsTableModel([], ramal_offset_cb=self._get_mt_ramal_offset)
         self.bt_model.set_limit_callback(self._on_dim_limit)
         self.mt_model.set_limit_callback(self._on_dim_limit)
         self._init_cold_engine()
@@ -925,6 +925,7 @@ class LegendPage(QWidget):
             self.spin_bt.blockSignals(True)
             self.spin_bt.setValue(self.project_data[key_ramales])
             self.spin_bt.blockSignals(False)
+            self._refresh_mt_ramal_display()
         else:
             self.spin_mt.blockSignals(True)
             self.spin_mt.setValue(self.project_data[key_ramales])
@@ -1051,6 +1052,30 @@ class LegendPage(QWidget):
         except Exception:
             return default
 
+    def _get_mt_ramal_offset(self) -> int:
+        bt_count = 0
+        if isinstance(self.project_data, dict):
+            bt_count = self._to_int(self.project_data.get("bt_ramales", 0), 0)
+        if bt_count <= 0 and self.bt_model:
+            bt_count = max(
+                (self._to_int(r.get("ramal", 0), 0) for r in self.bt_model.items if isinstance(r, dict)),
+                default=0,
+            )
+        return max(bt_count, 0)
+
+    def _refresh_mt_ramal_display(self) -> None:
+        try:
+            if not self.mt_model:
+                return
+            col = PROJ_COLUMNS.index("ramal")
+            if self.mt_model.rowCount() > 0:
+                top = self.mt_model.index(0, col)
+                bottom = self.mt_model.index(self.mt_model.rowCount() - 1, col)
+                self.mt_model.dataChanged.emit(top, bottom, [Qt.DisplayRole, Qt.EditRole])
+            self._fit_table_to_contents_view(self.mt_view)
+        except Exception:
+            pass
+
     def _block_for_model(self, model: "LegendItemsTableModel") -> str:
         if model is self.bt_model:
             return "bt"
@@ -1096,6 +1121,7 @@ class LegendPage(QWidget):
             self._add_ramales_bulk("bt", value - current)
         else:
             self._trim_ramales_to("bt", value)
+        self._refresh_mt_ramal_display()
 
     def _on_mt_ramales_changed(self, value: int) -> None:
         if not isinstance(self.project_data, dict):
@@ -1697,7 +1723,11 @@ class LegendItemsTableModel(QAbstractTableModel):
     MAX_LW_M = 12.8
     MAX_H_M = 3.7
 
-    def __init__(self, items: List[dict] | None = None):
+    def __init__(
+        self,
+        items: List[dict] | None = None,
+        ramal_offset_cb: Callable[[], int] | None = None,
+    ):
         super().__init__()
         self.items: List[dict] = items or []
         self._btu_map: Dict[str, float] = {}
@@ -1706,6 +1736,7 @@ class LegendItemsTableModel(QAbstractTableModel):
         self._tevap_map: Dict[str, float] = {}
         self._tevap_default: float = 0.0
         self._limit_cb: Callable[[str, float], None] | None = None
+        self._ramal_offset_cb: Callable[[], int] | None = ramal_offset_cb
         self.default_row = {
             "loop": 1,
             "ramal": 1,
@@ -1725,6 +1756,17 @@ class LegendItemsTableModel(QAbstractTableModel):
     def set_limit_callback(self, cb: Callable[[str, float], None] | None) -> None:
         self._limit_cb = cb
 
+    def set_ramal_offset_cb(self, cb: Callable[[], int] | None) -> None:
+        self._ramal_offset_cb = cb
+
+    def _ramal_offset(self) -> int:
+        if not self._ramal_offset_cb:
+            return 0
+        try:
+            return int(self._ramal_offset_cb() or 0)
+        except Exception:
+            return 0
+
     def rowCount(self, parent=QModelIndex()):
         return len(self.items)
 
@@ -1737,6 +1779,16 @@ class LegendItemsTableModel(QAbstractTableModel):
         item = self.items[index.row()]
         key = self.headers[index.column()]
         if role in (Qt.DisplayRole, Qt.EditRole):
+            if key == "ramal":
+                val = item.get("ramal", "")
+                try:
+                    val_int = int(val)
+                except Exception:
+                    return val
+                offset = self._ramal_offset()
+                if offset > 0:
+                    return val_int + offset
+                return val_int
             if key == "largo_m":
                 return item.get("largo_m", item.get("dim_m", ""))
             if key == "btu_ft":
@@ -1771,6 +1823,19 @@ class LegendItemsTableModel(QAbstractTableModel):
     def setData(self, index: QModelIndex, value, role=Qt.EditRole):
         if role == Qt.EditRole and index.isValid():
             key = self.headers[index.column()]
+            if key == "ramal":
+                val = self._parse_float(value)
+                try:
+                    val_int = int(round(val))
+                except Exception:
+                    val_int = 1
+                offset = self._ramal_offset()
+                if offset > 0:
+                    val_int = max(val_int - offset, 1)
+                item = self.items[index.row()]
+                item["ramal"] = val_int
+                self.dataChanged.emit(index, index, [Qt.DisplayRole, Qt.EditRole])
+                return True
             if key in ("largo_m", "ancho_m", "alto_m"):
                 val = self._parse_float(value)
                 if self._row_is_cuarto(index.row()):
