@@ -32,17 +32,21 @@ from PySide6.QtWidgets import (
     QDialog,
     QTableWidget,
     QTableWidgetItem,
+    QTabWidget,
+    QGroupBox,
 )
 
 try:
     from logic.legend_jd import LegendJDService
     from logic.legend_jd.project_service import LegendProjectService
     from logic.legend_jd.legend_exporter import build_legend_workbook, restore_template_assets
+    from logic.legend.eev_calc import compute_eev
 except Exception as exc:  # pragma: no cover
     LegendJDService = None  # type: ignore
     LegendProjectService = None  # type: ignore
     build_legend_workbook = None  # type: ignore
     restore_template_assets = None  # type: ignore
+    compute_eev = None  # type: ignore
     _IMPORT_ERROR = exc
 else:
     _IMPORT_ERROR = None
@@ -279,7 +283,7 @@ class LegendPage(QWidget):
         self.spec_fields["vendedor"] = vendedor_edit
         _add_single("VENDEDOR", vendedor_edit)
 
-        # TIPO DE SISTEMA + DISTRIBUCIÓN TUBERÍA
+        # TIPO DE SISTEMA + DISTRIBUCION TUBERIA
         tipo_cb = QComboBox()
         tipo_cb.addItems(["", "RACK", "WATERLOOP"])
         tipo_cb.setEditable(False)
@@ -290,7 +294,8 @@ class LegendPage(QWidget):
         distrib_cb.setEditable(False)
         distrib_cb.currentTextChanged.connect(lambda _t: self._on_spec_changed("distribucion_tuberia"))
         self.spec_fields["distribucion_tuberia"] = distrib_cb
-        _add_double("TIPO DE SISTEMA", tipo_cb, "DISTRIBUCIÓN TUBERÍA", distrib_cb)
+        _add_double("TIPO DE SISTEMA", tipo_cb, "DISTRIBUCION TUBERIA", distrib_cb)
+
         # TCOND F/C
         self.tcond_f_edit = QLineEdit()
         self.tcond_c_edit = QLineEdit()
@@ -328,18 +333,18 @@ class LegendPage(QWidget):
         self.spec_fields["controlador"] = self.controlador_cb
         _add_double("REFRIGERANTE", self.refrigerante_cb, "CONTROLADOR", self.controlador_cb)
 
-        # Deshielos + Expansión
+        # Deshielos + Expansion
         self.deshielos_cb = QComboBox()
-        self.deshielos_cb.addItems(["", "ELÉCTRICO", "GAS CALIENTE", "GAS TIBIO"])
+        self.deshielos_cb.addItems(["", "ELECTRICO", "GAS CALIENTE", "GAS TIBIO"])
         self.deshielos_cb.setEditable(False)
         self.expansion_cb = QComboBox()
-        self.expansion_cb.addItems(["", "TERMOSTÁTICA", "ELECTRÓNICA"])
+        self.expansion_cb.addItems(["", "TERMOSTATICA", "ELECTRONICA"])
         self.expansion_cb.setEditable(False)
         self.deshielos_cb.currentTextChanged.connect(lambda _t: self._on_spec_changed("deshielos"))
         self.expansion_cb.currentTextChanged.connect(lambda _t: self._on_spec_changed("expansion"))
         self.spec_fields["deshielos"] = self.deshielos_cb
         self.spec_fields["expansion"] = self.expansion_cb
-        _add_double("DESHIELOS", self.deshielos_cb, "EXPANSIÓN", self.expansion_cb)
+        _add_double("DESHIELOS", self.deshielos_cb, "EXPANSION", self.expansion_cb)
 
         specs_widget = QWidget()
         specs_widget.setLayout(specs_layout)
@@ -484,6 +489,40 @@ class LegendPage(QWidget):
         proj_outer.addWidget(self.mt_view)
         self.lbl_total_mt = QLabel("TOTAL MT: 0.0")
         proj_outer.addWidget(self.lbl_total_mt)
+
+        self.eev_group = QGroupBox("EEV - EXPANSIÓN ELECTRÓNICA")
+        eev_layout = QVBoxLayout()
+        self.eev_tabs = QTabWidget()
+        self.eev_detail = QTableWidget(0, 10)
+        self.eev_bom = QTableWidget(0, 3)
+        self._setup_eev_table(
+            self.eev_detail,
+            [
+                "SUCCIÓN",
+                "LOOP",
+                "RAMAL",
+                "EQUIPO",
+                "USO",
+                "CARGA (BTU/HR)",
+                "TEVAP (F)",
+                "FAMILIA (EEV)",
+                "ORIFICIO",
+                "MODELO",
+            ],
+        )
+        self._setup_eev_table(
+            self.eev_bom,
+            ["MODELO", "DESCRIPCIÓN", "CANTIDAD"],
+        )
+        self.eev_tabs.addTab(self.eev_detail, "DETALLE")
+        self.eev_tabs.addTab(self.eev_bom, "RESUMEN")
+        self.lbl_eev_warn = QLabel("")
+        self.lbl_eev_warn.setStyleSheet("color:#C00;")
+        eev_layout.addWidget(self.eev_tabs)
+        eev_layout.addWidget(self.lbl_eev_warn)
+        self.eev_group.setLayout(eev_layout)
+        self.eev_group.setVisible(False)
+        proj_outer.addWidget(self.eev_group)
 
         if _IMPORT_ERROR:
             QMessageBox.critical(self, "LEGEND", f"No se pudo importar LegendJDService:\n{_IMPORT_ERROR}")
@@ -696,6 +735,8 @@ class LegendPage(QWidget):
         self.project_data["specs"] = specs
         if key == "distribucion_tuberia":
             self._update_loop_column_visibility()
+        if key in ("expansion", "refrigerante"):
+            self._update_eev()
         self._set_dirty(True)
 
     def _on_spec_changed_upper(self, key: str, widget: QLineEdit, text: str) -> None:
@@ -963,6 +1004,34 @@ class LegendPage(QWidget):
         except Exception:
             pass
 
+    def _setup_eev_table(self, table: QTableWidget, headers: List[str]) -> None:
+        table.setColumnCount(len(headers))
+        table.setHorizontalHeaderLabels(headers)
+        table.verticalHeader().setVisible(False)
+        table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        table.setSelectionMode(QAbstractItemView.SingleSelection)
+        table.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        header = table.horizontalHeader()
+        for idx in range(len(headers)):
+            header.setSectionResizeMode(idx, QHeaderView.ResizeToContents)
+        header.setStretchLastSection(True)
+
+    def _fit_eev_table_to_contents(self, table: QTableWidget) -> None:
+        try:
+            table.resizeRowsToContents()
+        except Exception:
+            pass
+        row_count = table.rowCount()
+        header_h = table.horizontalHeader().height()
+        if row_count > 0:
+            total_rows_h = sum(table.rowHeight(i) for i in range(row_count))
+        else:
+            total_rows_h = table.verticalHeader().defaultSectionSize()
+        h = header_h + total_rows_h + table.frameWidth() * 2 + 6
+        table.setMinimumHeight(h)
+        table.setMaximumHeight(h)
+
     def _refresh_table_view(self, view: QTableView) -> None:
         try:
             view.doItemsLayout()
@@ -1051,6 +1120,16 @@ class LegendPage(QWidget):
             return int(val)
         except Exception:
             return default
+
+    def _norm_text(self, text: str) -> str:
+        try:
+            import unicodedata
+
+            norm = unicodedata.normalize("NFKD", str(text))
+            norm = "".join(c for c in norm if not unicodedata.combining(c))
+            return " ".join(norm.strip().upper().split())
+        except Exception:
+            return " ".join(str(text or "").strip().upper().split())
 
     def _get_mt_ramal_offset(self) -> int:
         bt_count = 0
@@ -1351,6 +1430,88 @@ class LegendPage(QWidget):
         self.lbl_total_bt.setText(f"TOTAL BT (BTU/H): {fmt(self.total_bt)}")
         self.lbl_total_mt.setText(f"TOTAL MT (BTU/H): {fmt(self.total_mt)}")
         self.lbl_total_general.setText(f"TOTAL GENERAL: {fmt(self.total_bt + self.total_mt)}")
+        self._update_eev()
+
+    def _update_eev(self) -> None:
+        try:
+            if not compute_eev:
+                self.eev_group.setVisible(True)
+                self._fill_eev_detail([])
+                self._fill_eev_bom([])
+                self.lbl_eev_warn.setText("EEV NO DISPONIBLE (MÓDULO NO CARGADO)")
+                return
+            exp_widget = self.spec_fields.get("expansion")
+            exp_text = exp_widget.currentText() if isinstance(exp_widget, QComboBox) else ""
+            exp_norm = self._norm_text(exp_text)
+            if "ELECTRON" not in exp_norm:
+                self.eev_group.setVisible(False)
+                return
+            self.eev_group.setVisible(True)
+            project_data = self._collect_project_data()
+            bt_items = list(self.bt_model.items)
+            mt_items = list(self.mt_model.items)
+            mt_offset = self._get_mt_ramal_offset()
+            result = compute_eev(project_data, bt_items, mt_items, mt_ramal_offset=mt_offset)
+            detail_rows = result.get("detail_rows", [])
+            bom_rows = result.get("bom_rows", [])
+            warnings = result.get("warnings", [])
+            self._fill_eev_detail(detail_rows)
+            self._fill_eev_bom(bom_rows)
+            if warnings:
+                self.lbl_eev_warn.setText(" | ".join(sorted(set(warnings))))
+            else:
+                self.lbl_eev_warn.setText("")
+        except Exception:
+            self.eev_group.setVisible(True)
+            self._fill_eev_detail([])
+            self._fill_eev_bom([])
+            self.lbl_eev_warn.setText("ERROR AL CALCULAR EEV")
+
+    def _fill_eev_detail(self, rows: List[Dict[str, Any]]) -> None:
+        self.eev_detail.setRowCount(len(rows))
+        num_cols = {1, 2, 5, 6, 8}
+        for r_idx, row in enumerate(rows):
+            values = [
+                row.get("suction", ""),
+                row.get("loop", ""),
+                row.get("ramal", ""),
+                row.get("equipo", ""),
+                row.get("uso", ""),
+                int(round(float(row.get("btu_hr", 0) or 0))),
+                row.get("tevap_f", ""),
+                row.get("familia", ""),
+                row.get("orifice", ""),
+                row.get("model", ""),
+            ]
+            for c_idx, val in enumerate(values):
+                text = str(val)
+                if not isinstance(val, (int, float)):
+                    text = text.upper()
+                item = QTableWidgetItem(text)
+                if c_idx in num_cols:
+                    item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+                self.eev_detail.setItem(r_idx, c_idx, item)
+        self.eev_detail.resizeColumnsToContents()
+        self._fit_eev_table_to_contents(self.eev_detail)
+
+    def _fill_eev_bom(self, rows: List[Dict[str, Any]]) -> None:
+        self.eev_bom.setRowCount(len(rows))
+        for r_idx, row in enumerate(rows):
+            values = [
+                row.get("model", ""),
+                row.get("description", ""),
+                row.get("qty", 0),
+            ]
+            for c_idx, val in enumerate(values):
+                text = str(val)
+                if not isinstance(val, (int, float)):
+                    text = text.upper()
+                item = QTableWidgetItem(text)
+                if c_idx == 2:
+                    item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+                self.eev_bom.setItem(r_idx, c_idx, item)
+        self.eev_bom.resizeColumnsToContents()
+        self._fit_eev_table_to_contents(self.eev_bom)
 
     def _table_key_press(self, event, model: "LegendItemsTableModel", view: QTableView) -> None:
         if event.matches(QKeySequence.StandardKey.Copy):
