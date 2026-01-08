@@ -1063,11 +1063,14 @@ class LegendPage(QWidget):
         table.setColumnCount(len(headers))
         table.setHorizontalHeaderLabels(headers)
         table.verticalHeader().setVisible(False)
+        table.verticalHeader().setDefaultSectionSize(26)
+        table.verticalHeader().setSectionResizeMode(QHeaderView.Fixed)
         table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         table.setSelectionBehavior(QAbstractItemView.SelectRows)
         table.setSelectionMode(QAbstractItemView.SingleSelection)
         table.setAlternatingRowColors(True)
         table.setTextElideMode(Qt.ElideRight)
+        table.setWordWrap(False)
         table.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         header = table.horizontalHeader()
         for idx in range(len(headers)):
@@ -1080,16 +1083,10 @@ class LegendPage(QWidget):
         )
 
     def _fit_eev_table_to_contents(self, table: QTableWidget) -> None:
-        try:
-            table.resizeRowsToContents()
-        except Exception:
-            pass
         row_count = table.rowCount()
         header_h = table.horizontalHeader().height()
-        if row_count > 0:
-            total_rows_h = sum(table.rowHeight(i) for i in range(row_count))
-        else:
-            total_rows_h = table.verticalHeader().defaultSectionSize()
+        row_h = table.verticalHeader().defaultSectionSize()
+        total_rows_h = row_h * max(row_count, 1)
         h = header_h + total_rows_h + table.frameWidth() * 2 + 6
         table.setMinimumHeight(h)
         table.setMaximumHeight(h)
@@ -1218,6 +1215,7 @@ class LegendPage(QWidget):
 
         dlg = QDialog(self)
         dlg.setWindowTitle("COSTOS EEV")
+        dlg.setMinimumSize(900, 700)
         layout = QVBoxLayout()
 
         factor_row = QHBoxLayout()

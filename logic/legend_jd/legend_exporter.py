@@ -12,10 +12,14 @@ from typing import Any, Dict, Iterable, List, Tuple
 import json
 from openpyxl import load_workbook
 from openpyxl.cell.cell import MergedCell
-from openpyxl.styles import Border, PatternFill, Side
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 import unicodedata
 
+try:
+    from logic.legend.eev_calc import compute_eev
+except Exception:
+    compute_eev = None  # type: ignore
 
 def _to_float(val: Any, default: float = 0.0) -> float:
     try:
@@ -293,6 +297,241 @@ def _load_deshielo_por_uso() -> Dict[str, Dict[str, str]]:
     return {}
 
 
+def _load_eev_cost_profile() -> Dict[str, Any]:
+    for path in (
+        Path("data/LEGEND/eev_cost_profile.json"),
+        Path("data/legend/eev_cost_profile.json"),
+    ):
+        if path.exists():
+            try:
+                return json.loads(path.read_text(encoding="utf-8"))
+            except Exception:
+                return {}
+    return {}
+
+
+def _compute_eev_sets_for_export(project_data: Dict[str, Any], result: Dict[str, Any]) -> List[Dict[str, Any]]:
+    profile = _load_eev_cost_profile()
+    if not profile:
+        return []
+    overrides = project_data.get("eev_cost_overrides", {}) if isinstance(project_data, dict) else {}
+    factor_default = _to_float(profile.get("factor_default", 0.0))
+    factor_override = overrides.get("factor") if isinstance(overrides, dict) else None
+    factor_val = _to_float(factor_override, factor_default) if factor_override is not None else factor_default
+    parts = profile.get("parts", {}) if isinstance(profile, dict) else {}
+    parts_override = overrides.get("parts_base_cost", {}) if isinstance(overrides, dict) else {}
+    sets_cfg = profile.get("sets", {}) if isinstance(profile, dict) else {}
+    currency = profile.get("currency", "") if isinstance(profile, dict) else ""
+    package_counts = result.get("package_counts", {}) if isinstance(result, dict) else {}
+
+    def _unit_cost_for_part(part_key: str) -> float:
+        base_cost = _to_float(parts.get(part_key, {}).get("base_cost", 0.0))
+        if isinstance(parts_override, dict) and part_key in parts_override:
+            base_cost = _to_float(parts_override.get(part_key, base_cost))
+        return base_cost * (1.0 + factor_val)
+
+    def _set_unit_cost(set_key: str) -> float | None:
+        cfg = sets_cfg.get(set_key, {}) if isinstance(sets_cfg, dict) else {}
+        parts_list = cfg.get("parts", []) if isinstance(cfg, dict) else []
+        if not parts_list:
+            return None
+        total = 0.0
+        for part_key in parts_list:
+            total += _unit_cost_for_part(str(part_key))
+        return total
+
+    order = ["VALVULA", "CONTROL", "SENSOR", "TRANSDUCTOR", "CAJAS", "SENSORES CO2"]
+    rows: List[Dict[str, Any]] = []
+    for key in order:
+        qty = _to_int(package_counts.get(key, 0), 0)
+        if key in ("CAJAS", "SENSORES CO2"):
+            part_key = "CAJAS_ELECTRICAS" if key == "CAJAS" else "DGS_IR_CO2"
+            unit_cost = _unit_cost_for_part(part_key)
+        else:
+            unit_cost = _set_unit_cost(key)
+        total_cost = None if unit_cost is None else qty * unit_cost
+        rows.append(
+            {
+                "category": key,
+                "qty": qty,
+                "unit_cost": unit_cost,
+                "total_cost": total_cost,
+                "currency": currency,
+            }
+        )
+    return rows
+
+
+def _write_eev_sheet(wb, project_data: Dict[str, Any], mt_ramal_offset: int) -> None:
+    ws = wb["EEV"] if "EEV" in wb.sheetnames else wb.create_sheet("EEV")
+    for rng in list(ws.merged_cells.ranges):
+        ws.unmerge_cells(str(rng))
+    if ws.max_row > 0:
+        ws.delete_rows(1, ws.max_row)
+    if ws.max_column > 0:
+        ws.delete_cols(1, ws.max_column)
+
+    specs = project_data.get("specs", {}) if isinstance(project_data, dict) else {}
+    if _norm_label(specs.get("expansion", "")) != "ELECTRONICA":
+        return
+    if not compute_eev:
+        return
+
+    bt_items = _normalize_rows(project_data.get("bt_items", []))
+    mt_items = _normalize_rows(project_data.get("mt_items", []))
+    result = compute_eev(project_data, bt_items, mt_items, mt_ramal_offset=mt_ramal_offset)
+    detail_rows = result.get("detail_rows", []) if isinstance(result, dict) else []
+    bom_rows = result.get("bom_rows", []) if isinstance(result, dict) else []
+    set_rows = _compute_eev_sets_for_export(project_data, result if isinstance(result, dict) else {})
+    if not detail_rows and not bom_rows and not set_rows:
+        return
+
+    header_fill = PatternFill("solid", fgColor="C6EFCE")
+    title_font = Font(bold=True, size=12)
+    header_font = Font(bold=True)
+    center = Alignment(horizontal="center", vertical="center")
+    right = Alignment(horizontal="right", vertical="center")
+    left = Alignment(horizontal="left", vertical="center")
+
+    def _upper(val: Any) -> str:
+        return str(val or "").upper()
+
+    def _write_headers(row: int, headers: List[str], start_col: int = 1) -> None:
+        for idx, h in enumerate(headers):
+            cell = ws.cell(row, start_col + idx, h)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = center
+
+    def _set_widths(widths: Dict[int, float]) -> None:
+        for col_idx, w in widths.items():
+            ws.column_dimensions[get_column_letter(col_idx)].width = w
+
+    row = 1
+    detail_headers = [
+        "SUCCION",
+        "LOOP",
+        "RAMAL",
+        "EQUIPO",
+        "USO",
+        "CARGA (BTU/HR)",
+        "TEVAP (F)",
+        "FAMILIA (EEV)",
+        "ORIFICIO",
+        "MODELO",
+    ]
+    max_detail_col = len(detail_headers)
+    ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=max_detail_col)
+    title = ws.cell(row, 1, "EEV - EXPANSION ELECTRONICA")
+    title.font = title_font
+    title.alignment = left
+    row += 2
+    _write_headers(row, detail_headers)
+    row += 1
+    start_detail = row - 1
+    for drow in detail_rows:
+        ws.cell(row, 1, _upper(drow.get("suction", ""))).alignment = center
+        ws.cell(row, 2, drow.get("loop", "")).alignment = center
+        ws.cell(row, 3, drow.get("ramal", "")).alignment = center
+        ws.cell(row, 4, _upper(drow.get("equipo", ""))).alignment = left
+        ws.cell(row, 5, _upper(drow.get("uso", ""))).alignment = left
+        cell_btu = ws.cell(row, 6, int(round(_to_float(drow.get("btu_hr", 0)))))
+        cell_btu.number_format = "#,##0"
+        cell_btu.alignment = right
+        cell_t = ws.cell(row, 7, _to_float(drow.get("tevap_f", 0.0)))
+        cell_t.number_format = "0.0"
+        cell_t.alignment = right
+        ws.cell(row, 8, _upper(drow.get("familia", ""))).alignment = center
+        ws.cell(row, 9, _upper(drow.get("orifice", ""))).alignment = center
+        ws.cell(row, 10, _upper(drow.get("model", ""))).alignment = left
+        row += 1
+    end_detail = row - 1
+    _apply_borders(ws, start_detail, end_detail, 1, max_detail_col)
+
+    row += 1
+    bom_headers = ["MODELO", "DESCRIPCION", "CANTIDAD", "COSTO UNITARIO", "COSTO TOTAL", "MONEDA"]
+    ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=len(bom_headers))
+    bom_title = ws.cell(row, 1, "RESUMEN EEV")
+    bom_title.font = title_font
+    bom_title.alignment = left
+    row += 1
+    _write_headers(row, bom_headers)
+    row += 1
+    start_bom = row - 1
+    currency = result.get("cost_currency", "") if isinstance(result, dict) else ""
+    for brow in bom_rows:
+        ws.cell(row, 1, _upper(brow.get("model", ""))).alignment = left
+        ws.cell(row, 2, _upper(brow.get("description", ""))).alignment = left
+        cell_qty = ws.cell(row, 3, _to_int(brow.get("qty", 0)))
+        cell_qty.alignment = right
+        unit_cost = brow.get("unit_cost")
+        total_cost = brow.get("total_cost")
+        if unit_cost is not None:
+            c_unit = ws.cell(row, 4, float(unit_cost))
+            c_unit.number_format = "#,##0.00"
+            c_unit.alignment = right
+        if total_cost is not None:
+            c_tot = ws.cell(row, 5, float(total_cost))
+            c_tot.number_format = "#,##0.00"
+            c_tot.alignment = right
+        ws.cell(row, 6, _upper(brow.get("currency", currency))).alignment = center
+        row += 1
+    end_bom = row - 1
+    _apply_borders(ws, start_bom, end_bom, 1, len(bom_headers))
+
+    if set_rows:
+        row += 1
+        set_headers = ["CATEGORIA", "CANTIDAD", "COSTO UNITARIO", "COSTO TOTAL", "MONEDA"]
+        ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=len(set_headers))
+        set_title = ws.cell(row, 1, "PAQUETES")
+        set_title.font = title_font
+        set_title.alignment = left
+        row += 1
+        _write_headers(row, set_headers)
+        row += 1
+        start_set = row - 1
+        total_set_cost = 0.0
+        for srow in set_rows:
+            ws.cell(row, 1, _upper(srow.get("category", ""))).alignment = left
+            cell_qty = ws.cell(row, 2, _to_int(srow.get("qty", 0)))
+            cell_qty.alignment = right
+            unit_cost = srow.get("unit_cost")
+            total_cost = srow.get("total_cost")
+            if unit_cost is not None:
+                c_unit = ws.cell(row, 3, float(unit_cost))
+                c_unit.number_format = "#,##0.00"
+                c_unit.alignment = right
+            if total_cost is not None:
+                c_tot = ws.cell(row, 4, float(total_cost))
+                c_tot.number_format = "#,##0.00"
+                c_tot.alignment = right
+                total_set_cost += float(total_cost)
+            ws.cell(row, 5, _upper(srow.get("currency", currency))).alignment = center
+            row += 1
+        ws.cell(row, 1, "TOTAL").font = header_font
+        tot_cell = ws.cell(row, 4, total_set_cost)
+        tot_cell.number_format = "#,##0.00"
+        tot_cell.alignment = right
+        ws.cell(row, 5, _upper(currency)).alignment = center
+        end_set = row
+        _apply_borders(ws, start_set, end_set, 1, len(set_headers))
+        row += 1
+
+    def _autofit_columns(min_col: int, max_col: int) -> None:
+        for col_idx in range(min_col, max_col + 1):
+            max_len = 0
+            for r in range(1, ws.max_row + 1):
+                val = ws.cell(r, col_idx).value
+                if val is None:
+                    continue
+                max_len = max(max_len, len(str(val)))
+            if max_len <= 0:
+                continue
+            ws.column_dimensions[get_column_letter(col_idx)].width = min(max_len + 2, 60)
+
+    _autofit_columns(1, max_detail_col)
+
+
 def _make_block_rows(
     items: List[Dict[str, Any]],
     default_deshielo: str,
@@ -555,4 +794,8 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
         for row_idx in spacer_rows:
             _apply_borders(ws, row_idx, row_idx, 1, max_col)
     ws.calculate_dimension()
+    try:
+        _write_eev_sheet(wb, project_data, bt_count)
+    except Exception:
+        pass
     return wb
