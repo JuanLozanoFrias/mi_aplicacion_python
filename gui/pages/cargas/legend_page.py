@@ -1694,7 +1694,7 @@ class LegendPage(QWidget):
             self.eev_group.setVisible(True)
             self._fill_eev_detail([])
             self._fill_eev_bom([])
-                self._fill_eev_sets([])
+            self._fill_eev_sets([])
             self.lbl_eev_warn.setText("ERROR AL CALCULAR EEV")
 
     def _fill_eev_detail(self, rows: List[Dict[str, Any]]) -> None:
