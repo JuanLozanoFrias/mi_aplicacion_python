@@ -503,6 +503,7 @@ class LegendPage(QWidget):
         self.eev_tabs = QTabWidget()
         self.eev_detail = QTableWidget(0, 10)
         self.eev_bom = QTableWidget(0, 6)
+        self.eev_sets = QTableWidget(0, 3)
         self._setup_eev_table(
             self.eev_detail,
             [
@@ -524,6 +525,7 @@ class LegendPage(QWidget):
         )
         self.eev_tabs.addTab(self.eev_detail, "DETALLE")
         self.eev_tabs.addTab(self.eev_bom, "RESUMEN")
+        self.eev_tabs.addTab(self.eev_sets, "PAQUETES")
         self.lbl_eev_warn = QLabel("")
         self.lbl_eev_warn.setStyleSheet("color:#C00;")
         eev_layout.addLayout(eev_actions)
@@ -1655,6 +1657,7 @@ class LegendPage(QWidget):
                 self.eev_group.setVisible(True)
                 self._fill_eev_detail([])
                 self._fill_eev_bom([])
+                self._fill_eev_sets([])
                 self.lbl_eev_warn.setText("EEV NO DISPONIBLE (MÓDULO NO CARGADO)")
                 return
             exp_widget = self.spec_fields.get("expansion")
@@ -1674,6 +1677,7 @@ class LegendPage(QWidget):
             warnings = result.get("warnings", [])
             self._fill_eev_detail(detail_rows)
             self._fill_eev_bom(bom_rows)
+            self._fill_eev_sets(self._compute_eev_set_rows(project_data))
             currency = result.get("cost_currency", "")
             total_cost = result.get("cost_total")
             if isinstance(total_cost, (int, float)):
@@ -1690,6 +1694,7 @@ class LegendPage(QWidget):
             self.eev_group.setVisible(True)
             self._fill_eev_detail([])
             self._fill_eev_bom([])
+                self._fill_eev_sets([])
             self.lbl_eev_warn.setText("ERROR AL CALCULAR EEV")
 
     def _fill_eev_detail(self, rows: List[Dict[str, Any]]) -> None:
@@ -1742,6 +1747,67 @@ class LegendPage(QWidget):
                 self.eev_bom.setItem(r_idx, c_idx, item)
         self.eev_bom.resizeColumnsToContents()
         self._fit_eev_table_to_contents(self.eev_bom)
+
+    def _compute_eev_set_rows(self, project_data: Dict[str, Any]) -> List[Dict[str, Any]]:
+        profile = self._load_eev_cost_profile()
+        if not profile:
+            return []
+        overrides = {}
+        if isinstance(project_data, dict):
+            overrides = project_data.get("eev_cost_overrides", {}) or {}
+        parts = profile.get("parts", {}) if isinstance(profile, dict) else {}
+        sets_cfg = profile.get("sets", {}) if isinstance(profile, dict) else {}
+        parts_override = overrides.get("parts_base_cost", {}) if isinstance(overrides, dict) else {}
+        factor_default = float(profile.get("factor_default", 0.0) or 0.0)
+        factor_override = overrides.get("factor")
+        factor_final = float(factor_override) if factor_override is not None else factor_default
+        currency = profile.get("currency", "") if isinstance(profile, dict) else ""
+
+        def _unit_cost_for_part(part_key: str) -> float:
+            base_cost = float(parts.get(part_key, {}).get("base_cost", 0.0) or 0.0)
+            if isinstance(parts_override, dict) and part_key in parts_override:
+                try:
+                    base_cost = float(parts_override.get(part_key, base_cost) or 0.0)
+                except Exception:
+                    base_cost = float(base_cost or 0.0)
+            return base_cost * (1.0 + factor_final)
+
+        rows: List[Dict[str, Any]] = []
+        for key in sorted(sets_cfg.keys()):
+            cfg = sets_cfg.get(key, {}) if isinstance(sets_cfg, dict) else {}
+            label = str(cfg.get("label", key))
+            parts_list = cfg.get("parts", []) if isinstance(cfg, dict) else []
+            total = 0.0
+            for part_key in parts_list:
+                total += _unit_cost_for_part(str(part_key))
+            rows.append(
+                {
+                    "label": label,
+                    "unit_cost": total,
+                    "currency": currency,
+                }
+            )
+        return rows
+
+    def _fill_eev_sets(self, rows: List[Dict[str, Any]]) -> None:
+        self.eev_sets.setRowCount(len(rows))
+        for r_idx, row in enumerate(rows):
+            unit_cost = row.get("unit_cost")
+            values = [
+                row.get("label", ""),
+                f"{unit_cost:,.2f}" if isinstance(unit_cost, (int, float)) else "",
+                row.get("currency", ""),
+            ]
+            for c_idx, val in enumerate(values):
+                text = str(val)
+                if not isinstance(val, (int, float)):
+                    text = text.upper()
+                item = QTableWidgetItem(text)
+                if c_idx == 1:
+                    item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+                self.eev_sets.setItem(r_idx, c_idx, item)
+        self.eev_sets.resizeColumnsToContents()
+        self._fit_eev_table_to_contents(self.eev_sets)
 
     def _table_key_press(self, event, model: "LegendItemsTableModel", view: QTableView) -> None:
         if event.matches(QKeySequence.StandardKey.Copy):
