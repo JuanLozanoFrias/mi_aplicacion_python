@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import json
+import re
 from typing import Any, Dict, List, Tuple
 
 
@@ -10,6 +11,28 @@ def _load_json(path: Path) -> Dict[str, Any]:
         return json.loads(path.read_text(encoding="utf-8"))
     except Exception:
         return {}
+
+
+_COST_PROFILE: Dict[str, Any] | None = None
+_COST_PROFILE_MTIME: float | None = None
+
+
+def _load_cost_profile() -> Dict[str, Any]:
+    global _COST_PROFILE, _COST_PROFILE_MTIME
+    paths = [
+        Path("data/LEGEND/eev_cost_profile.json"),
+        Path("data/legend/eev_cost_profile.json"),
+    ]
+    for path in paths:
+        if path.exists():
+            mtime = path.stat().st_mtime
+            if _COST_PROFILE is None or _COST_PROFILE_MTIME != mtime:
+                _COST_PROFILE = _load_json(path)
+                _COST_PROFILE_MTIME = mtime
+            return _COST_PROFILE or {}
+    _COST_PROFILE = {}
+    _COST_PROFILE_MTIME = None
+    return _COST_PROFILE
 
 
 def _norm(val: Any) -> str:
@@ -223,6 +246,13 @@ def compute_eev(
             _add_bom(part.get("model", ""), part.get("description", ""), qty)
 
     total_valves = akvp_valve_count + ccm_valve_count
+    total_evap = 0
+    for it in list(bt_items) + list(mt_items):
+        if not isinstance(it, dict):
+            continue
+        total_evap += _to_int(it.get("evap_qty", 0), 0)
+    if total_valves > 0:
+        _add_bom("CAJAS ELECTRICAS", "CAJAS ELECTRICAS", total_evap + 1)
     if refrigerant_family == "CO2" and total_valves > 0:
         _add_bom(
             "DGS-IR CO2 5m+B&L",
@@ -230,4 +260,67 @@ def compute_eev(
             1 + n_cuartos,
         )
 
-    return {"detail_rows": detail_rows, "bom_rows": bom_rows, "warnings": warnings}
+    cost_profile = _load_cost_profile()
+    overrides = {}
+    if isinstance(project_data, dict):
+        overrides = project_data.get("eev_cost_overrides", {}) or {}
+    factor_default = _to_float(cost_profile.get("factor_default", 0.0))
+    factor_override = overrides.get("factor")
+    factor_final = _to_float(factor_override, factor_default) if factor_override is not None else factor_default
+    parts = cost_profile.get("parts", {}) if isinstance(cost_profile, dict) else {}
+    part_rules = cost_profile.get("model_to_part_rules", []) if isinstance(cost_profile, dict) else []
+    parts_override = overrides.get("parts_base_cost", {}) if isinstance(overrides, dict) else {}
+    models_override = overrides.get("models_unit_cost", {}) if isinstance(overrides, dict) else {}
+    currency = cost_profile.get("currency", "") if isinstance(cost_profile, dict) else ""
+
+    grand_total = 0.0
+    for row in bom_rows:
+        model = str(row.get("model", "") or "")
+        model_norm = _norm(model)
+        qty = _to_int(row.get("qty", 0), 0)
+        unit_cost = None
+        if isinstance(models_override, dict):
+            if model in models_override:
+                unit_cost = _to_float(models_override.get(model))
+            else:
+                override_norm = {_norm(k): v for k, v in models_override.items()}
+                if model_norm in override_norm:
+                    unit_cost = _to_float(override_norm.get(model_norm))
+        if unit_cost is None:
+            part_key = None
+            for rule in part_rules:
+                regex = rule.get("match_regex")
+                if not regex:
+                    continue
+                try:
+                    if re.search(regex, model_norm, re.IGNORECASE):
+                        part_key = rule.get("part_key")
+                        break
+                except Exception:
+                    continue
+            if not part_key and isinstance(parts, dict):
+                for key, part in parts.items():
+                    label = _norm(part.get("label", ""))
+                    if label and label == model_norm:
+                        part_key = key
+                        break
+            if part_key and isinstance(parts, dict) and part_key in parts:
+                base_cost = _to_float(parts.get(part_key, {}).get("base_cost", 0.0))
+                if isinstance(parts_override, dict) and part_key in parts_override:
+                    base_cost = _to_float(parts_override.get(part_key, base_cost))
+                unit_cost = base_cost * (1.0 + factor_final)
+        total_cost = None
+        if unit_cost is not None:
+            total_cost = float(qty) * float(unit_cost)
+            grand_total += total_cost
+        row["unit_cost"] = unit_cost
+        row["total_cost"] = total_cost
+        row["currency"] = currency
+
+    return {
+        "detail_rows": detail_rows,
+        "bom_rows": bom_rows,
+        "warnings": warnings,
+        "cost_currency": currency,
+        "cost_total": grand_total,
+    }

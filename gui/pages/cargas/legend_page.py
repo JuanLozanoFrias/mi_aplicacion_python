@@ -25,6 +25,7 @@ from PySide6.QtWidgets import (
     QGridLayout,
     QFileDialog,
     QSpinBox,
+    QDoubleSpinBox,
     QInputDialog,
     QScrollArea,
     QHeaderView,
@@ -492,9 +493,16 @@ class LegendPage(QWidget):
 
         self.eev_group = QGroupBox("EEV - EXPANSIÓN ELECTRÓNICA")
         eev_layout = QVBoxLayout()
+        eev_actions = QHBoxLayout()
+        self.btn_eev_costs = QPushButton("COSTOS EEV...")
+        self.btn_eev_costs.clicked.connect(self._open_eev_costs)
+        self.lbl_eev_total_cost = QLabel("TOTAL COSTO EEV: --")
+        eev_actions.addWidget(self.btn_eev_costs)
+        eev_actions.addStretch(1)
+        eev_actions.addWidget(self.lbl_eev_total_cost)
         self.eev_tabs = QTabWidget()
         self.eev_detail = QTableWidget(0, 10)
-        self.eev_bom = QTableWidget(0, 3)
+        self.eev_bom = QTableWidget(0, 6)
         self._setup_eev_table(
             self.eev_detail,
             [
@@ -512,12 +520,13 @@ class LegendPage(QWidget):
         )
         self._setup_eev_table(
             self.eev_bom,
-            ["MODELO", "DESCRIPCIÓN", "CANTIDAD"],
+            ["MODELO", "DESCRIPCIÓN", "CANTIDAD", "COSTO UNITARIO", "COSTO TOTAL", "MONEDA"],
         )
         self.eev_tabs.addTab(self.eev_detail, "DETALLE")
         self.eev_tabs.addTab(self.eev_bom, "RESUMEN")
         self.lbl_eev_warn = QLabel("")
         self.lbl_eev_warn.setStyleSheet("color:#C00;")
+        eev_layout.addLayout(eev_actions)
         eev_layout.addWidget(self.eev_tabs)
         eev_layout.addWidget(self.lbl_eev_warn)
         self.eev_group.setLayout(eev_layout)
@@ -1032,6 +1041,214 @@ class LegendPage(QWidget):
         table.setMinimumHeight(h)
         table.setMaximumHeight(h)
 
+    def _load_eev_cost_profile(self) -> Dict[str, Any]:
+        candidates = [
+            Path("data/LEGEND/eev_cost_profile.json"),
+            Path("data/legend/eev_cost_profile.json"),
+        ]
+        for path in candidates:
+            if path.exists():
+                try:
+                    return json.loads(path.read_text(encoding="utf-8"))
+                except Exception:
+                    return {}
+        return {}
+
+    def _open_eev_costs(self) -> None:
+        profile = self._load_eev_cost_profile()
+        if not profile:
+            QMessageBox.warning(self, "LEGEND", "No se encontro eev_cost_profile.json")
+            return
+        overrides = {}
+        if isinstance(self.project_data, dict):
+            overrides = dict(self.project_data.get("eev_cost_overrides", {}) or {})
+        factor_default = float(profile.get("factor_default", 0.0) or 0.0)
+        factor_val = overrides.get("factor")
+        if factor_val is None:
+            factor_val = factor_default
+        parts = profile.get("parts", {}) if isinstance(profile, dict) else {}
+        parts_override = overrides.get("parts_base_cost", {}) if isinstance(overrides, dict) else {}
+        models_override = overrides.get("models_unit_cost", {}) if isinstance(overrides, dict) else {}
+        sets_cfg = profile.get("sets", {}) if isinstance(profile, dict) else {}
+
+        dlg = QDialog(self)
+        dlg.setWindowTitle("COSTOS EEV")
+        layout = QVBoxLayout()
+
+        factor_row = QHBoxLayout()
+        factor_row.addWidget(QLabel("FACTOR"))
+        factor_spin = QDoubleSpinBox()
+        factor_spin.setDecimals(4)
+        factor_spin.setRange(0.0, 5.0)
+        factor_spin.setSingleStep(0.01)
+        factor_spin.setValue(float(factor_val))
+        factor_row.addWidget(factor_spin)
+        factor_row.addStretch(1)
+        layout.addLayout(factor_row)
+
+        parts_table = QTableWidget(0, 3)
+        parts_table.setHorizontalHeaderLabels(["PART_KEY", "LABEL", "BASE_COST"])
+        parts_table.verticalHeader().setVisible(False)
+        parts_table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        parts_table.setSelectionMode(QAbstractItemView.SingleSelection)
+        parts_table.setEditTriggers(QAbstractItemView.DoubleClicked | QAbstractItemView.SelectedClicked)
+        parts_table.setRowCount(len(parts))
+        for r_idx, key in enumerate(sorted(parts.keys())):
+            label = str(parts.get(key, {}).get("label", ""))
+            base_cost = float(parts.get(key, {}).get("base_cost", 0.0) or 0.0)
+            if key in parts_override:
+                base_cost = float(parts_override.get(key, base_cost) or 0.0)
+            key_item = QTableWidgetItem(str(key))
+            key_item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+            label_item = QTableWidgetItem(str(label))
+            label_item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+            cost_item = QTableWidgetItem(f"{base_cost:.2f}")
+            parts_table.setItem(r_idx, 0, key_item)
+            parts_table.setItem(r_idx, 1, label_item)
+            parts_table.setItem(r_idx, 2, cost_item)
+        parts_table.resizeColumnsToContents()
+        parts_table.horizontalHeader().setStretchLastSection(True)
+        layout.addWidget(QLabel("PARTES (BASE COST)"))
+        layout.addWidget(parts_table)
+
+        sets_table = QTableWidget(0, 2)
+        sets_table.setHorizontalHeaderLabels(["SET", "COSTO UNITARIO"])
+        sets_table.verticalHeader().setVisible(False)
+        sets_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        sets_table.setSelectionMode(QAbstractItemView.NoSelection)
+        sets_table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        sets_table.horizontalHeader().setStretchLastSection(True)
+
+        def _unit_cost_for_part(part_key: str, factor_val: float) -> float:
+            base_cost = float(parts.get(part_key, {}).get("base_cost", 0.0) or 0.0)
+            if part_key in parts_override:
+                try:
+                    base_cost = float(parts_override.get(part_key, base_cost) or 0.0)
+                except Exception:
+                    base_cost = float(base_cost or 0.0)
+            return base_cost * (1.0 + factor_val)
+
+        def _refresh_sets_table() -> None:
+            factor_val_local = float(factor_spin.value())
+            items = []
+            for key in sorted(sets_cfg.keys()):
+                cfg = sets_cfg.get(key, {}) if isinstance(sets_cfg, dict) else {}
+                label = str(cfg.get("label", key))
+                parts_list = cfg.get("parts", []) if isinstance(cfg, dict) else []
+                total = 0.0
+                for part_key in parts_list:
+                    total += _unit_cost_for_part(str(part_key), factor_val_local)
+                items.append((label, total))
+            sets_table.setRowCount(len(items))
+            for r_idx, (label, total) in enumerate(items):
+                item_label = QTableWidgetItem(str(label).upper())
+                item_val = QTableWidgetItem(f"{total:,.2f}")
+                item_val.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+                sets_table.setItem(r_idx, 0, item_label)
+                sets_table.setItem(r_idx, 1, item_val)
+            sets_table.resizeColumnsToContents()
+            sets_table.horizontalHeader().setStretchLastSection(True)
+
+        if sets_cfg:
+            layout.addWidget(QLabel("SETS (COSTO UNITARIO)"))
+            layout.addWidget(sets_table)
+            _refresh_sets_table()
+            factor_spin.valueChanged.connect(_refresh_sets_table)
+
+        models_table = QTableWidget(0, 2)
+        models_table.setHorizontalHeaderLabels(["MODELO", "UNIT_COST"])
+        models_table.verticalHeader().setVisible(False)
+        models_table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        models_table.setSelectionMode(QAbstractItemView.SingleSelection)
+        models_table.setEditTriggers(QAbstractItemView.DoubleClicked | QAbstractItemView.SelectedClicked)
+        rows = list(models_override.items())
+        models_table.setRowCount(len(rows))
+        for r_idx, (model, unit_cost) in enumerate(rows):
+            models_table.setItem(r_idx, 0, QTableWidgetItem(str(model)))
+            models_table.setItem(r_idx, 1, QTableWidgetItem(f"{float(unit_cost):.2f}"))
+        models_table.resizeColumnsToContents()
+        models_table.horizontalHeader().setStretchLastSection(True)
+
+        btn_row = QHBoxLayout()
+        btn_add = QPushButton("AGREGAR FILA")
+        btn_del = QPushButton("ELIMINAR FILA")
+        btn_row.addWidget(btn_add)
+        btn_row.addWidget(btn_del)
+        btn_row.addStretch(1)
+        layout.addWidget(QLabel("OVERRIDE POR MODELO"))
+        layout.addLayout(btn_row)
+        layout.addWidget(models_table)
+
+        def _add_model_row() -> None:
+            r = models_table.rowCount()
+            models_table.insertRow(r)
+            models_table.setItem(r, 0, QTableWidgetItem(""))
+            models_table.setItem(r, 1, QTableWidgetItem("0.00"))
+
+        def _del_model_row() -> None:
+            rows = sorted({i.row() for i in models_table.selectionModel().selectedRows()})
+            if not rows:
+                return
+            for r in reversed(rows):
+                models_table.removeRow(r)
+
+        btn_add.clicked.connect(_add_model_row)
+        btn_del.clicked.connect(_del_model_row)
+
+        btns = QHBoxLayout()
+        btn_save = QPushButton("GUARDAR")
+        btn_cancel = QPushButton("CANCELAR")
+        btns.addStretch(1)
+        btns.addWidget(btn_cancel)
+        btns.addWidget(btn_save)
+        layout.addLayout(btns)
+
+        dlg.setLayout(layout)
+
+        def _save_costs() -> None:
+            new_overrides = {}
+            new_overrides["factor"] = float(factor_spin.value())
+            parts_out: Dict[str, float] = {}
+            for r in range(parts_table.rowCount()):
+                key = parts_table.item(r, 0).text().strip()
+                if not key:
+                    continue
+                try:
+                    val = float(parts_table.item(r, 2).text().replace(",", "."))
+                except Exception:
+                    continue
+                base_cost = float(parts.get(key, {}).get("base_cost", 0.0) or 0.0)
+                if abs(val - base_cost) > 1e-6:
+                    parts_out[key] = val
+            models_out: Dict[str, float] = {}
+            for r in range(models_table.rowCount()):
+                model = models_table.item(r, 0)
+                cost = models_table.item(r, 1)
+                if not model or not cost:
+                    continue
+                m_text = model.text().strip()
+                if not m_text:
+                    continue
+                try:
+                    c_val = float(cost.text().replace(",", "."))
+                except Exception:
+                    continue
+                models_out[m_text] = c_val
+            new_overrides["parts_base_cost"] = parts_out
+            new_overrides["models_unit_cost"] = models_out
+            if not isinstance(self.project_data, dict):
+                self.project_data = {}
+            self.project_data["eev_cost_overrides"] = new_overrides
+            self._set_dirty(True)
+            self._update_eev()
+            self._on_save_project()
+            dlg.accept()
+
+        btn_save.clicked.connect(_save_costs)
+        btn_cancel.clicked.connect(dlg.reject)
+
+        dlg.exec()
+
     def _refresh_table_view(self, view: QTableView) -> None:
         try:
             view.doItemsLayout()
@@ -1457,6 +1674,14 @@ class LegendPage(QWidget):
             warnings = result.get("warnings", [])
             self._fill_eev_detail(detail_rows)
             self._fill_eev_bom(bom_rows)
+            currency = result.get("cost_currency", "")
+            total_cost = result.get("cost_total")
+            if isinstance(total_cost, (int, float)):
+                self.lbl_eev_total_cost.setText(
+                    f"TOTAL COSTO EEV: {currency} {total_cost:,.2f}".strip()
+                )
+            else:
+                self.lbl_eev_total_cost.setText("TOTAL COSTO EEV: --")
             if warnings:
                 self.lbl_eev_warn.setText(" | ".join(sorted(set(warnings))))
             else:
@@ -1497,17 +1722,22 @@ class LegendPage(QWidget):
     def _fill_eev_bom(self, rows: List[Dict[str, Any]]) -> None:
         self.eev_bom.setRowCount(len(rows))
         for r_idx, row in enumerate(rows):
+            unit_cost = row.get("unit_cost")
+            total_cost = row.get("total_cost")
             values = [
                 row.get("model", ""),
                 row.get("description", ""),
                 row.get("qty", 0),
+                f"{unit_cost:,.2f}" if isinstance(unit_cost, (int, float)) else "",
+                f"{total_cost:,.2f}" if isinstance(total_cost, (int, float)) else "",
+                row.get("currency", ""),
             ]
             for c_idx, val in enumerate(values):
                 text = str(val)
                 if not isinstance(val, (int, float)):
                     text = text.upper()
                 item = QTableWidgetItem(text)
-                if c_idx == 2:
+                if c_idx in (2, 3, 4):
                     item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
                 self.eev_bom.setItem(r_idx, c_idx, item)
         self.eev_bom.resizeColumnsToContents()

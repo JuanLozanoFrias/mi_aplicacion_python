@@ -25,6 +25,12 @@ DEFAULT_SPECS = {
     "vendedor": "",
 }
 
+DEFAULT_EEV_COST_OVERRIDES = {
+    "factor": None,
+    "parts_base_cost": {},
+    "models_unit_cost": {},
+}
+
 DEFAULT_ROW = {
     "loop": 1,
     "ramal": 1,
@@ -71,6 +77,8 @@ class LegendProjectService:
         meta.update(data.get("meta", {}))
         specs = DEFAULT_SPECS.copy()
         specs.update(data.get("specs", {}))
+        eev_cost_overrides = DEFAULT_EEV_COST_OVERRIDES.copy()
+        eev_cost_overrides.update(data.get("eev_cost_overrides", {}))
         bt_items = [_normalize_row(r) for r in data.get("bt_items", []) if isinstance(r, dict)]
         mt_items = [_normalize_row(r) for r in data.get("mt_items", []) if isinstance(r, dict)]
         bt_ramales = int(data.get("bt_ramales", 1) or 1)
@@ -78,6 +86,7 @@ class LegendProjectService:
         return {
             "meta": meta,
             "specs": specs,
+            "eev_cost_overrides": eev_cost_overrides,
             "bt_items": bt_items,
             "mt_items": mt_items,
             "bt_ramales": bt_ramales,
@@ -99,6 +108,7 @@ class LegendProjectService:
                 return {
                     "meta": DEFAULT_META.copy(),
                     "specs": DEFAULT_SPECS.copy(),
+                "eev_cost_overrides": DEFAULT_EEV_COST_OVERRIDES.copy(),
                     "bt_items": [],
                     "mt_items": [],
                     "bt_ramales": 1,
@@ -111,6 +121,7 @@ class LegendProjectService:
             return {
                 "meta": DEFAULT_META.copy(),
                 "specs": DEFAULT_SPECS.copy(),
+                "eev_cost_overrides": DEFAULT_EEV_COST_OVERRIDES.copy(),
                 "bt_items": [],
                 "mt_items": [],
                 "bt_ramales": 1,
@@ -122,6 +133,7 @@ class LegendProjectService:
             return {
                 "meta": DEFAULT_META.copy(),
                 "specs": DEFAULT_SPECS.copy(),
+                "eev_cost_overrides": DEFAULT_EEV_COST_OVERRIDES.copy(),
                 "bt_items": [],
                 "mt_items": [],
                 "bt_ramales": 1,
@@ -136,6 +148,7 @@ class LegendProjectService:
             return {
                 "meta": DEFAULT_META.copy(),
                 "specs": DEFAULT_SPECS.copy(),
+                "eev_cost_overrides": DEFAULT_EEV_COST_OVERRIDES.copy(),
                 "bt_items": [],
                 "mt_items": [],
                 "bt_ramales": 1,
@@ -147,6 +160,7 @@ class LegendProjectService:
             return {
                 "meta": DEFAULT_META.copy(),
                 "specs": DEFAULT_SPECS.copy(),
+                "eev_cost_overrides": DEFAULT_EEV_COST_OVERRIDES.copy(),
                 "bt_items": [],
                 "mt_items": [],
                 "bt_ramales": 1,
@@ -164,11 +178,14 @@ class LegendProjectService:
         meta.update(payload.get("meta", {}))
         specs = DEFAULT_SPECS.copy()
         specs.update(payload.get("specs", {}))
+        eev_cost_overrides = DEFAULT_EEV_COST_OVERRIDES.copy()
+        eev_cost_overrides.update(payload.get("eev_cost_overrides", {}))
         bt_items = [_normalize_row(r) for r in payload.get("bt_items", []) if isinstance(r, dict)]
         mt_items = [_normalize_row(r) for r in payload.get("mt_items", []) if isinstance(r, dict)]
         out = {
             "meta": meta,
             "specs": specs,
+            "eev_cost_overrides": eev_cost_overrides,
             "bt_items": bt_items,
             "mt_items": mt_items,
             "bt_ramales": int(payload.get("bt_ramales", 1) or 1),
