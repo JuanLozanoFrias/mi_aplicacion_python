@@ -491,15 +491,48 @@ class LegendPage(QWidget):
         self.lbl_total_mt = QLabel("TOTAL MT: 0.0")
         proj_outer.addWidget(self.lbl_total_mt)
 
-        self.eev_group = QGroupBox("EEV - EXPANSIÓN ELECTRÓNICA")
+        self.eev_group = QGroupBox()
+        self.eev_group.setTitle("")
         eev_layout = QVBoxLayout()
-        eev_actions = QHBoxLayout()
+        eev_layout.setContentsMargins(8, 8, 8, 8)
+        eev_layout.setSpacing(6)
+
+        top_bar = QHBoxLayout()
+        self.lbl_eev_title = QLabel("EEV - EXPANSION ELECTRONICA")
+        self.lbl_eev_title.setStyleSheet("font-weight:600;")
+        top_bar.addWidget(self.lbl_eev_title)
+        top_bar.addStretch(1)
+        self.lbl_eev_valves = QLabel("VALVULAS: 0")
+        self.lbl_eev_ramales = QLabel("RAMALES CON EEV: 0")
+        for _lbl in (self.lbl_eev_valves, self.lbl_eev_ramales):
+            _lbl.setStyleSheet("padding:2px 8px; border-radius:8px; background:#eef5ff; color:#1f3b6d;")
+        top_bar.addWidget(self.lbl_eev_valves)
+        top_bar.addWidget(self.lbl_eev_ramales)
+        top_bar.addStretch(1)
+        self.lbl_eev_total_cost = QLabel("TOTAL COSTO EEV: --")
+        self.lbl_eev_total_cost.setStyleSheet(
+            "padding:4px 10px; border-radius:10px; background:#e8f5e9; color:#1b5e20; font-weight:600;"
+        )
+        top_bar.addWidget(self.lbl_eev_total_cost)
+        eev_layout.addLayout(top_bar)
+
+        action_row = QHBoxLayout()
         self.btn_eev_costs = QPushButton("COSTOS EEV...")
         self.btn_eev_costs.clicked.connect(self._open_eev_costs)
-        self.lbl_eev_total_cost = QLabel("TOTAL COSTO EEV: --")
-        eev_actions.addWidget(self.btn_eev_costs)
-        eev_actions.addStretch(1)
-        eev_actions.addWidget(self.lbl_eev_total_cost)
+        self.lbl_eev_missing = QLabel("ITEMS SIN PRECIO: 0")
+        self.lbl_eev_missing.setStyleSheet("color:#b45309;")
+        self.lbl_eev_missing.setCursor(Qt.PointingHandCursor)
+        self.lbl_eev_missing.mousePressEvent = self._on_eev_missing_clicked
+        action_row.addWidget(self.btn_eev_costs)
+        action_row.addSpacing(8)
+        action_row.addWidget(self.lbl_eev_missing)
+        action_row.addStretch(1)
+        self.eev_search = QLineEdit()
+        self.eev_search.setPlaceholderText("BUSCAR...")
+        self.eev_search.textChanged.connect(self._apply_eev_filters)
+        action_row.addWidget(self.eev_search)
+        eev_layout.addLayout(action_row)
+
         self.eev_tabs = QTabWidget()
         self.eev_detail = QTableWidget(0, 10)
         self.eev_bom = QTableWidget(0, 6)
@@ -507,7 +540,7 @@ class LegendPage(QWidget):
         self._setup_eev_table(
             self.eev_detail,
             [
-                "SUCCIÓN",
+                "SUCCION",
                 "LOOP",
                 "RAMAL",
                 "EQUIPO",
@@ -521,23 +554,30 @@ class LegendPage(QWidget):
         )
         self._setup_eev_table(
             self.eev_bom,
-            ["MODELO", "DESCRIPCIÓN", "CANTIDAD", "COSTO UNITARIO", "COSTO TOTAL", "MONEDA"],
+            ["MODELO", "DESCRIPCION", "CANTIDAD", "COSTO UNITARIO", "COSTO TOTAL", "MONEDA"],
         )
         self._setup_eev_table(
             self.eev_sets,
-            ["EQUIPO", "CANTIDAD", "COSTO UNITARIO", "COSTO TOTAL", "MONEDA"],
+            ["CATEGORIA", "CANTIDAD", "COSTO UNITARIO", "COSTO TOTAL", "MONEDA"],
         )
         self.eev_tabs.addTab(self.eev_detail, "DETALLE")
         self.eev_tabs.addTab(self.eev_bom, "RESUMEN")
         self.eev_tabs.addTab(self.eev_sets, "PAQUETES")
         self.lbl_eev_warn = QLabel("")
         self.lbl_eev_warn.setStyleSheet("color:#C00;")
-        eev_layout.addLayout(eev_actions)
         eev_layout.addWidget(self.eev_tabs)
         eev_layout.addWidget(self.lbl_eev_warn)
         self.eev_group.setLayout(eev_layout)
         self.eev_group.setVisible(False)
         proj_outer.addWidget(self.eev_group)
+        self._eev_missing_count = 0
+        self._eev_filter_missing = False
+        self._eev_highlight_model = ""
+        try:
+            self.eev_detail.itemSelectionChanged.connect(self._on_eev_detail_select)
+            self.eev_bom.itemSelectionChanged.connect(self._on_eev_bom_select)
+        except Exception:
+            pass
 
         if _IMPORT_ERROR:
             QMessageBox.critical(self, "LEGEND", f"No se pudo importar LegendJDService:\n{_IMPORT_ERROR}")
@@ -1026,11 +1066,18 @@ class LegendPage(QWidget):
         table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         table.setSelectionBehavior(QAbstractItemView.SelectRows)
         table.setSelectionMode(QAbstractItemView.SingleSelection)
+        table.setAlternatingRowColors(True)
+        table.setTextElideMode(Qt.ElideRight)
         table.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         header = table.horizontalHeader()
         for idx in range(len(headers)):
             header.setSectionResizeMode(idx, QHeaderView.ResizeToContents)
         header.setStretchLastSection(True)
+        table.setStyleSheet(
+            "QTableWidget::item:selected{background:#e6f2ff; color:#000;}"
+            "QTableWidget::item:hover{background:#f2f7ff;}"
+            "QTableWidget{alternate-background-color:#fafbfd;}"
+        )
 
     def _fit_eev_table_to_contents(self, table: QTableWidget) -> None:
         try:
@@ -1047,6 +1094,98 @@ class LegendPage(QWidget):
         table.setMinimumHeight(h)
         table.setMaximumHeight(h)
 
+    def _fmt_int(self, val: Any) -> str:
+        try:
+            return f"{int(round(float(val))):,}"
+        except Exception:
+            return ""
+
+    def _fmt_temp(self, val: Any) -> str:
+        try:
+            return f"{float(val):.1f}"
+        except Exception:
+            return ""
+
+    def _fmt_cost(self, val: Any) -> str:
+        try:
+            return f"{float(val):,.2f}"
+        except Exception:
+            return ""
+
+    def _apply_eev_filters(self) -> None:
+        term = self.eev_search.text().strip().upper() if hasattr(self, "eev_search") else ""
+        self._filter_table(self.eev_detail, term, [3, 4, 9], False)
+        self._filter_table(self.eev_sets, term, [0], False)
+        self._filter_table(self.eev_bom, term, [0, 1], self._eev_filter_missing)
+
+    def _filter_table(self, table: QTableWidget, term: str, cols: List[int], missing_only: bool) -> None:
+        for r in range(table.rowCount()):
+            if missing_only:
+                flag = False
+                item0 = table.item(r, 0)
+                if item0:
+                    flag = bool(item0.data(Qt.UserRole + 1))
+                if not flag:
+                    table.setRowHidden(r, True)
+                    continue
+            if not term:
+                table.setRowHidden(r, False)
+                continue
+            row_text = ""
+            for c in cols:
+                item = table.item(r, c)
+                if item:
+                    row_text += " " + item.text().upper()
+            table.setRowHidden(r, term not in row_text)
+        self._fit_eev_table_to_contents(table)
+
+    def _on_eev_missing_clicked(self, event=None) -> None:
+        if self._eev_missing_count <= 0:
+            return
+        self._eev_filter_missing = not self._eev_filter_missing
+        if self._eev_filter_missing:
+            self.lbl_eev_missing.setStyleSheet("color:#b45309; font-weight:600;")
+        else:
+            self.lbl_eev_missing.setStyleSheet("color:#b45309;")
+        self._apply_eev_filters()
+        self._open_eev_costs()
+
+    def _on_eev_detail_select(self) -> None:
+        model = ""
+        row = self.eev_detail.currentRow()
+        if row >= 0:
+            item = self.eev_detail.item(row, 9)
+            if item:
+                model = item.text()
+        self._highlight_eev_by_model(model)
+
+    def _on_eev_bom_select(self) -> None:
+        model = ""
+        row = self.eev_bom.currentRow()
+        if row >= 0:
+            item = self.eev_bom.item(row, 0)
+            if item:
+                model = item.text()
+        self._highlight_eev_by_model(model)
+
+    def _highlight_eev_by_model(self, model: str) -> None:
+        target = self._norm_text(model)
+        self._apply_highlight_table(self.eev_detail, 9, target)
+        self._apply_highlight_table(self.eev_bom, 0, target)
+
+    def _apply_highlight_table(self, table: QTableWidget, col_model: int, target: str) -> None:
+        for r in range(table.rowCount()):
+            item_model = table.item(r, col_model)
+            match = False
+            if target and item_model:
+                match = self._norm_text(item_model.text()) == target
+            for c in range(table.columnCount()):
+                item = table.item(r, c)
+                if not item:
+                    continue
+                font = item.font()
+                font.setBold(match)
+                item.setFont(font)
     def _load_eev_cost_profile(self) -> Dict[str, Any]:
         candidates = [
             Path("data/LEGEND/eev_cost_profile.json"),
@@ -1682,6 +1821,18 @@ class LegendPage(QWidget):
             self._fill_eev_detail(detail_rows)
             self._fill_eev_bom(bom_rows)
             self._fill_eev_sets(self._compute_eev_set_rows(project_data, result))
+            valves_count = len(detail_rows)
+            ramal_keys = set()
+            for r in detail_rows:
+                ramal_keys.add(
+                    (
+                        self._norm_text(r.get("suction", "")),
+                        self._norm_text(r.get("loop", "")),
+                        self._norm_text(r.get("ramal", "")),
+                    )
+                )
+            self.lbl_eev_valves.setText(f"VALVULAS: {valves_count}")
+            self.lbl_eev_ramales.setText(f"RAMALES CON EEV: {len(ramal_keys)}")
             currency = result.get("cost_currency", "")
             total_cost = result.get("cost_total")
             if isinstance(total_cost, (int, float)):
@@ -1703,54 +1854,81 @@ class LegendPage(QWidget):
 
     def _fill_eev_detail(self, rows: List[Dict[str, Any]]) -> None:
         self.eev_detail.setRowCount(len(rows))
-        num_cols = {1, 2, 5, 6, 8}
         for r_idx, row in enumerate(rows):
+            btu_text = self._fmt_int(row.get("btu_hr", 0))
+            tevap_text = self._fmt_temp(row.get("tevap_f", ""))
             values = [
                 row.get("suction", ""),
-                row.get("loop", ""),
-                row.get("ramal", ""),
+                self._fmt_int(row.get("loop", "")),
+                self._fmt_int(row.get("ramal", "")),
                 row.get("equipo", ""),
                 row.get("uso", ""),
-                int(round(float(row.get("btu_hr", 0) or 0))),
-                row.get("tevap_f", ""),
+                btu_text,
+                tevap_text,
                 row.get("familia", ""),
                 row.get("orifice", ""),
                 row.get("model", ""),
             ]
             for c_idx, val in enumerate(values):
                 text = str(val)
-                if not isinstance(val, (int, float)):
+                if c_idx not in (5, 6) and not isinstance(val, (int, float)):
                     text = text.upper()
                 item = QTableWidgetItem(text)
-                if c_idx in num_cols:
+                if c_idx in (1, 2, 5, 6):
                     item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+                if c_idx == 8:
+                    item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+                if c_idx == 3:
+                    item.setToolTip(str(val))
                 self.eev_detail.setItem(r_idx, c_idx, item)
         self.eev_detail.resizeColumnsToContents()
+        header = self.eev_detail.horizontalHeader()
+        header.setSectionResizeMode(3, QHeaderView.Stretch)
+        header.setSectionResizeMode(8, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(9, QHeaderView.ResizeToContents)
         self._fit_eev_table_to_contents(self.eev_detail)
+        self._apply_eev_filters()
 
     def _fill_eev_bom(self, rows: List[Dict[str, Any]]) -> None:
         self.eev_bom.setRowCount(len(rows))
+        missing_count = 0
         for r_idx, row in enumerate(rows):
             unit_cost = row.get("unit_cost")
             total_cost = row.get("total_cost")
+            missing = bool(row.get("cost_missing"))
+            if missing:
+                missing_count += 1
+            unit_text = "?" if missing else (self._fmt_cost(unit_cost) if isinstance(unit_cost, (int, float)) else "")
+            total_text = "?" if missing else (self._fmt_cost(total_cost) if isinstance(total_cost, (int, float)) else "")
             values = [
                 row.get("model", ""),
                 row.get("description", ""),
-                row.get("qty", 0),
-                f"{unit_cost:,.2f}" if isinstance(unit_cost, (int, float)) else "",
-                f"{total_cost:,.2f}" if isinstance(total_cost, (int, float)) else "",
+                self._fmt_int(row.get("qty", 0)),
+                unit_text,
+                total_text,
                 row.get("currency", ""),
             ]
             for c_idx, val in enumerate(values):
                 text = str(val)
-                if not isinstance(val, (int, float)):
+                if c_idx not in (2, 3, 4) and not isinstance(val, (int, float)):
                     text = text.upper()
                 item = QTableWidgetItem(text)
                 if c_idx in (2, 3, 4):
                     item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+                if c_idx == 1:
+                    item.setToolTip(str(values[1]))
+                if missing and c_idx in (3, 4):
+                    item.setBackground(QColor(255, 248, 220))
+                if c_idx == 0:
+                    item.setData(Qt.UserRole + 1, missing)
                 self.eev_bom.setItem(r_idx, c_idx, item)
         self.eev_bom.resizeColumnsToContents()
+        header = self.eev_bom.horizontalHeader()
+        header.setSectionResizeMode(1, QHeaderView.Stretch)
         self._fit_eev_table_to_contents(self.eev_bom)
+        self._eev_missing_count = missing_count
+        self.lbl_eev_missing.setText(f"ITEMS SIN PRECIO: {missing_count}")
+        self._apply_eev_filters()
 
     def _compute_eev_set_rows(
         self, project_data: Dict[str, Any], result: Dict[str, Any]
@@ -1779,15 +1957,32 @@ class LegendPage(QWidget):
                     base_cost = float(base_cost or 0.0)
             return base_cost * (1.0 + factor_final)
 
+        order = ["VALVULA", "CONTROL", "SENSOR", "TRANSDUCTOR", "CAJAS", "SENSORES CO2"]
         rows: List[Dict[str, Any]] = []
-        for key in sorted(sets_cfg.keys()):
+        for key in order:
+            if key in ("CAJAS", "SENSORES CO2"):
+                part_key = "CAJAS_ELECTRICAS" if key == "CAJAS" else "DGS_IR_CO2"
+                qty = int(package_counts.get(key.upper(), 0) or 0)
+                if qty <= 0:
+                    continue
+                unit_cost = _unit_cost_for_part(part_key)
+                rows.append(
+                    {
+                        "label": key,
+                        "qty": qty,
+                        "unit_cost": unit_cost,
+                        "total_cost": unit_cost * qty if qty else 0.0,
+                        "currency": currency,
+                    }
+                )
+                continue
             cfg = sets_cfg.get(key, {}) if isinstance(sets_cfg, dict) else {}
             label = str(cfg.get("label", key))
             parts_list = cfg.get("parts", []) if isinstance(cfg, dict) else []
             total = 0.0
             for part_key in parts_list:
                 total += _unit_cost_for_part(str(part_key))
-            qty = int(package_counts.get(label.upper(), 0) or 0)
+            qty = int(package_counts.get(key.upper(), 0) or 0)
             rows.append(
                 {
                     "label": label,
@@ -1797,48 +1992,46 @@ class LegendPage(QWidget):
                     "currency": currency,
                 }
             )
-        extra_map = {
-            "CAJAS": "CAJAS_ELECTRICAS",
-            "SENSORES CO2": "DGS_IR_CO2",
-        }
-        for label, part_key in extra_map.items():
-            qty = int(package_counts.get(label.upper(), 0) or 0)
-            if qty <= 0:
-                continue
-            unit_cost = _unit_cost_for_part(part_key)
-            rows.append(
-                {
-                    "label": label,
-                    "qty": qty,
-                    "unit_cost": unit_cost,
-                    "total_cost": unit_cost * qty if qty else 0.0,
-                    "currency": currency,
-                }
-            )
         return rows
 
     def _fill_eev_sets(self, rows: List[Dict[str, Any]]) -> None:
-        self.eev_sets.setRowCount(len(rows))
+        total_sum = 0.0
+        self.eev_sets.setRowCount(len(rows) + (1 if rows else 0))
         for r_idx, row in enumerate(rows):
             unit_cost = row.get("unit_cost")
             total_cost = row.get("total_cost")
+            if isinstance(total_cost, (int, float)):
+                total_sum += float(total_cost)
             values = [
                 row.get("label", ""),
-                row.get("qty", 0),
-                f"{unit_cost:,.2f}" if isinstance(unit_cost, (int, float)) else "",
-                f"{total_cost:,.2f}" if isinstance(total_cost, (int, float)) else "",
+                self._fmt_int(row.get("qty", 0)),
+                self._fmt_cost(unit_cost) if isinstance(unit_cost, (int, float)) else "",
+                self._fmt_cost(total_cost) if isinstance(total_cost, (int, float)) else "",
                 row.get("currency", ""),
             ]
             for c_idx, val in enumerate(values):
                 text = str(val)
-                if not isinstance(val, (int, float)):
+                if c_idx == 0:
                     text = text.upper()
                 item = QTableWidgetItem(text)
                 if c_idx in (1, 2, 3):
                     item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
                 self.eev_sets.setItem(r_idx, c_idx, item)
+        if rows:
+            r_total = len(rows)
+            total_item = QTableWidgetItem("TOTAL")
+            total_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            total_item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+            self.eev_sets.setItem(r_total, 0, total_item)
+            self.eev_sets.setItem(r_total, 3, QTableWidgetItem(self._fmt_cost(total_sum)))
+            self.eev_sets.setItem(r_total, 4, QTableWidgetItem(rows[0].get("currency", "")))
+            for c_idx in (3, 4):
+                item = self.eev_sets.item(r_total, c_idx)
+                if item:
+                    item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
         self.eev_sets.resizeColumnsToContents()
         self._fit_eev_table_to_contents(self.eev_sets)
+        self._apply_eev_filters()
 
     def _table_key_press(self, event, model: "LegendItemsTableModel", view: QTableView) -> None:
         if event.matches(QKeySequence.StandardKey.Copy):

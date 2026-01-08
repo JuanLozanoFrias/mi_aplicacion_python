@@ -281,6 +281,7 @@ def compute_eev(
         model_norm = _norm(model)
         qty = _to_int(row.get("qty", 0), 0)
         unit_cost = None
+        cost_missing = False
         if isinstance(models_override, dict):
             if model in models_override:
                 unit_cost = _to_float(models_override.get(model))
@@ -308,9 +309,17 @@ def compute_eev(
                         break
             if part_key and isinstance(parts, dict) and part_key in parts:
                 base_cost = _to_float(parts.get(part_key, {}).get("base_cost", 0.0))
+                override_used = False
                 if isinstance(parts_override, dict) and part_key in parts_override:
                     base_cost = _to_float(parts_override.get(part_key, base_cost))
+                    override_used = True
                 unit_cost = base_cost * (1.0 + factor_final)
+                if base_cost == 0.0 and not override_used:
+                    cost_missing = True
+            else:
+                cost_missing = True
+        else:
+            cost_missing = False
         total_cost = None
         if unit_cost is not None:
             total_cost = float(qty) * float(unit_cost)
@@ -318,6 +327,7 @@ def compute_eev(
         row["unit_cost"] = unit_cost
         row["total_cost"] = total_cost
         row["currency"] = currency
+        row["cost_missing"] = cost_missing
 
     package_counts = {
         "VALVULA": total_valves,
