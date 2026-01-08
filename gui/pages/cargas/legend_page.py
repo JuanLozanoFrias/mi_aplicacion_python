@@ -1661,7 +1661,7 @@ class LegendPage(QWidget):
                 self.eev_group.setVisible(True)
                 self._fill_eev_detail([])
                 self._fill_eev_bom([])
-            self._fill_eev_sets([])
+                self._fill_eev_sets([])
                 self.lbl_eev_warn.setText("EEV NO DISPONIBLE (MÓDULO NO CARGADO)")
                 return
             exp_widget = self.spec_fields.get("expansion")
