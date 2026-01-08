@@ -1,6 +1,6 @@
 {
   "schema": "legend_eev_cost_profile_v1",
-  "currency": "COP",
+  "currency": "USD",
   "factor_default": 0.1,
   "parts": {
     "AKV_10P1": {

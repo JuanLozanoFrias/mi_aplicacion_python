@@ -253,11 +253,13 @@ def compute_eev(
         total_evap += _to_int(it.get("evap_qty", 0), 0)
     if total_valves > 0:
         _add_bom("CAJAS ELECTRICAS", "CAJAS ELECTRICAS", total_evap + 1)
+    co2_qty = 0
     if refrigerant_family == "CO2" and total_valves > 0:
+        co2_qty = 1 + n_cuartos
         _add_bom(
             "DGS-IR CO2 5m+B&L",
             "Detector basic fugas para CO2 incluido B&L",
-            1 + n_cuartos,
+            co2_qty,
         )
 
     cost_profile = _load_cost_profile()
@@ -317,10 +319,20 @@ def compute_eev(
         row["total_cost"] = total_cost
         row["currency"] = currency
 
+    package_counts = {
+        "VALVULA": total_valves,
+        "CONTROL": total_valves,
+        "TRANSDUCTOR": transducer_count,
+        "SENSOR": sensors_total,
+        "CAJAS": (total_evap + 1) if total_valves > 0 else 0,
+        "SENSORES CO2": co2_qty,
+    }
+
     return {
         "detail_rows": detail_rows,
         "bom_rows": bom_rows,
         "warnings": warnings,
         "cost_currency": currency,
         "cost_total": grand_total,
+        "package_counts": package_counts,
     }
