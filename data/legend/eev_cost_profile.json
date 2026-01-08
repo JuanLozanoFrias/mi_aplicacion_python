@@ -1,0 +1,239 @@
+{
+  "schema": "legend_eev_cost_profile_v1",
+  "currency": "COP",
+  "factor_default": 0.1,
+  "parts": {
+    "AKV_10P1": {
+      "label": "AKV 10P1",
+      "base_cost": 97.84
+    },
+    "AKV_10P2": {
+      "label": "AKV 10P2",
+      "base_cost": 97.84
+    },
+    "AKV_10P3": {
+      "label": "AKV 10P3",
+      "base_cost": 97.84
+    },
+    "AKV_10P4": {
+      "label": "AKV 10P4",
+      "base_cost": 97.84
+    },
+    "AKV_10P5": {
+      "label": "AKV 10P5",
+      "base_cost": 97.84
+    },
+    "AKV_10P6": {
+      "label": "AKV 10P6",
+      "base_cost": 97.84
+    },
+    "AKV_10P7": {
+      "label": "AKV 10P7",
+      "base_cost": 97.84
+    },
+    "AKV_10P8": {
+      "label": "AKV 10P8",
+      "base_cost": 97.84
+    },
+    "BF220BS": {
+      "label": "BF220BS",
+      "base_cost": 30.53
+    },
+    "AK_CC_55_S": {
+      "label": "AK-CC 55_S",
+      "base_cost": 216.95
+    },
+    "AK_UI_55_B": {
+      "label": "AK-UI 55_B",
+      "base_cost": 39.11
+    },
+    "AKS_12": {
+      "label": "AKS 12",
+      "base_cost": 16.69
+    },
+    "AKS_2050_59": {
+      "label": "AKS 2050_59",
+      "base_cost": 139.73
+    },
+    "PG_9": {
+      "label": "PG 9",
+      "base_cost": 4.3
+    },
+    "AK_SM_880": {
+      "label": "AK-SM 880",
+      "base_cost": 0
+    },
+    "CCM_10": {
+      "label": "CCM 10",
+      "base_cost": 0
+    },
+    "CONECTOR": {
+      "label": "CONECTOR",
+      "base_cost": 0
+    },
+    "AK_CC750": {
+      "label": "AK-CC750",
+      "base_cost": 0
+    },
+    "AK_PS075": {
+      "label": "AK-PS075",
+      "base_cost": 0
+    },
+    "EKA_164B": {
+      "label": "EKA 164B",
+      "base_cost": 0
+    },
+    "CABLE": {
+      "label": "CABLE",
+      "base_cost": 8.48
+    },
+    "AK_XM_208": {
+      "label": "AK-XM 208",
+      "base_cost": 0
+    },
+    "AKS_2050_5": {
+      "label": "AKS 2050_5",
+      "base_cost": 139.73
+    },
+    "CAJAS_ELECTRICAS": {
+      "label": "CAJAS ELECTRICAS",
+      "base_cost": 0
+    },
+    "DGS_IR_CO2": {
+      "label": "DGS-IR CO2 5m+B&L",
+      "base_cost": 0
+    }
+  },
+  "model_to_part_rules": [
+    {
+      "match_regex": "^AKV 10P1$",
+      "part_key": "AKV_10P1"
+    },
+    {
+      "match_regex": "^AKV 10P2$",
+      "part_key": "AKV_10P2"
+    },
+    {
+      "match_regex": "^AKV 10P3$",
+      "part_key": "AKV_10P3"
+    },
+    {
+      "match_regex": "^AKV 10P4$",
+      "part_key": "AKV_10P4"
+    },
+    {
+      "match_regex": "^AKV 10P5$",
+      "part_key": "AKV_10P5"
+    },
+    {
+      "match_regex": "^AKV 10P6$",
+      "part_key": "AKV_10P6"
+    },
+    {
+      "match_regex": "^AKV 10P7$",
+      "part_key": "AKV_10P7"
+    },
+    {
+      "match_regex": "^AKV 10P8$",
+      "part_key": "AKV_10P8"
+    },
+    {
+      "match_regex": "^BF220BS$",
+      "part_key": "BF220BS"
+    },
+    {
+      "match_regex": "^AK-CC 55_S$",
+      "part_key": "AK_CC_55_S"
+    },
+    {
+      "match_regex": "^AK-UI 55_B$",
+      "part_key": "AK_UI_55_B"
+    },
+    {
+      "match_regex": "^AKS 12$",
+      "part_key": "AKS_12"
+    },
+    {
+      "match_regex": "^AKS 2050_59$",
+      "part_key": "AKS_2050_59"
+    },
+    {
+      "match_regex": "^PG\\s*9$",
+      "part_key": "PG_9"
+    },
+    {
+      "match_regex": "^AK-SM 880$",
+      "part_key": "AK_SM_880"
+    },
+    {
+      "match_regex": "^CCM 10$",
+      "part_key": "CCM_10"
+    },
+    {
+      "match_regex": "^CONECTOR$",
+      "part_key": "CONECTOR"
+    },
+    {
+      "match_regex": "^AK-CC750$",
+      "part_key": "AK_CC750"
+    },
+    {
+      "match_regex": "^AK-PS075$",
+      "part_key": "AK_PS075"
+    },
+    {
+      "match_regex": "^EKA 164B$",
+      "part_key": "EKA_164B"
+    },
+    {
+      "match_regex": "^CABLE$",
+      "part_key": "CABLE"
+    },
+    {
+      "match_regex": "^AK-XM 208$",
+      "part_key": "AK_XM_208"
+    },
+    {
+      "match_regex": "^AKS 2050_5$",
+      "part_key": "AKS_2050_5"
+    },
+    {
+      "match_regex": "^CAJAS ELECTRICAS$",
+      "part_key": "CAJAS_ELECTRICAS"
+    },
+    {
+      "match_regex": "^DGS-IR CO2 5m\\+B&L$",
+      "part_key": "DGS_IR_CO2"
+    }
+  ],
+  "sets": {
+    "VALVULA": {
+      "label": "VALVULA",
+      "parts": [
+        "AKV_10P1",
+        "BF220BS"
+      ]
+    },
+    "CONTROL": {
+      "label": "CONTROL",
+      "parts": [
+        "AK_CC_55_S",
+        "AK_UI_55_B",
+        "CABLE"
+      ]
+    },
+    "TRANSDUCTOR": {
+      "label": "TRANSDUCTOR",
+      "parts": [
+        "AKS_2050_5",
+        "PG_9"
+      ]
+    },
+    "SENSOR": {
+      "label": "SENSOR",
+      "parts": [
+        "AKS_12"
+      ]
+    }
+  }
+}
