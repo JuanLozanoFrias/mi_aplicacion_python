@@ -1662,7 +1662,7 @@ class LegendPage(QWidget):
                 self._fill_eev_detail([])
                 self._fill_eev_bom([])
                 self._fill_eev_sets([])
-                self.lbl_eev_warn.setText("EEV NO DISPONIBLE (MÓDULO NO CARGADO)")
+                self.lbl_eev_warn.setText("EEV NO DISPONIBLE (MODULO NO CARGADO)")
                 return
             exp_widget = self.spec_fields.get("expansion")
             exp_text = exp_widget.currentText() if isinstance(exp_widget, QComboBox) else ""
@@ -1841,7 +1841,6 @@ class LegendPage(QWidget):
         self._fit_eev_table_to_contents(self.eev_sets)
 
     def _table_key_press(self, event, model: "LegendItemsTableModel", view: QTableView) -> None:
-(self, event, model: "LegendItemsTableModel", view: QTableView) -> None:
         if event.matches(QKeySequence.StandardKey.Copy):
             self._copy_selection(model, view)
             event.accept()
