@@ -181,6 +181,8 @@ class LegendPage(QWidget):
         self._equipos_btu_ft: Dict[str, float] = {}
         self._familia_options = ["AUTO", "FRONTAL BAJA", "FRONTAL MEDIA", "DUAL"]
         self._cold_engine = None
+        self._comp_perf = self._load_compresores_perf()
+        self._comp_brands = sorted(self._comp_perf.get("brands", {}).keys())
 
         outer = QVBoxLayout(self)
         outer.setContentsMargins(12, 12, 12, 12)
@@ -491,6 +493,18 @@ class LegendPage(QWidget):
         self.lbl_total_mt = QLabel("TOTAL MT: 0.0")
         proj_outer.addWidget(self.lbl_total_mt)
 
+        # COMPRESORES
+        self.comp_group = QGroupBox("COMPRESORES")
+        comp_layout = QVBoxLayout()
+        comp_layout.setContentsMargins(8, 8, 8, 8)
+        comp_layout.setSpacing(6)
+        self.comp_bt = self._build_compressor_block("BAJA (BT)")
+        self.comp_mt = self._build_compressor_block("MEDIA (MT)")
+        comp_layout.addWidget(self.comp_bt["box"])
+        comp_layout.addWidget(self.comp_mt["box"])
+        self.comp_group.setLayout(comp_layout)
+        proj_outer.addWidget(self.comp_group)
+
         self.eev_group = QGroupBox()
         self.eev_group.setTitle("")
         eev_layout = QVBoxLayout()
@@ -703,6 +717,8 @@ class LegendPage(QWidget):
             else:
                 specs[k] = widget.text()
         data["specs"] = specs
+        if isinstance(self.project_data, dict):
+            data["compressors"] = dict(self.project_data.get("compressors", {}) or {})
         return data
 
     def _on_preview_legend(self) -> None:
@@ -792,6 +808,8 @@ class LegendPage(QWidget):
             self._update_loop_column_visibility()
         if key in ("expansion", "refrigerante"):
             self._update_eev()
+        if key in ("refrigerante", "tcond_f", "tcond_c"):
+            self._update_compressors()
         self._set_dirty(True)
 
     def _on_spec_changed_upper(self, key: str, widget: QLineEdit, text: str) -> None:
@@ -870,6 +888,7 @@ class LegendPage(QWidget):
         self._fit_table_to_contents_view(self.bt_view)
         self._fit_table_to_contents_view(self.mt_view)
         self._recalc_totals()
+        self._render_compressors()
 
     def _add_row(self, model, view: QTableView) -> None:
         model.add_row({})
@@ -1481,6 +1500,14 @@ class LegendPage(QWidget):
         except Exception:
             return default
 
+    def _to_float(self, val, default: float | None = 0.0) -> float | None:
+        try:
+            if isinstance(val, str):
+                val = val.replace(",", ".").strip()
+            return float(val)
+        except Exception:
+            return default
+
     def _norm_text(self, text: str) -> str:
         try:
             import unicodedata
@@ -1791,6 +1818,438 @@ class LegendPage(QWidget):
         self.lbl_total_mt.setText(f"TOTAL MT (BTU/H): {fmt(self.total_mt)}")
         self.lbl_total_general.setText(f"TOTAL GENERAL: {fmt(self.total_bt + self.total_mt)}")
         self._update_eev()
+        self._update_compressors()
+
+    def _load_compresores_perf(self) -> Dict[str, Any]:
+        for path in (
+            Path("data/LEGEND/compresores_perf.json"),
+            Path("data/legend/compresores_perf.json"),
+        ):
+            if path.exists():
+                try:
+                    return json.loads(path.read_text(encoding="utf-8"))
+                except Exception:
+                    return {}
+        return {}
+
+    def _get_comp_models(self, brand: str) -> List[str]:
+        brands = self._comp_perf.get("brands", {}) if isinstance(self._comp_perf, dict) else {}
+        models = brands.get(brand, {}).get("models", {}) if isinstance(brands, dict) else {}
+        return sorted(models.keys())
+
+    def _parse_perf_points(self, points: Dict[str, Any]) -> List[Dict[str, Any]]:
+        parsed = []
+        for key, val in points.items():
+            if not isinstance(key, str):
+                continue
+            parts = key.split("|")
+            if len(parts) < 3:
+                continue
+            try:
+                ref = parts[0].strip()
+                tcond = float(parts[1])
+                tevap = float(parts[2])
+            except Exception:
+                continue
+            parsed.append({"ref": ref, "tcond_f": tcond, "tevap_f": tevap, "data": val})
+        return parsed
+
+    def _get_comp_perf(
+        self, brand: str, model: str, tcond_f: float, tevap_f: float, refrigerante: str
+    ) -> tuple[Dict[str, Any] | None, bool]:
+        brands = self._comp_perf.get("brands", {}) if isinstance(self._comp_perf, dict) else {}
+        brand_data = brands.get(brand, {}) if isinstance(brands, dict) else {}
+        models = brand_data.get("models", {}) if isinstance(brand_data, dict) else {}
+        model_data = models.get(model, {}) if isinstance(models, dict) else {}
+        points = model_data.get("points", {}) if isinstance(model_data, dict) else {}
+        parsed = self._parse_perf_points(points) if isinstance(points, dict) else []
+        if not parsed:
+            return None, False
+        ref_norm = self._norm_text(refrigerante).replace("-", "")
+        best = None
+        best_score = None
+        ref_mismatch = False
+        for p in parsed:
+            pref = self._norm_text(p.get("ref", "")).replace("-", "")
+            mismatch = bool(ref_norm) and pref and ref_norm not in pref
+            score = abs(p["tcond_f"] - tcond_f) + abs(p["tevap_f"] - tevap_f)
+            if best is None or (not mismatch and best_score is not None and score < best_score):
+                best = p
+                best_score = score
+                ref_mismatch = mismatch
+            elif best is not None and best_score is not None:
+                if score < best_score and not mismatch:
+                    best = p
+                    best_score = score
+                    ref_mismatch = mismatch
+                elif best is None:
+                    best = p
+                    best_score = score
+                    ref_mismatch = mismatch
+        if best is None:
+            return None, False
+        return best.get("data", {}), ref_mismatch
+
+    def _compute_tevap_design(self, items: List[Dict[str, Any]]) -> float | None:
+        vals = []
+        for it in items:
+            try:
+                load = float(it.get("btu_hr", it.get("carga_btu_h", 0)) or 0)
+            except Exception:
+                load = 0.0
+            if load <= 0:
+                continue
+            try:
+                tev = float(it.get("tevap_f", it.get("tevap", 0)) or 0)
+            except Exception:
+                continue
+            vals.append(tev)
+        if not vals:
+            return None
+        return min(vals)
+
+    def _build_compressor_block(self, title: str) -> Dict[str, Any]:
+        box = QGroupBox(title)
+        grid = QGridLayout()
+        grid.setContentsMargins(6, 6, 6, 6)
+        grid.setSpacing(4)
+
+        brand_cb = QComboBox()
+        brand_cb.addItem("")
+        brand_cb.addItems(self._comp_brands)
+        n_spin = QSpinBox()
+        n_spin.setRange(0, 99)
+        n_spin.setEnabled(False)
+        target_spin = QSpinBox()
+        target_spin.setRange(0, 200)
+        target_spin.setValue(25)
+        btn_auto = QPushButton("AUTOSELECCIONAR")
+        btn_add_model = QPushButton("AGREGAR MODELO")
+        btn_del_model = QPushButton("ELIMINAR MODELO")
+
+        models_tbl = QTableWidget(0, 2)
+        models_tbl.setHorizontalHeaderLabels(["MODELO", "CANTIDAD"])
+        models_tbl.horizontalHeader().setStretchLastSection(False)
+        models_tbl.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
+        models_tbl.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
+        models_tbl.verticalHeader().setVisible(False)
+        models_tbl.setSelectionBehavior(QAbstractItemView.SelectRows)
+        models_tbl.setSelectionMode(QAbstractItemView.SingleSelection)
+        models_tbl.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        models_tbl.setMinimumHeight(90)
+
+        lbl_tevap = QLabel("--")
+        lbl_tcond = QLabel("--")
+        lbl_carga = QLabel("--")
+        lbl_cap = QLabel("--")
+        lbl_res = QLabel("--")
+        lbl_state = QLabel("SIN DATA")
+        lbl_state.setStyleSheet("color:#9ca3af;")
+
+        grid.addWidget(QLabel("MARCA"), 0, 0)
+        grid.addWidget(brand_cb, 0, 1)
+        grid.addWidget(QLabel("TARGET RESERVA %"), 0, 2)
+        grid.addWidget(target_spin, 0, 3)
+        grid.addWidget(btn_auto, 0, 4)
+
+        grid.addWidget(QLabel("MODELOS"), 1, 0)
+        grid.addWidget(models_tbl, 1, 1, 1, 3)
+        btns_row = QHBoxLayout()
+        btns_row.addWidget(btn_add_model)
+        btns_row.addWidget(btn_del_model)
+        btns_row.addStretch(1)
+        grid.addLayout(btns_row, 1, 4)
+
+        grid.addWidget(QLabel("TOTAL COMPRESORES"), 2, 0)
+        grid.addWidget(n_spin, 2, 1)
+
+        grid.addWidget(QLabel("TEVAP DISE?O (F)"), 3, 0)
+        grid.addWidget(lbl_tevap, 3, 1)
+        grid.addWidget(QLabel("TCOND (F)"), 3, 2)
+        grid.addWidget(lbl_tcond, 3, 3)
+
+        grid.addWidget(QLabel("CARGA (BTU/H)"), 4, 0)
+        grid.addWidget(lbl_carga, 4, 1)
+        grid.addWidget(QLabel("CAPACIDAD (BTU/H)"), 4, 2)
+        grid.addWidget(lbl_cap, 4, 3)
+
+        grid.addWidget(QLabel("RESERVA %"), 5, 0)
+        grid.addWidget(lbl_res, 5, 1)
+        grid.addWidget(QLabel("ESTADO"), 5, 2)
+        grid.addWidget(lbl_state, 5, 3)
+
+        grid.setColumnStretch(5, 1)
+        box.setLayout(grid)
+
+        block = {
+            "box": box,
+            "brand": brand_cb,
+            "n": n_spin,
+            "target": target_spin,
+            "btn_auto": btn_auto,
+            "btn_add_model": btn_add_model,
+            "btn_del_model": btn_del_model,
+            "models_tbl": models_tbl,
+            "lbl_tevap": lbl_tevap,
+            "lbl_tcond": lbl_tcond,
+            "lbl_carga": lbl_carga,
+            "lbl_cap": lbl_cap,
+            "lbl_res": lbl_res,
+            "lbl_state": lbl_state,
+        }
+
+        brand_cb.currentTextChanged.connect(lambda _t, b=block: self._on_comp_brand_changed(b))
+        target_spin.valueChanged.connect(lambda _v, b=block: self._on_comp_changed(b))
+        btn_auto.clicked.connect(lambda _=None, b=block: self._auto_select_compressor(b))
+        btn_add_model.clicked.connect(lambda _=None, b=block: self._add_comp_model_row(b))
+        btn_del_model.clicked.connect(lambda _=None, b=block: self._del_comp_model_row(b))
+        return block
+
+    def _on_comp_brand_changed(self, block: Dict[str, Any]) -> None:
+        brand = block["brand"].currentText()
+        models = self._get_comp_models(brand)
+        tbl: QTableWidget = block["models_tbl"]
+        for r in range(tbl.rowCount()):
+            combo = tbl.cellWidget(r, 0)
+            if isinstance(combo, QComboBox):
+                current = combo.currentText()
+                combo.blockSignals(True)
+                combo.clear()
+                combo.addItem("")
+                combo.addItems(models)
+                combo.setCurrentText(current if current in models else "")
+                combo.blockSignals(False)
+        self._on_comp_changed(block)
+    def _on_comp_changed(self, block: Dict[str, Any]) -> None:
+        self._update_compressors()
+        if not self._suspend_updates:
+            self._set_dirty(True)
+
+    def _add_comp_model_row(self, block: Dict[str, Any], model: str = "", qty: int = 1, trigger_update: bool = True) -> None:
+        tbl: QTableWidget = block["models_tbl"]
+        row = tbl.rowCount()
+        tbl.insertRow(row)
+
+        combo = QComboBox()
+        combo.addItem("")
+        combo.addItems(self._get_comp_models(block["brand"].currentText()))
+        combo.blockSignals(True)
+        if model:
+            combo.setCurrentText(model)
+        combo.blockSignals(False)
+        combo.currentTextChanged.connect(lambda _t, b=block: self._on_comp_changed(b))
+
+        spin = QSpinBox()
+        spin.setRange(1, 10)
+        spin.setValue(max(1, int(qty or 1)))
+        spin.valueChanged.connect(lambda _v, b=block: self._on_comp_changed(b))
+
+        tbl.setCellWidget(row, 0, combo)
+        tbl.setCellWidget(row, 1, spin)
+        tbl.setRowHeight(row, 26)
+
+        if trigger_update:
+            self._on_comp_changed(block)
+
+    def _del_comp_model_row(self, block: Dict[str, Any]) -> None:
+        tbl: QTableWidget = block["models_tbl"]
+        row = tbl.currentRow()
+        if row < 0:
+            return
+        tbl.removeRow(row)
+        self._on_comp_changed(block)
+
+    def _read_comp_model_rows(self, block: Dict[str, Any]) -> List[Dict[str, Any]]:
+        tbl: QTableWidget = block["models_tbl"]
+        rows: List[Dict[str, Any]] = []
+        for r in range(tbl.rowCount()):
+            combo = tbl.cellWidget(r, 0)
+            spin = tbl.cellWidget(r, 1)
+            if not isinstance(combo, QComboBox) or not isinstance(spin, QSpinBox):
+                continue
+            model = combo.currentText().strip()
+            if not model:
+                continue
+            rows.append({"model": model, "n": int(spin.value())})
+        return rows
+
+    def _sync_comp_total(self, block: Dict[str, Any], total_n: int) -> None:
+        n_spin: QSpinBox = block["n"]
+        n_spin.blockSignals(True)
+        n_spin.setValue(max(0, int(total_n or 0)))
+        n_spin.blockSignals(False)
+
+    def _auto_select_compressor(self, block: Dict[str, Any]) -> None:
+        brand = block["brand"].currentText()
+        if not brand:
+            return
+        models = self._get_comp_models(brand)
+        if not models:
+            return
+        rows = self._read_comp_model_rows(block)
+        total_n = sum(int(r.get("n", 0)) for r in rows)
+        if total_n <= 0:
+            total_n = 1
+        target = float(block["target"].value())
+        block_key = "bt" if block is self.comp_bt else "mt"
+        items = self.bt_model.items if block_key == "bt" else self.mt_model.items
+        load = self.total_bt if block_key == "bt" else self.total_mt
+        tevap_design = self._compute_tevap_design(items)
+        tcond_f = self._to_float(self.tcond_f_edit.text(), None)
+        refrigerante = self.spec_fields.get("refrigerante").currentText() if isinstance(self.spec_fields.get("refrigerante"), QComboBox) else ""
+        if tevap_design is None or tcond_f is None:
+            return
+        required = load * (1.0 + target / 100.0)
+        best_model = ""
+        best_cap = None
+        max_model = ""
+        max_cap = None
+        for m in models:
+            perf, _warn = self._get_comp_perf(brand, m, tcond_f, tevap_design, refrigerante)
+            if not perf:
+                continue
+            cap = self._to_float(
+                perf.get("capacity_btu_h", perf.get("evaporator_capacity_btu_h", 0.0)), 0.0
+            )
+            cap_total = total_n * cap
+            if cap_total >= required:
+                if best_cap is None or cap_total < best_cap:
+                    best_cap = cap_total
+                    best_model = m
+            if max_cap is None or cap_total > max_cap:
+                max_cap = cap_total
+                max_model = m
+        chosen = best_model or max_model
+        if chosen:
+            tbl: QTableWidget = block["models_tbl"]
+            tbl.setRowCount(0)
+            self._add_comp_model_row(block, chosen, total_n, trigger_update=False)
+            self._on_comp_changed(block)
+        else:
+            tbl: QTableWidget = block["models_tbl"]
+            tbl.setRowCount(0)
+            self._on_comp_changed(block)
+
+    def _update_compressors(self) -> None:
+        try:
+            self._update_compressors_block("bt", self.comp_bt)
+            self._update_compressors_block("mt", self.comp_mt)
+        except Exception:
+            pass
+
+    def _update_compressors_block(self, key: str, block: Dict[str, Any]) -> None:
+        brand = block["brand"].currentText()
+        target = float(block["target"].value())
+        items = self.bt_model.items if key == "bt" else self.mt_model.items
+        load = self.total_bt if key == "bt" else self.total_mt
+        tevap_design = self._compute_tevap_design(items)
+        tcond_f = self._to_float(self.tcond_f_edit.text(), None)
+        refrigerante = self.spec_fields.get("refrigerante").currentText() if isinstance(self.spec_fields.get("refrigerante"), QComboBox) else ""
+
+        model_rows = self._read_comp_model_rows(block)
+        total_n = sum(int(r.get("n", 0)) for r in model_rows)
+        self._sync_comp_total(block, total_n)
+
+        def _set_label(lbl: QLabel, val: str) -> None:
+            lbl.setText(val)
+
+        _set_label(block["lbl_carga"], f"{int(round(load)):,}" if load else "0")
+        _set_label(block["lbl_tcond"], f"{tcond_f:.1f}" if tcond_f is not None else "--")
+        _set_label(block["lbl_tevap"], f"{tevap_design:.1f}" if tevap_design is not None else "--")
+
+        if not brand or not model_rows or tevap_design is None or tcond_f is None:
+            _set_label(block["lbl_cap"], "--")
+            _set_label(block["lbl_res"], "--")
+            block["lbl_state"].setText("SIN DATA")
+            block["lbl_state"].setStyleSheet("color:#9ca3af;")
+        else:
+            cap_total = 0.0
+            has_perf = False
+            missing_perf = False
+            ref_warn_any = False
+            for entry in model_rows:
+                model = entry.get("model", "")
+                qty = int(entry.get("n", 0) or 0)
+                if not model or qty <= 0:
+                    continue
+                perf, ref_warn = self._get_comp_perf(brand, model, tcond_f, tevap_design, refrigerante)
+                if ref_warn:
+                    ref_warn_any = True
+                if not perf:
+                    missing_perf = True
+                    continue
+                has_perf = True
+                cap = self._to_float(
+                    perf.get("capacity_btu_h", perf.get("evaporator_capacity_btu_h", 0.0)), 0.0
+                )
+                cap_total += qty * cap
+
+            if not has_perf:
+                _set_label(block["lbl_cap"], "--")
+                _set_label(block["lbl_res"], "--")
+                block["lbl_state"].setText("SIN DATA")
+                block["lbl_state"].setStyleSheet("color:#9ca3af;")
+            else:
+                _set_label(block["lbl_cap"], f"{int(round(cap_total)):,}")
+                if load > 0:
+                    reserva = (cap_total - load) / load * 100.0
+                    _set_label(block["lbl_res"], f"{reserva:.1f}")
+                    if reserva >= target and not missing_perf:
+                        block["lbl_state"].setText("OK" + (" (REF?)" if ref_warn_any else ""))
+                        block["lbl_state"].setStyleSheet("color:#16a34a;")
+                    else:
+                        block["lbl_state"].setText("WARNING" + (" (REF?)" if ref_warn_any else ""))
+                        block["lbl_state"].setStyleSheet("color:#d97706;")
+                else:
+                    _set_label(block["lbl_res"], "0.0")
+                    block["lbl_state"].setText("SIN CARGA")
+                    block["lbl_state"].setStyleSheet("color:#6b7280;")
+
+        if not isinstance(self.project_data, dict):
+            self.project_data = {}
+        comp = self.project_data.get("compressors", {}) if isinstance(self.project_data, dict) else {}
+        comp.setdefault(key, {})
+        comp[key] = {
+            "brand": brand,
+            "models": model_rows,
+            "target_reserva_pct": target,
+        }
+        self.project_data["compressors"] = comp
+
+    def _render_compressors(self) -> None:
+        comp = {}
+        if isinstance(self.project_data, dict):
+            comp = self.project_data.get("compressors", {}) or {}
+        self._suspend_updates = True
+        for key, block in (("bt", self.comp_bt), ("mt", self.comp_mt)):
+            data = comp.get(key, {}) if isinstance(comp, dict) else {}
+            brand = str(data.get("brand", "") or "")
+            target = float(data.get("target_reserva_pct", 25) or 25)
+            models_list = data.get("models", []) if isinstance(data, dict) else []
+            if not isinstance(models_list, list):
+                models_list = []
+            if not models_list:
+                legacy_model = str(data.get("model", "") or "")
+                legacy_n = int(data.get("n", 1) or 1)
+                if legacy_model:
+                    models_list = [{"model": legacy_model, "n": legacy_n}]
+
+            block["brand"].blockSignals(True)
+            block["brand"].setCurrentText(brand if brand in self._comp_brands else "")
+            block["brand"].blockSignals(False)
+            self._on_comp_brand_changed(block)
+
+            block["target"].blockSignals(True)
+            block["target"].setValue(target)
+            block["target"].blockSignals(False)
+
+            tbl: QTableWidget = block["models_tbl"]
+            tbl.setRowCount(0)
+            for entry in models_list:
+                self._add_comp_model_row(block, str(entry.get("model", "") or ""), int(entry.get("n", 1) or 1), trigger_update=False)
+
+        self._suspend_updates = False
+        self._update_compressors()
 
     def _update_eev(self) -> None:
         try:

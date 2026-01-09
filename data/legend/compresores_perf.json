@@ -1,0 +1,2393 @@
+{
+  "meta": {
+    "generated_from": "LEGEND jd.xlsm",
+    "units": {
+      "capacity_btu_h": "BTU/h",
+      "heat_rejection_btu_h": "BTU/h",
+      "evaporator_capacity_btu_h": "BTU/h",
+      "power_w": "W",
+      "hp_nominal": "HP",
+      "rla": "A",
+      "consumption_kw": "kW",
+      "suction_in": "in",
+      "discharge_in": "in",
+      "oil_control": "string"
+    },
+    "notes": "Exported from BITZER/COPELAND sheets. 'points' keys are 'REF|TCOND_F|TEVAP_F'."
+  },
+  "brands": {
+    "BITZER": {
+      "brand": "BITZER",
+      "ref": "R-507",
+      "tcond_f": 85,
+      "tevaps_f": [
+        -28,
+        15
+      ],
+      "models": {
+        "2HES-1": {
+          "connections": {
+            "suction_in": 0.625,
+            "discharge_in": 0.5,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 5280.0,
+              "evaporator_capacity_btu_h": 4960.0,
+              "heat_rejection_btu_h": 8800.0,
+              "power_w": 1030.0,
+              "hp_nominal": 1.0,
+              "rla": 7.3,
+              "consumption_kw": 4.39
+            }
+          }
+        },
+        "2FES-2": {
+          "connections": {
+            "suction_in": 0.625,
+            "discharge_in": 0.5,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 7810.0,
+              "evaporator_capacity_btu_h": 7340.0,
+              "heat_rejection_btu_h": 12860.0,
+              "power_w": 1480.0,
+              "hp_nominal": 2.0,
+              "rla": 10.0,
+              "consumption_kw": 5.9
+            }
+          }
+        },
+        "2EES-2": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.625,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 9890.0,
+              "evaporator_capacity_btu_h": 9300.0,
+              "heat_rejection_btu_h": 15380.0,
+              "power_w": 1610.0,
+              "hp_nominal": 2.0,
+              "rla": 12.0,
+              "consumption_kw": 6.03
+            }
+          }
+        },
+        "2DES-2": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.625,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 11980.0,
+              "evaporator_capacity_btu_h": 11260.0,
+              "heat_rejection_btu_h": 18690.0,
+              "power_w": 1970.0,
+              "hp_nominal": 2.0,
+              "rla": 13.1,
+              "consumption_kw": 7.03
+            }
+          }
+        },
+        "2CES-3": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.625,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 15050.0,
+              "evaporator_capacity_btu_h": 14150.0,
+              "heat_rejection_btu_h": 23400.0,
+              "power_w": 2450.0,
+              "hp_nominal": 3.0,
+              "rla": 14.9,
+              "consumption_kw": 9.07
+            }
+          }
+        },
+        "4FES-3": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.625,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 15930.0,
+              "evaporator_capacity_btu_h": 14980.0,
+              "heat_rejection_btu_h": 25100.0,
+              "power_w": 2700.0,
+              "hp_nominal": 3.0,
+              "rla": 20.1,
+              "consumption_kw": 9.97
+            }
+          }
+        },
+        "4EES-4": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.625,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 20300.0,
+              "evaporator_capacity_btu_h": 19080.0,
+              "heat_rejection_btu_h": 31700.0,
+              "power_w": 3350.0,
+              "hp_nominal": 4.0,
+              "rla": 22.4,
+              "consumption_kw": 10.67
+            }
+          }
+        },
+        "4DES-5": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.875,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 24300.0,
+              "evaporator_capacity_btu_h": 22900.0,
+              "heat_rejection_btu_h": 37900.0,
+              "power_w": 3990.0,
+              "hp_nominal": 5.0,
+              "rla": 23.0,
+              "consumption_kw": 13.43
+            }
+          }
+        },
+        "4CES-6": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.875,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 29300.0,
+              "evaporator_capacity_btu_h": 27500.0,
+              "heat_rejection_btu_h": 45400.0,
+              "power_w": 4730.0,
+              "hp_nominal": 6.0,
+              "rla": 27.9,
+              "consumption_kw": 16.56
+            }
+          }
+        },
+        "4VES-7": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.875,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 29000.0,
+              "evaporator_capacity_btu_h": 27300.0,
+              "heat_rejection_btu_h": 44100.0,
+              "power_w": 4430.0,
+              "hp_nominal": 7.0,
+              "rla": 27.1,
+              "consumption_kw": 14.63
+            }
+          }
+        },
+        "4TES-9": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 36000.0,
+              "evaporator_capacity_btu_h": 33800.0,
+              "heat_rejection_btu_h": 54800.0,
+              "power_w": 5530.0,
+              "hp_nominal": 9.0,
+              "rla": 31.4,
+              "consumption_kw": 17.78
+            }
+          }
+        },
+        "4PES-12": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 40000.0,
+              "evaporator_capacity_btu_h": 37600.0,
+              "heat_rejection_btu_h": 60800.0,
+              "power_w": 6120.0,
+              "hp_nominal": 12.0,
+              "rla": 38.6,
+              "consumption_kw": 20.6
+            }
+          }
+        },
+        "4NES-14": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 48800.0,
+              "evaporator_capacity_btu_h": 45900.0,
+              "heat_rejection_btu_h": 74800.0,
+              "power_w": 7600.0,
+              "hp_nominal": 14.0,
+              "rla": 44.3,
+              "consumption_kw": 24.2
+            }
+          }
+        },
+        "4JE-15": {
+          "connections": {
+            "suction_in": 1.625,
+            "discharge_in": 1.125,
+            "oil_control": "PENTA II"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 58400.0,
+              "evaporator_capacity_btu_h": 54900.0,
+              "heat_rejection_btu_h": 89200.0,
+              "power_w": 9040.0,
+              "hp_nominal": 15.0,
+              "rla": 55.7,
+              "consumption_kw": 31.1
+            }
+          }
+        },
+        "4HE-18": {
+          "connections": {
+            "suction_in": 1.625,
+            "discharge_in": 1.125,
+            "oil_control": "PENTA II"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 69100.0,
+              "evaporator_capacity_btu_h": 65000.0,
+              "heat_rejection_btu_h": 105600.0,
+              "power_w": 10680.0,
+              "hp_nominal": 18.0,
+              "rla": 60.3,
+              "consumption_kw": 34.3
+            }
+          }
+        },
+        "4GE-23": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.125,
+            "oil_control": "PENTA II"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 81100.0,
+              "evaporator_capacity_btu_h": 76300.0,
+              "heat_rejection_btu_h": 123800.0,
+              "power_w": 12530.0,
+              "hp_nominal": 23.0,
+              "rla": 64.3,
+              "consumption_kw": 38.2
+            }
+          }
+        },
+        "4FE-28": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.125,
+            "oil_control": "PENTA II"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 96900.0,
+              "evaporator_capacity_btu_h": 91200.0,
+              "heat_rejection_btu_h": 148500.0,
+              "power_w": 15130.0,
+              "hp_nominal": 28.0,
+              "rla": 85.7,
+              "consumption_kw": 51.7
+            }
+          }
+        },
+        "6JE-25": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.375,
+            "oil_control": "PENTA II"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 87100.0,
+              "evaporator_capacity_btu_h": 81900.0,
+              "heat_rejection_btu_h": 132000.0,
+              "power_w": 13170.0,
+              "hp_nominal": 25.0,
+              "rla": 79.1,
+              "consumption_kw": 47.9
+            }
+          }
+        },
+        "6HE-28": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.375,
+            "oil_control": "PENTA II"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 102100.0,
+              "evaporator_capacity_btu_h": 96000.0,
+              "heat_rejection_btu_h": 155300.0,
+              "power_w": 15590.0,
+              "hp_nominal": 28.0,
+              "rla": 86.4,
+              "consumption_kw": 52.6
+            }
+          }
+        },
+        "6GE-34": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.375,
+            "oil_control": "PENTA II"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 122300.0,
+              "evaporator_capacity_btu_h": 115000.0,
+              "heat_rejection_btu_h": 187000.0,
+              "power_w": 18970.0,
+              "hp_nominal": 34.0,
+              "rla": 94.3,
+              "consumption_kw": 59.9
+            }
+          }
+        },
+        "2HES-2": {
+          "connections": {
+            "suction_in": 0.625,
+            "discharge_in": 0.5,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 17810.0,
+              "evaporator_capacity_btu_h": 16760.0,
+              "heat_rejection_btu_h": 23200.0,
+              "power_w": 1580.0,
+              "hp_nominal": 2.0,
+              "rla": 11.1,
+              "consumption_kw": 6.07
+            }
+          }
+        },
+        "2FES-3": {
+          "connections": {
+            "suction_in": 0.625,
+            "discharge_in": 0.5,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 25600.0,
+              "evaporator_capacity_btu_h": 24100.0,
+              "heat_rejection_btu_h": 33200.0,
+              "power_w": 2240.0,
+              "hp_nominal": 3.0,
+              "rla": 12.6,
+              "consumption_kw": 7.65
+            }
+          }
+        },
+        "2EES-3": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.625,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 32400.0,
+              "evaporator_capacity_btu_h": 30400.0,
+              "heat_rejection_btu_h": 41200.0,
+              "power_w": 2600.0,
+              "hp_nominal": 3.0,
+              "rla": 15.6,
+              "consumption_kw": 9.35
+            }
+          }
+        },
+        "2DES-3": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.625,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 38600.0,
+              "evaporator_capacity_btu_h": 36300.0,
+              "heat_rejection_btu_h": 49200.0,
+              "power_w": 3100.0,
+              "hp_nominal": 3.0,
+              "rla": 17.0,
+              "consumption_kw": 10.35
+            }
+          }
+        },
+        "2CES-4": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.625,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 47400.0,
+              "evaporator_capacity_btu_h": 44600.0,
+              "heat_rejection_btu_h": 60300.0,
+              "power_w": 3800.0,
+              "hp_nominal": 4.0,
+              "rla": 20.3,
+              "consumption_kw": 12.09
+            }
+          }
+        },
+        "4FES-5": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.625,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 51300.0,
+              "evaporator_capacity_btu_h": 48300.0,
+              "heat_rejection_btu_h": 65300.0,
+              "power_w": 4110.0,
+              "hp_nominal": 5.0,
+              "rla": 27.0,
+              "consumption_kw": 13.66
+            }
+          }
+        },
+        "4EES-6": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.625,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 64500.0,
+              "evaporator_capacity_btu_h": 60700.0,
+              "heat_rejection_btu_h": 82100.0,
+              "power_w": 5180.0,
+              "hp_nominal": 6.0,
+              "rla": 31.3,
+              "consumption_kw": 15.93
+            }
+          }
+        },
+        "4DES-7": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.875,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 77400.0,
+              "evaporator_capacity_btu_h": 72800.0,
+              "heat_rejection_btu_h": 98500.0,
+              "power_w": 6200.0,
+              "hp_nominal": 7.0,
+              "rla": 34.5,
+              "consumption_kw": 19.46
+            }
+          }
+        },
+        "4CES-9": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.875,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 93700.0,
+              "evaporator_capacity_btu_h": 88100.0,
+              "heat_rejection_btu_h": 119500.0,
+              "power_w": 7580.0,
+              "hp_nominal": 9.0,
+              "rla": 38.1,
+              "consumption_kw": 22.5
+            }
+          }
+        },
+        "4VES-10": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.875,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 99200.0,
+              "evaporator_capacity_btu_h": 93400.0,
+              "heat_rejection_btu_h": 125200.0,
+              "power_w": 7610.0,
+              "hp_nominal": 10.0,
+              "rla": 42.9,
+              "consumption_kw": 23.9
+            }
+          }
+        },
+        "4TES-12": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 119700.0,
+              "evaporator_capacity_btu_h": 112600.0,
+              "heat_rejection_btu_h": 151300.0,
+              "power_w": 9270.0,
+              "hp_nominal": 12.0,
+              "rla": 47.1,
+              "consumption_kw": 27.9
+            }
+          }
+        },
+        "4PES-15": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 137400.0,
+              "evaporator_capacity_btu_h": 129300.00000000001,
+              "heat_rejection_btu_h": 173600.0,
+              "power_w": 10610.0,
+              "hp_nominal": 15.0,
+              "rla": 54.3,
+              "consumption_kw": 33.5
+            }
+          }
+        },
+        "4NES-20": {
+          "connections": {
+            "suction_in": 1.625,
+            "discharge_in": 1.125,
+            "oil_control": "OLC-K1"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 163100.0,
+              "evaporator_capacity_btu_h": 153500.0,
+              "heat_rejection_btu_h": 206000.0,
+              "power_w": 12530.0,
+              "hp_nominal": 20.0,
+              "rla": 64.3,
+              "consumption_kw": 38.2
+            }
+          }
+        },
+        "4JE-22": {
+          "connections": {
+            "suction_in": 1.625,
+            "discharge_in": 1.125,
+            "oil_control": "PENTA II"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 182100.0,
+              "evaporator_capacity_btu_h": 171300.0,
+              "heat_rejection_btu_h": 230000.0,
+              "power_w": 13950.0,
+              "hp_nominal": 22.0,
+              "rla": 68.6,
+              "consumption_kw": 41.4
+            }
+          }
+        },
+        "4HE-25": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.125,
+            "oil_control": "PENTA II"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 214000.0,
+              "evaporator_capacity_btu_h": 201000.0,
+              "heat_rejection_btu_h": 270000.0,
+              "power_w": 16590.0,
+              "hp_nominal": 25.0,
+              "rla": 84.3,
+              "consumption_kw": 50.8
+            }
+          }
+        },
+        "4GE-30": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.125,
+            "oil_control": "PENTA II"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 246000.0,
+              "evaporator_capacity_btu_h": 231000.0,
+              "heat_rejection_btu_h": 311000.0,
+              "power_w": 19230.0,
+              "hp_nominal": 30.0,
+              "rla": 100.0,
+              "consumption_kw": 60.5
+            }
+          }
+        },
+        "4FE-35": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.125,
+            "oil_control": "PENTA II"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 293000.0,
+              "evaporator_capacity_btu_h": 276000.0,
+              "heat_rejection_btu_h": 374000.0,
+              "power_w": 23800.0,
+              "hp_nominal": 35.0,
+              "rla": 105.9,
+              "consumption_kw": 71.1
+            }
+          }
+        },
+        "6JE-33": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.375,
+            "oil_control": "PENTA II"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 269000.0,
+              "evaporator_capacity_btu_h": 253000.0,
+              "heat_rejection_btu_h": 339000.0,
+              "power_w": 20600.0,
+              "hp_nominal": 33.0,
+              "rla": 111.4,
+              "consumption_kw": 67.8
+            }
+          }
+        },
+        "6HE-35": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.375,
+            "oil_control": "PENTA II"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 314000.0,
+              "evaporator_capacity_btu_h": 295000.0,
+              "heat_rejection_btu_h": 398000.0,
+              "power_w": 24600.0,
+              "hp_nominal": 35.0,
+              "rla": 117.1,
+              "consumption_kw": 76.6
+            }
+          }
+        },
+        "6GE-40": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.375,
+            "oil_control": "PENTA II"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 358000.0,
+              "evaporator_capacity_btu_h": 337000.0,
+              "heat_rejection_btu_h": 456000.0,
+              "power_w": 28800.0,
+              "hp_nominal": 40.0,
+              "rla": 157.1,
+              "consumption_kw": 94.1
+            }
+          }
+        },
+        "2HES-1Y": {
+          "connections": {
+            "suction_in": 0.625,
+            "discharge_in": 0.5,
+            "oil_control": "OLC-K1"
+          }
+        },
+        "2FES-2Y": {
+          "connections": {
+            "suction_in": 0.625,
+            "discharge_in": 0.5,
+            "oil_control": "OLC-K1"
+          }
+        },
+        "2EES-2Y": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.625,
+            "oil_control": "OLC-K1"
+          }
+        },
+        "2DES-2Y": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.625,
+            "oil_control": "OLC-K1"
+          }
+        },
+        "2CES-3Y": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.625,
+            "oil_control": "OLC-K1"
+          }
+        },
+        "4FES-3Y": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.625,
+            "oil_control": "OLC-K1"
+          }
+        },
+        "4EES-4Y": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.625,
+            "oil_control": "OLC-K1"
+          }
+        },
+        "4DES-5Y": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.875,
+            "oil_control": "OLC-K1"
+          }
+        },
+        "4CES-6Y": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.875,
+            "oil_control": "OLC-K1"
+          }
+        },
+        "4VES-6Y": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.875,
+            "oil_control": "OLC-K1"
+          }
+        },
+        "4TES-8Y": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OLC-K1"
+          }
+        },
+        "4PES-10Y": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OLC-K1"
+          }
+        },
+        "4NES-12Y": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OLC-K1"
+          }
+        },
+        "4JE-13Y": {
+          "connections": {
+            "suction_in": 1.625,
+            "discharge_in": 1.125,
+            "oil_control": "PENTA II"
+          }
+        },
+        "4HE-15Y": {
+          "connections": {
+            "suction_in": 1.625,
+            "discharge_in": 1.125,
+            "oil_control": "PENTA II"
+          }
+        },
+        "4GE-20Y": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.125,
+            "oil_control": "PENTA II"
+          }
+        },
+        "4FE-25Y": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.125,
+            "oil_control": "PENTA II"
+          }
+        },
+        "6JE-22Y": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.375,
+            "oil_control": "PENTA II"
+          }
+        },
+        "6HE-25Y": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.375,
+            "oil_control": "PENTA II"
+          }
+        },
+        "6GE-30Y": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.375,
+            "oil_control": "PENTA II"
+          }
+        },
+        "2NSL-05K": {
+          "connections": {
+            "suction_in": 0.625,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "2MSL-07K": {
+          "connections": {
+            "suction_in": 0.625,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "2KSL-1K": {
+          "connections": {
+            "suction_in": 0.625,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "2JSL-2K": {
+          "connections": {
+            "suction_in": 0.625,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "2HSL-3K": {
+          "connections": {
+            "suction_in": 0.625,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "2GSL-3K": {
+          "connections": {
+            "suction_in": 0.625,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "2FSL-4K": {
+          "connections": {
+            "suction_in": 0.625,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "2ESL-4K": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.625,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "2DSL-5K": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.625,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "2CSL-6K": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.625,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "4FSL-7K": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.625,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "4ESL-9K": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.625,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "4DSL-10K": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.875,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "4CSL-12K": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.875,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "4VSL-15K": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.875,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "4TSL-20K": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "4PSL-25K": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "4NSL-30K": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "=+CS4": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.875,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "=+CT4": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.875,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "=+CU4": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.875,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "=+CV4": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "=+CW4": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        },
+        "=+CX4": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "TRAX OIL -CO2"
+          }
+        }
+      }
+    },
+    "COPELAND": {
+      "brand": "COPELAND",
+      "ref": "R-507",
+      "tcond_f": 85,
+      "tevaps_f": [
+        -28,
+        15
+      ],
+      "models": {
+        "2DF3F16KE-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 0.875,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 17900.0,
+              "evaporator_capacity_btu_h": 16800.0,
+              "heat_rejection_btu_h": 28856.0,
+              "power_w": 3210.0,
+              "hp_nominal": 3.0,
+              "rla": 16.0,
+              "consumption_kw": 11.5
+            }
+          }
+        },
+        "2DL3F20KE-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 0.875,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 20900.0,
+              "evaporator_capacity_btu_h": 19700.0,
+              "heat_rejection_btu_h": 32914.0,
+              "power_w": 3520.0,
+              "hp_nominal": 3.5,
+              "rla": 26.3,
+              "consumption_kw": 14.6
+            }
+          }
+        },
+        "2DA3F23KE-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 0.875,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 24300.0,
+              "evaporator_capacity_btu_h": 22900.0,
+              "heat_rejection_btu_h": 38157.0,
+              "power_w": 4060.0,
+              "hp_nominal": 4.0,
+              "rla": 28.8,
+              "consumption_kw": 15.3
+            }
+          }
+        },
+        "2DB3F25KE-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 0.875,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 26100.0,
+              "evaporator_capacity_btu_h": 24500.0,
+              "heat_rejection_btu_h": 40708.0,
+              "power_w": 4280.0,
+              "hp_nominal": 4.5,
+              "rla": 28.2,
+              "consumption_kw": 15.9
+            }
+          }
+        },
+        "3DA3F28KE-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 0.875,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 28300.0,
+              "evaporator_capacity_btu_h": 26600.0,
+              "heat_rejection_btu_h": 44751.0,
+              "power_w": 4820.0,
+              "hp_nominal": 5.0,
+              "rla": 26.8,
+              "consumption_kw": 17.0
+            }
+          }
+        },
+        "3DADF28KE-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 28300.0,
+              "evaporator_capacity_btu_h": 26600.0,
+              "heat_rejection_btu_h": 44751.0,
+              "power_w": 4820.0,
+              "hp_nominal": 5.0,
+              "rla": 26.8,
+              "consumption_kw": 17.0
+            }
+          }
+        },
+        "3DB3F33KE-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 33300.0,
+              "evaporator_capacity_btu_h": 31400.0,
+              "heat_rejection_btu_h": 52754.0,
+              "power_w": 5700.0,
+              "hp_nominal": 5.5,
+              "rla": 30.7,
+              "consumption_kw": 19.5
+            }
+          }
+        },
+        "3DBDF33KE-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 33300.0,
+              "evaporator_capacity_btu_h": 31400.0,
+              "heat_rejection_btu_h": 52754.0,
+              "power_w": 5700.0,
+              "hp_nominal": 5.5,
+              "rla": 30.7,
+              "consumption_kw": 19.5
+            }
+          }
+        },
+        "3DF3F40KE-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 41200.0,
+              "evaporator_capacity_btu_h": 38700.0,
+              "heat_rejection_btu_h": 64579.0,
+              "power_w": 6850.0,
+              "hp_nominal": 6.0,
+              "rla": 37.0,
+              "consumption_kw": 23.2
+            }
+          }
+        },
+        "3DFDF40KE-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 41200.0,
+              "evaporator_capacity_btu_h": 38700.0,
+              "heat_rejection_btu_h": 64579.0,
+              "power_w": 6850.0,
+              "hp_nominal": 6.0,
+              "rla": 37.0,
+              "consumption_kw": 23.2
+            }
+          }
+        },
+        "3DS3F46KE-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 45900.0,
+              "evaporator_capacity_btu_h": 43200.0,
+              "heat_rejection_btu_h": 72180.0,
+              "power_w": 7700.0,
+              "hp_nominal": 7.0,
+              "rla": 41.4,
+              "consumption_kw": 25.0
+            }
+          }
+        },
+        "3DSDF46KE-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 45900.0,
+              "evaporator_capacity_btu_h": 43200.0,
+              "heat_rejection_btu_h": 72180.0,
+              "power_w": 7700.0,
+              "hp_nominal": 7.0,
+              "rla": 41.4,
+              "consumption_kw": 25.0
+            }
+          }
+        },
+        "4DHNF63KE-TSK": {
+          "connections": {
+            "suction_in": 1.625,
+            "discharge_in": 1.375,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 68000.0,
+              "evaporator_capacity_btu_h": 64000.0,
+              "heat_rejection_btu_h": 105202.0,
+              "power_w": 10900.0,
+              "hp_nominal": 10.0,
+              "rla": 52.6,
+              "consumption_kw": 37.6
+            }
+          }
+        },
+        "4DKNF63KE-TSK": {
+          "connections": {
+            "suction_in": 1.625,
+            "discharge_in": 1.375,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 68000.0,
+              "evaporator_capacity_btu_h": 64000.0,
+              "heat_rejection_btu_h": 105202.0,
+              "power_w": 10900.0,
+              "hp_nominal": 10.0,
+              "rla": 52.6,
+              "consumption_kw": 37.6
+            }
+          }
+        },
+        "4DLDF63KL-TSK": {
+          "connections": {
+            "suction_in": 1.625,
+            "discharge_in": 1.375,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 68500.0,
+              "evaporator_capacity_btu_h": 64500.0,
+              "heat_rejection_btu_h": 105702.0,
+              "power_w": 10900.0,
+              "hp_nominal": 10.0,
+              "rla": 52.6,
+              "consumption_kw": 37.6
+            }
+          }
+        },
+        "4DHXF63KE-TSK": {
+          "connections": {
+            "suction_in": 1.625,
+            "discharge_in": 1.375,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": "#N/A",
+              "evaporator_capacity_btu_h": "#N/A",
+              "heat_rejection_btu_h": "#N/A",
+              "power_w": "#N/A",
+              "hp_nominal": "#N/A",
+              "rla": "#N/A",
+              "consumption_kw": "#N/A"
+            }
+          }
+        },
+        "4DJNF76KE-TSK": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.375,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 79500.0,
+              "evaporator_capacity_btu_h": 75000.0,
+              "heat_rejection_btu_h": 122845.0,
+              "power_w": 12700.0,
+              "hp_nominal": 12.5,
+              "rla": 64.3,
+              "consumption_kw": 43.1
+            }
+          }
+        },
+        "4DRNF76KL-TSK": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.375,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 79500.0,
+              "evaporator_capacity_btu_h": 75000.0,
+              "heat_rejection_btu_h": 122845.0,
+              "power_w": 12700.0,
+              "hp_nominal": 12.5,
+              "rla": 64.3,
+              "consumption_kw": 43.1
+            }
+          }
+        },
+        "4DJXF76KL-TSK": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.375,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": "#N/A",
+              "evaporator_capacity_btu_h": "#N/A",
+              "heat_rejection_btu_h": "#N/A",
+              "power_w": "#N/A",
+              "hp_nominal": "#N/A",
+              "rla": "#N/A",
+              "consumption_kw": "#N/A"
+            }
+          }
+        },
+        "4DTDF76KL-TSK": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.375,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 80000.0,
+              "evaporator_capacity_btu_h": 75500.0,
+              "heat_rejection_btu_h": 123345.0,
+              "power_w": 12700.0,
+              "hp_nominal": 12.5,
+              "rla": 64.3,
+              "consumption_kw": 43.1
+            }
+          }
+        },
+        "6DHNF93KE-TSK": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.375,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 98000.0,
+              "evaporator_capacity_btu_h": 92500.0,
+              "heat_rejection_btu_h": 151243.0,
+              "power_w": 15600.0,
+              "hp_nominal": 15.0,
+              "rla": 80.7,
+              "consumption_kw": 56.0
+            }
+          }
+        },
+        "6DJNF11ME-TSK": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.625,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 106000.0,
+              "evaporator_capacity_btu_h": 100000.0,
+              "heat_rejection_btu_h": 170164.0,
+              "power_w": 18800.0,
+              "hp_nominal": 17.0,
+              "rla": 95.6,
+              "consumption_kw": 65.0
+            }
+          }
+        },
+        "ZF06K4E-TF5": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 6810.0,
+              "evaporator_capacity_btu_h": 6400.0,
+              "heat_rejection_btu_h": 11315.0,
+              "power_w": 1320.0,
+              "hp_nominal": 2.0,
+              "rla": 9.3,
+              "consumption_kw": 4.1
+            },
+            "R-507|85|15": {
+              "capacity_btu_h": 18500.0,
+              "evaporator_capacity_btu_h": 17500.0,
+              "heat_rejection_btu_h": 24609.0,
+              "power_w": 1790.0,
+              "hp_nominal": 2.0,
+              "rla": 9.3,
+              "consumption_kw": 5.6
+            }
+          }
+        },
+        "ZF09K4E-TF5": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 9580.0,
+              "evaporator_capacity_btu_h": 9010.0,
+              "heat_rejection_btu_h": 15280.0,
+              "power_w": 1670.0,
+              "hp_nominal": 3.0,
+              "rla": 9.6,
+              "consumption_kw": 6.4
+            },
+            "R-507|85|15": {
+              "capacity_btu_h": 26200.0,
+              "evaporator_capacity_btu_h": 24600.0,
+              "heat_rejection_btu_h": 33743.0,
+              "power_w": 2210.0,
+              "hp_nominal": 3.0,
+              "rla": 11.1,
+              "consumption_kw": 7.5
+            }
+          }
+        },
+        "ZF11K4E-TF5": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 11900.0,
+              "evaporator_capacity_btu_h": 11200.0,
+              "heat_rejection_btu_h": 18828.0,
+              "power_w": 2030.0,
+              "hp_nominal": 3.5,
+              "rla": 12.1,
+              "consumption_kw": 7.5
+            },
+            "R-507|85|15": {
+              "capacity_btu_h": 32600.0,
+              "evaporator_capacity_btu_h": 30700.0,
+              "heat_rejection_btu_h": 42054.0,
+              "power_w": 2770.0,
+              "hp_nominal": 3.5,
+              "rla": 13.6,
+              "consumption_kw": 9.0
+            }
+          }
+        },
+        "ZF13K4E-TF5": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 13600.0,
+              "evaporator_capacity_btu_h": 12800.0,
+              "heat_rejection_btu_h": 21621.0,
+              "power_w": 2350.0,
+              "hp_nominal": 4.0,
+              "rla": 13.2,
+              "consumption_kw": 7.9
+            },
+            "R-507|85|15": {
+              "capacity_btu_h": 37500.0,
+              "evaporator_capacity_btu_h": 35300.0,
+              "heat_rejection_btu_h": 48080.0,
+              "power_w": 3100.0,
+              "hp_nominal": 4.0,
+              "rla": 15.0,
+              "consumption_kw": 9.6
+            }
+          }
+        },
+        "ZF15K4E-TF5": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 16900.0,
+              "evaporator_capacity_btu_h": 15900.0,
+              "heat_rejection_btu_h": 26661.0,
+              "power_w": 2860.0,
+              "hp_nominal": 5.0,
+              "rla": 18.9,
+              "consumption_kw": 9.9
+            },
+            "R-507|85|15": {
+              "capacity_btu_h": 46500.0,
+              "evaporator_capacity_btu_h": 43800.0,
+              "heat_rejection_btu_h": 59708.0,
+              "power_w": 3870.0,
+              "hp_nominal": 5.0,
+              "rla": 21.4,
+              "consumption_kw": 12.1
+            }
+          }
+        },
+        "ZF18K4E-TF5": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 20300.0,
+              "evaporator_capacity_btu_h": 19100.0,
+              "heat_rejection_btu_h": 32075.0,
+              "power_w": 3450.0,
+              "hp_nominal": 6.0,
+              "rla": 21.8,
+              "consumption_kw": 13.4
+            },
+            "R-507|85|15": {
+              "capacity_btu_h": 55500.0,
+              "evaporator_capacity_btu_h": 52500.0,
+              "heat_rejection_btu_h": 71370.0,
+              "power_w": 4650.0,
+              "hp_nominal": 6.0,
+              "rla": 23.9,
+              "consumption_kw": 15.7
+            }
+          }
+        },
+        "ZF25K4E-TF5": {
+          "connections": {
+            "suction_in": 1.125,
+            "discharge_in": 0.875,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 25400.0,
+              "evaporator_capacity_btu_h": 23900.0,
+              "heat_rejection_btu_h": 40178.0,
+              "power_w": 4330.0,
+              "hp_nominal": 7.5,
+              "rla": 26.7,
+              "consumption_kw": 16.7
+            },
+            "R-507|85|15": {
+              "capacity_btu_h": 69500.0,
+              "evaporator_capacity_btu_h": 65500.0,
+              "heat_rejection_btu_h": 89295.0,
+              "power_w": 5800.0,
+              "hp_nominal": 7.5,
+              "rla": 29.5,
+              "consumption_kw": 19.6
+            }
+          }
+        },
+        "ZF34K5E-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 0.875,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 32600.0,
+              "evaporator_capacity_btu_h": 30600.0,
+              "heat_rejection_btu_h": 50689.0,
+              "power_w": 5300.0,
+              "hp_nominal": 10.0,
+              "rla": 37.1,
+              "consumption_kw": 21.7
+            },
+            "R-507|85|15": {
+              "capacity_btu_h": 95000.0,
+              "evaporator_capacity_btu_h": 89500.0,
+              "heat_rejection_btu_h": 122133.0,
+              "power_w": 7950.0,
+              "hp_nominal": 10.0,
+              "rla": 41.2,
+              "consumption_kw": 26.8
+            }
+          }
+        },
+        "ZF41K5E-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 0.875,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|-28": {
+              "capacity_btu_h": 41300.0,
+              "evaporator_capacity_btu_h": 38900.0,
+              "heat_rejection_btu_h": 64167.0,
+              "power_w": 6700.0,
+              "hp_nominal": 13.0,
+              "rla": 42.1,
+              "consumption_kw": 27.1
+            },
+            "R-507|85|15": {
+              "capacity_btu_h": 115000.0,
+              "evaporator_capacity_btu_h": 108000.0,
+              "heat_rejection_btu_h": 147765.0,
+              "power_w": 9600.0,
+              "hp_nominal": 13.0,
+              "rla": 49.5,
+              "consumption_kw": 32.5
+            }
+          }
+        },
+        "2DC3R53KE-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 0.875,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 46100.0,
+              "evaporator_capacity_btu_h": 43400.0,
+              "heat_rejection_btu_h": 58250.0,
+              "power_w": 3560.0,
+              "hp_nominal": 3.5,
+              "rla": 22.3,
+              "consumption_kw": 12.9
+            }
+          }
+        },
+        "2DD3R63KE-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 0.875,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 55000.0,
+              "evaporator_capacity_btu_h": 52000.0,
+              "heat_rejection_btu_h": 69266.0,
+              "power_w": 4180.0,
+              "hp_nominal": 4.0,
+              "rla": 22.3,
+              "consumption_kw": 14.2
+            }
+          }
+        },
+        "2DL3R78KE-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 0.875,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 67000.0,
+              "evaporator_capacity_btu_h": 63500.0,
+              "heat_rejection_btu_h": 84577.0,
+              "power_w": 5150.0,
+              "hp_nominal": 5.0,
+              "rla": 31.6,
+              "consumption_kw": 18.0
+            }
+          }
+        },
+        "3DA3R10ME-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 93000.0,
+              "evaporator_capacity_btu_h": 87500.0,
+              "heat_rejection_btu_h": 117062.0,
+              "power_w": 7050.0,
+              "hp_nominal": 6.5,
+              "rla": 41.0,
+              "consumption_kw": 23.8
+            }
+          }
+        },
+        "3DADR10ME-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 93000.0,
+              "evaporator_capacity_btu_h": 87500.0,
+              "heat_rejection_btu_h": 117062.0,
+              "power_w": 7050.0,
+              "hp_nominal": 6.5,
+              "rla": 41.0,
+              "consumption_kw": 23.8
+            }
+          }
+        },
+        "3DB3R12ME-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 108000.0,
+              "evaporator_capacity_btu_h": 102000.0,
+              "heat_rejection_btu_h": 137181.0,
+              "power_w": 8550.0,
+              "hp_nominal": 7.5,
+              "rla": 43.6,
+              "consumption_kw": 27.2
+            }
+          }
+        },
+        "3DBDR12ML-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 108000.0,
+              "evaporator_capacity_btu_h": 102000.0,
+              "heat_rejection_btu_h": 137181.0,
+              "power_w": 8550.0,
+              "hp_nominal": 7.5,
+              "rla": 43.6,
+              "consumption_kw": 27.2
+            }
+          }
+        },
+        "3DF3R15ME-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 135000.0,
+              "evaporator_capacity_btu_h": 127000.0,
+              "heat_rejection_btu_h": 171860.0,
+              "power_w": 10800.0,
+              "hp_nominal": 10.0,
+              "rla": 48.1,
+              "consumption_kw": 35.3
+            }
+          }
+        },
+        "3DFDR15ME-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 1.125,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 135000.0,
+              "evaporator_capacity_btu_h": 127000.0,
+              "heat_rejection_btu_h": 171860.0,
+              "power_w": 10800.0,
+              "hp_nominal": 10.0,
+              "rla": 48.1,
+              "consumption_kw": 35.3
+            }
+          }
+        },
+        "3DS3R17ME-TFC": {
+          "connections": {
+            "suction_in": 1.625,
+            "discharge_in": 1.125,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 150000.0,
+              "evaporator_capacity_btu_h": 141000.0,
+              "heat_rejection_btu_h": 190956.0,
+              "power_w": 12000.0,
+              "hp_nominal": 10.0,
+              "rla": 59.6,
+              "consumption_kw": 39.1
+            }
+          }
+        },
+        "3DSDR17ME-TFC": {
+          "connections": {
+            "suction_in": 1.625,
+            "discharge_in": 1.125,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 150000.0,
+              "evaporator_capacity_btu_h": 141000.0,
+              "heat_rejection_btu_h": 190956.0,
+              "power_w": 12000.0,
+              "hp_nominal": 10.0,
+              "rla": 59.6,
+              "consumption_kw": 39.1
+            }
+          }
+        },
+        "4DHNR22ME-TSK": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.375,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 207000.0,
+              "evaporator_capacity_btu_h": 195000.0,
+              "heat_rejection_btu_h": 261949.0,
+              "power_w": 16100.0,
+              "hp_nominal": 15.0,
+              "rla": 74.4,
+              "consumption_kw": 56.7
+            }
+          }
+        },
+        "4DKNR22ME-TSK": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.375,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 207000.0,
+              "evaporator_capacity_btu_h": 195000.0,
+              "heat_rejection_btu_h": 261949.0,
+              "power_w": 16100.0,
+              "hp_nominal": 15.0,
+              "rla": 74.4,
+              "consumption_kw": 56.7
+            }
+          }
+        },
+        "4DHXR22ML-TSK": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.375,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 207000.0,
+              "evaporator_capacity_btu_h": 195000.0,
+              "heat_rejection_btu_h": 261949.0,
+              "power_w": 16100.0,
+              "hp_nominal": 15.0,
+              "rla": 74.4,
+              "consumption_kw": 56.7
+            }
+          }
+        },
+        "4DJNR28ME-TSK": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.375,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 246000.0,
+              "evaporator_capacity_btu_h": 232000.0,
+              "heat_rejection_btu_h": 312895.0,
+              "power_w": 19600.0,
+              "hp_nominal": 18.0,
+              "rla": 105.4,
+              "consumption_kw": 66.8
+            }
+          }
+        },
+        "4DRNR28ME-TSK": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.375,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 246000.0,
+              "evaporator_capacity_btu_h": 232000.0,
+              "heat_rejection_btu_h": 312895.0,
+              "power_w": 19600.0,
+              "hp_nominal": 18.0,
+              "rla": 105.4,
+              "consumption_kw": 66.8
+            }
+          }
+        },
+        "4DJXR28ME-TSK": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.375,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 246000.0,
+              "evaporator_capacity_btu_h": 232000.0,
+              "heat_rejection_btu_h": 312895.0,
+              "power_w": 19600.0,
+              "hp_nominal": 18.0,
+              "rla": 105.4,
+              "consumption_kw": 66.8
+            }
+          }
+        },
+        "6DHNR35ME-TSK": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.625,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 306000.0,
+              "evaporator_capacity_btu_h": 288000.0,
+              "heat_rejection_btu_h": 387912.0,
+              "power_w": 24000.0,
+              "hp_nominal": 23.0,
+              "rla": 125.1,
+              "consumption_kw": 80.0
+            }
+          }
+        },
+        "6DJNR40ME-TSN": {
+          "connections": {
+            "suction_in": 2.125,
+            "discharge_in": 1.625,
+            "oil_control": "OL60-HX"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 362000.0,
+              "evaporator_capacity_btu_h": 340000.0,
+              "heat_rejection_btu_h": 463366.0,
+              "power_w": 29700.0,
+              "hp_nominal": 26.0,
+              "rla": 142.9,
+              "consumption_kw": 95.9
+            }
+          }
+        },
+        "ZB21KCE-TF5": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 28100.0,
+              "evaporator_capacity_btu_h": 26500.0,
+              "heat_rejection_btu_h": 35472.0,
+              "power_w": 2160.0,
+              "hp_nominal": 3.0,
+              "rla": 12.1,
+              "consumption_kw": 7.4
+            }
+          }
+        },
+        "ZBD21KCE-TF5": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 27200.0,
+              "evaporator_capacity_btu_h": 25600.0,
+              "heat_rejection_btu_h": 34401.0,
+              "power_w": 2110.0,
+              "hp_nominal": 3.0,
+              "rla": 12.6,
+              "consumption_kw": 7.5
+            }
+          }
+        },
+        "ZB30KCE-TF5": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 37600.0,
+              "evaporator_capacity_btu_h": 35400.0,
+              "heat_rejection_btu_h": 47293.0,
+              "power_w": 2840.0,
+              "hp_nominal": 4.0,
+              "rla": 15.7,
+              "consumption_kw": 10.1
+            }
+          }
+        },
+        "ZBD30KC-TF5": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": "#N/A",
+              "evaporator_capacity_btu_h": "#N/A",
+              "heat_rejection_btu_h": "#N/A",
+              "power_w": "#N/A",
+              "hp_nominal": "#N/A",
+              "rla": "#N/A",
+              "consumption_kw": "#N/A"
+            }
+          }
+        },
+        "ZBD30KCE-TF5": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 38100.0,
+              "evaporator_capacity_btu_h": 35800.0,
+              "heat_rejection_btu_h": 48373.0,
+              "power_w": 3010.0,
+              "hp_nominal": 4.0,
+              "rla": 15.7,
+              "consumption_kw": 9.3
+            }
+          }
+        },
+        "ZB38KCE-TF5": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 46900.0,
+              "evaporator_capacity_btu_h": 44200.0,
+              "heat_rejection_btu_h": 59016.0,
+              "power_w": 3550.0,
+              "hp_nominal": 5.0,
+              "rla": 22.1,
+              "consumption_kw": 12.6
+            }
+          }
+        },
+        "ZBD38KQ-TF5": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": "#N/A",
+              "evaporator_capacity_btu_h": "#N/A",
+              "heat_rejection_btu_h": "#N/A",
+              "power_w": "#N/A",
+              "hp_nominal": "#N/A",
+              "rla": "#N/A",
+              "consumption_kw": "#N/A"
+            }
+          }
+        },
+        "ZBD38KC-TF5": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 46500.0,
+              "evaporator_capacity_btu_h": 43700.0,
+              "heat_rejection_btu_h": 58992.0,
+              "power_w": 3660.0,
+              "hp_nominal": 5.0,
+              "rla": 23.7,
+              "consumption_kw": 12.4
+            }
+          }
+        },
+        "ZB45KCE-TF5": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 55500.0,
+              "evaporator_capacity_btu_h": 52500.0,
+              "heat_rejection_btu_h": 69630.0,
+              "power_w": 4140.0,
+              "hp_nominal": 6.0,
+              "rla": 22.5,
+              "consumption_kw": 14.1
+            }
+          }
+        },
+        "ZBD45KC-TF5": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": "#N/A",
+              "evaporator_capacity_btu_h": "#N/A",
+              "heat_rejection_btu_h": "#N/A",
+              "power_w": "#N/A",
+              "hp_nominal": "#N/A",
+              "rla": "#N/A",
+              "consumption_kw": "#N/A"
+            }
+          }
+        },
+        "ZBD45KCE-TF5": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.5,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 55500.0,
+              "evaporator_capacity_btu_h": 52500.0,
+              "heat_rejection_btu_h": 71370.0,
+              "power_w": 4650.0,
+              "hp_nominal": 6.0,
+              "rla": 22.5,
+              "consumption_kw": 14.5
+            }
+          }
+        },
+        "ZB48KCE-TF5": {
+          "connections": {
+            "suction_in": 0.875,
+            "discharge_in": 0.625,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 63000.0,
+              "evaporator_capacity_btu_h": 59500.0,
+              "heat_rejection_btu_h": 78802.0,
+              "power_w": 4630.0,
+              "hp_nominal": 6.5,
+              "rla": 25.4,
+              "consumption_kw": 16.5
+            }
+          }
+        },
+        "ZB58K5E-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 0.875,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 72100.0,
+              "evaporator_capacity_btu_h": 67900.0,
+              "heat_rejection_btu_h": 91793.0,
+              "power_w": 5770.0,
+              "hp_nominal": 8.0,
+              "rla": 34.3,
+              "consumption_kw": 20.3
+            }
+          }
+        },
+        "ZBD58K5E-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 0.875,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": "#N/A",
+              "evaporator_capacity_btu_h": "#N/A",
+              "heat_rejection_btu_h": "#N/A",
+              "power_w": "#N/A",
+              "hp_nominal": "#N/A",
+              "rla": "#N/A",
+              "consumption_kw": "#N/A"
+            }
+          }
+        },
+        "ZBD57KCE-TF5": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 0.875,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 70500.0,
+              "evaporator_capacity_btu_h": 66500.0,
+              "heat_rejection_btu_h": 89613.0,
+              "power_w": 5600.0,
+              "hp_nominal": 7.5,
+              "rla": 35.5,
+              "consumption_kw": 19.1
+            }
+          }
+        },
+        "ZB66K5E-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 0.875,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 82200.0,
+              "evaporator_capacity_btu_h": 77300.0,
+              "heat_rejection_btu_h": 104521.0,
+              "power_w": 6540.0,
+              "hp_nominal": 9.0,
+              "rla": 39.3,
+              "consumption_kw": 22.3
+            }
+          }
+        },
+        "ZB76K5E-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 0.875,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 96600.0,
+              "evaporator_capacity_btu_h": 90900.0,
+              "heat_rejection_btu_h": 122471.0,
+              "power_w": 7580.0,
+              "hp_nominal": 10.0,
+              "rla": 43.0,
+              "consumption_kw": 25.25
+            }
+          }
+        },
+        "ZBD76K5E-TFC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 0.875,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 98600.0,
+              "evaporator_capacity_btu_h": 92700.0,
+              "heat_rejection_btu_h": 126791.0,
+              "power_w": 8260.0,
+              "hp_nominal": 10.0,
+              "rla": 43.0,
+              "consumption_kw": 27.5
+            }
+          }
+        },
+        "ZB95K5E-TWC": {
+          "connections": {
+            "suction_in": 1.375,
+            "discharge_in": 0.875,
+            "oil_control": "TRAX OIL"
+          },
+          "points": {
+            "R-507|85|15": {
+              "capacity_btu_h": 119500.0,
+              "evaporator_capacity_btu_h": 112500.0,
+              "heat_rejection_btu_h": 152674.0,
+              "power_w": 9720.0,
+              "hp_nominal": 13.0,
+              "rla": 52.9,
+              "consumption_kw": 32.45
+            }
+          }
+        }
+      }
+    }
+  }
+}

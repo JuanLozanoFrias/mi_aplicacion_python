@@ -31,6 +31,19 @@ DEFAULT_EEV_COST_OVERRIDES = {
     "models_unit_cost": {},
 }
 
+DEFAULT_COMPRESSORS = {
+    "bt": {
+        "brand": "",
+        "models": [],
+        "target_reserva_pct": 25,
+    },
+    "mt": {
+        "brand": "",
+        "models": [],
+        "target_reserva_pct": 25,
+    },
+}
+
 DEFAULT_ROW = {
     "loop": 1,
     "ramal": 1,
@@ -72,6 +85,28 @@ def _normalize_row(row: Dict[str, Any]) -> Dict[str, Any]:
 
 class LegendProjectService:
     @staticmethod
+    def _normalize_compressors(data: Dict[str, Any]) -> Dict[str, Any]:
+        out = DEFAULT_COMPRESSORS.copy()
+        for key in ("bt", "mt"):
+            src = data.get(key, {}) if isinstance(data, dict) else {}
+            brand = str(src.get("brand", "") or "")
+            target = float(src.get("target_reserva_pct", 25) or 25)
+            models = src.get("models")
+            if not isinstance(models, list):
+                models = []
+            if not models:
+                legacy_model = str(src.get("model", "") or "")
+                legacy_n = int(src.get("n", 1) or 1)
+                if legacy_model:
+                    models = [{"model": legacy_model, "n": legacy_n}]
+            out[key] = {
+                "brand": brand,
+                "models": models,
+                "target_reserva_pct": target,
+            }
+        return out
+
+    @staticmethod
     def _normalize_payload(data: Dict[str, Any]) -> Dict[str, Any]:
         meta = DEFAULT_META.copy()
         meta.update(data.get("meta", {}))
@@ -79,6 +114,7 @@ class LegendProjectService:
         specs.update(data.get("specs", {}))
         eev_cost_overrides = DEFAULT_EEV_COST_OVERRIDES.copy()
         eev_cost_overrides.update(data.get("eev_cost_overrides", {}))
+        compressors = LegendProjectService._normalize_compressors(data.get("compressors", {}))
         bt_items = [_normalize_row(r) for r in data.get("bt_items", []) if isinstance(r, dict)]
         mt_items = [_normalize_row(r) for r in data.get("mt_items", []) if isinstance(r, dict)]
         bt_ramales = int(data.get("bt_ramales", 1) or 1)
@@ -87,6 +123,7 @@ class LegendProjectService:
             "meta": meta,
             "specs": specs,
             "eev_cost_overrides": eev_cost_overrides,
+            "compressors": compressors,
             "bt_items": bt_items,
             "mt_items": mt_items,
             "bt_ramales": bt_ramales,
@@ -122,6 +159,7 @@ class LegendProjectService:
                 "meta": DEFAULT_META.copy(),
                 "specs": DEFAULT_SPECS.copy(),
                 "eev_cost_overrides": DEFAULT_EEV_COST_OVERRIDES.copy(),
+                "compressors": DEFAULT_COMPRESSORS.copy(),
                 "bt_items": [],
                 "mt_items": [],
                 "bt_ramales": 1,
@@ -134,6 +172,7 @@ class LegendProjectService:
                 "meta": DEFAULT_META.copy(),
                 "specs": DEFAULT_SPECS.copy(),
                 "eev_cost_overrides": DEFAULT_EEV_COST_OVERRIDES.copy(),
+                "compressors": DEFAULT_COMPRESSORS.copy(),
                 "bt_items": [],
                 "mt_items": [],
                 "bt_ramales": 1,
@@ -149,6 +188,7 @@ class LegendProjectService:
                 "meta": DEFAULT_META.copy(),
                 "specs": DEFAULT_SPECS.copy(),
                 "eev_cost_overrides": DEFAULT_EEV_COST_OVERRIDES.copy(),
+                "compressors": DEFAULT_COMPRESSORS.copy(),
                 "bt_items": [],
                 "mt_items": [],
                 "bt_ramales": 1,
@@ -161,6 +201,7 @@ class LegendProjectService:
                 "meta": DEFAULT_META.copy(),
                 "specs": DEFAULT_SPECS.copy(),
                 "eev_cost_overrides": DEFAULT_EEV_COST_OVERRIDES.copy(),
+                "compressors": DEFAULT_COMPRESSORS.copy(),
                 "bt_items": [],
                 "mt_items": [],
                 "bt_ramales": 1,
@@ -180,12 +221,14 @@ class LegendProjectService:
         specs.update(payload.get("specs", {}))
         eev_cost_overrides = DEFAULT_EEV_COST_OVERRIDES.copy()
         eev_cost_overrides.update(payload.get("eev_cost_overrides", {}))
+        compressors = LegendProjectService._normalize_compressors(payload.get("compressors", {}))
         bt_items = [_normalize_row(r) for r in payload.get("bt_items", []) if isinstance(r, dict)]
         mt_items = [_normalize_row(r) for r in payload.get("mt_items", []) if isinstance(r, dict)]
         out = {
             "meta": meta,
             "specs": specs,
             "eev_cost_overrides": eev_cost_overrides,
+            "compressors": compressors,
             "bt_items": bt_items,
             "mt_items": mt_items,
             "bt_ramales": int(payload.get("bt_ramales", 1) or 1),

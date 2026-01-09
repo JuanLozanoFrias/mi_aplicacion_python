@@ -72,6 +72,17 @@ def _find_header_row(ws, max_row: int = 30) -> int | None:
     return None
 
 
+def _find_comp_section_row(ws, max_row: int = 200) -> int | None:
+    for r in range(1, min(max_row, ws.max_row) + 1):
+        for c in range(1, ws.max_column + 1):
+            val = _norm_label(ws.cell(r, c).value)
+            if not val:
+                continue
+            if "COMPRESORES" in val:
+                return r
+    return None
+
+
 def _map_header_cols(ws, header_row: int) -> Dict[str, int]:
     mapping: Dict[str, int] = {}
     for c in range(1, ws.max_column + 1):
@@ -627,14 +638,6 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
     deshielo_span = _merge_span(ws, header_row, deshielo_col) if deshielo_col else None
 
     start_row = header_row + 2
-    if ws.max_row >= start_row:
-        ws.delete_rows(start_row, ws.max_row - start_row + 1)
-
-    data_style_row = start_row
-    total_style_row = header_row
-    max_col = ws.max_column
-    data_row_height = _row_height(ws, data_style_row)
-    total_row_height = _row_height(ws, total_style_row)
 
     bt_items = _normalize_rows(project_data.get("bt_items", []))
     mt_items = _normalize_rows(project_data.get("mt_items", []))
@@ -648,6 +651,54 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
     mt_rows, mt_total = _make_block_rows(
         mt_items, default_deshielo, deshielo_por_uso.get("MT", {}), ramal_offset=bt_count
     )
+    needed_rows = len(bt_rows) + len(mt_rows) + 3
+    if needed_rows < 1:
+        needed_rows = 1
+
+    comp_row = _find_comp_section_row(ws)
+    reserva_pos = _find_label_cell(ws, "RESERVA %", max_row=200) or _find_label_cell(
+        ws, "RESERVA%", max_row=200
+    )
+    summary_rows: List[int] = []
+    for label in ("CAP", "CARGA", "RESERVA %", "RESERVA%"):
+        pos = _find_label_cell(ws, label, max_row=200)
+        if pos:
+            summary_rows.append(pos[0])
+    block_start = None
+    if summary_rows:
+        block_start = min(summary_rows) - 1
+    if block_start is not None:
+        block_start = max(start_row, block_start)
+    anchor_row = block_start or comp_row
+
+    if anchor_row and anchor_row > start_row:
+        available_rows = anchor_row - start_row
+        bt_spacer = True
+        mt_spacer = True
+        required_rows = (
+            len(bt_rows)
+            + 1
+            + (1 if bt_spacer else 0)
+            + len(mt_rows)
+            + 1
+            + (1 if mt_spacer else 0)
+        )
+        if available_rows < required_rows:
+            ws.insert_rows(anchor_row, required_rows - available_rows)
+        elif available_rows > required_rows:
+            ws.delete_rows(start_row + required_rows, available_rows - required_rows)
+    else:
+        if ws.max_row >= start_row:
+            ws.delete_rows(start_row, ws.max_row - start_row + 1)
+        rows_to_insert = max(needed_rows, 0)
+        if rows_to_insert:
+            ws.insert_rows(start_row, rows_to_insert)
+
+    data_style_row = start_row
+    total_style_row = header_row
+    max_col = ws.max_column
+    data_row_height = _row_height(ws, data_style_row)
+    total_row_height = _row_height(ws, total_style_row)
 
     cur = start_row
     total_ranges: List[Tuple[int, int, int]] = []
@@ -784,15 +835,18 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
             _merge_loop_block_empty(mt_start, mt_end)
         else:
             _merge_loop_ranges(mt_start, mt_end)
-    _write_total("CARGA TOTAL MEDIA", mt_total, add_spacer=False)
+    _write_total("CARGA TOTAL MEDIA", mt_total, add_spacer=True if anchor_row else False)
 
     last_row = cur - 1
     if header_row and last_row >= header_row:
         _apply_borders(ws, header_row, last_row, 1, max_col)
         for row_idx, min_col, max_col in total_ranges:
             _apply_borders(ws, row_idx, row_idx, min_col, max_col)
-        for row_idx in spacer_rows:
-            _apply_borders(ws, row_idx, row_idx, 1, max_col)
+        if spacer_rows:
+            empty_border = Border()
+            for row_idx in spacer_rows:
+                for c in range(1, max_col + 1):
+                    ws.cell(row_idx, c).border = empty_border
     ws.calculate_dimension()
     try:
         _write_eev_sheet(wb, project_data, bt_count)
