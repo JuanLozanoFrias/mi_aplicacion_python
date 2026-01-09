@@ -1937,6 +1937,11 @@ class LegendPage(QWidget):
         models_tbl.setSelectionMode(QAbstractItemView.SingleSelection)
         models_tbl.setEditTriggers(QAbstractItemView.NoEditTriggers)
         models_tbl.setMinimumHeight(90)
+        models_tbl.setStyleSheet(
+            "QComboBox { background: #ffffff; color: #111827; }"
+            "QComboBox QAbstractItemView { background: #ffffff; color: #111827;"
+            " selection-background-color: #dbeafe; selection-color: #111827; }"
+        )
 
         lbl_tevap = QLabel("--")
         lbl_tcond = QLabel("--")
