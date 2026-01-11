@@ -32,14 +32,13 @@ DEFAULT_EEV_COST_OVERRIDES = {
 }
 
 DEFAULT_COMPRESSORS = {
+    "brand": "",
     "bt": {
-        "brand": "",
-        "models": [],
+        "items": [],
         "target_reserva_pct": 25,
     },
     "mt": {
-        "brand": "",
-        "models": [],
+        "items": [],
         "target_reserva_pct": 25,
     },
 }
@@ -87,21 +86,29 @@ class LegendProjectService:
     @staticmethod
     def _normalize_compressors(data: Dict[str, Any]) -> Dict[str, Any]:
         out = DEFAULT_COMPRESSORS.copy()
+        if not isinstance(data, dict):
+            return out
+        brand = str(data.get("brand", "") or "")
+        if not brand:
+            brand = str((data.get("bt", {}) or {}).get("brand", "") or "")
+        if not brand:
+            brand = str((data.get("mt", {}) or {}).get("brand", "") or "")
+        out["brand"] = brand
         for key in ("bt", "mt"):
             src = data.get(key, {}) if isinstance(data, dict) else {}
-            brand = str(src.get("brand", "") or "")
             target = float(src.get("target_reserva_pct", 25) or 25)
-            models = src.get("models")
-            if not isinstance(models, list):
-                models = []
-            if not models:
+            items = src.get("items")
+            if not isinstance(items, list):
+                items = src.get("models")
+            if not isinstance(items, list):
+                items = []
+            if not items:
                 legacy_model = str(src.get("model", "") or "")
                 legacy_n = int(src.get("n", 1) or 1)
                 if legacy_model:
-                    models = [{"model": legacy_model, "n": legacy_n}]
+                    items = [{"model": legacy_model, "n": legacy_n}]
             out[key] = {
-                "brand": brand,
-                "models": models,
+                "items": items,
                 "target_reserva_pct": target,
             }
         return out
