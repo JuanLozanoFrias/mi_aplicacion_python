@@ -4,6 +4,7 @@ from pathlib import Path
 import json
 import os
 import tempfile
+from datetime import datetime
 from typing import Any, Callable, Dict, List
 import traceback
 
@@ -57,6 +58,8 @@ try:
 except Exception:
     ColdRoomEngine = None  # type: ignore
     ColdRoomInputs = None  # type: ignore
+
+from gui.pages.cargas.biblioteca_legend import BibliotecaLegendDialog
 
 
 PROJ_COLUMNS = [
@@ -206,23 +209,14 @@ class LegendPage(QWidget):
         proj_outer.setContentsMargins(4, 4, 4, 4)
         proj_outer.setSpacing(6)
 
-        self.btn_open_proj = QPushButton("ABRIR PROYECTO...")
-        self.btn_new_proj = QPushButton("NUEVO PROYECTO")
-        self.btn_save_proj = QPushButton("GUARDAR")
-        self.btn_preview = QPushButton("VISUALIZAR LEGEND")
-        self.btn_export = QPushButton("EXPORTAR LEGEND")
-        self.btn_save_proj.setEnabled(True)
-        self.btn_preview.setEnabled(True)
-        self.btn_export.setEnabled(True)
+        self.btn_export_project = QPushButton("EXPORTAR PROYECTO")
+        self.btn_library = QPushButton("BIBLIOTECA")
         self.lbl_proj_folder = QLabel("CARPETA: --")
         self.lbl_proj_folder.setToolTip("")
         self.lbl_total_general = QLabel("TOTAL GENERAL: 0.0")
         proj_hdr = QHBoxLayout()
-        proj_hdr.addWidget(self.btn_open_proj)
-        proj_hdr.addWidget(self.btn_new_proj)
-        proj_hdr.addWidget(self.btn_save_proj)
-        proj_hdr.addWidget(self.btn_preview)
-        proj_hdr.addWidget(self.btn_export)
+        proj_hdr.addWidget(self.btn_export_project)
+        proj_hdr.addWidget(self.btn_library)
         proj_hdr.addWidget(self.lbl_proj_folder, 1)
         proj_hdr.addWidget(self.lbl_total_general)
         proj_outer.addLayout(proj_hdr)
@@ -354,11 +348,8 @@ class LegendPage(QWidget):
         proj_outer.addWidget(QLabel("ESPECIFICACIONES TECNICAS"))
         proj_outer.addWidget(specs_widget)
 
-        self.btn_open_proj.clicked.connect(self._on_open_project)
-        self.btn_new_proj.clicked.connect(self._on_new_project)
-        self.btn_save_proj.clicked.connect(self._on_save_project)
-        self.btn_preview.clicked.connect(self._on_preview_legend)
-        self.btn_export.clicked.connect(self._on_export_legend)
+        self.btn_export_project.clicked.connect(self._export_project)
+        self.btn_library.clicked.connect(self._open_library)
 
         self.bt_model = LegendItemsTableModel([])
         self.mt_model = LegendItemsTableModel([], ramal_offset_cb=self._get_mt_ramal_offset)
@@ -629,9 +620,6 @@ class LegendPage(QWidget):
         self.project_dir = Path(dir_path)
         self.project_data = LegendProjectService.load(self.project_dir)
         self._render_project()
-        self.btn_save_proj.setEnabled(True)
-        self.btn_preview.setEnabled(True)
-        self.btn_export.setEnabled(True)
         self.lbl_proj_folder.setText(f"CARPETA: {self.project_dir}")
         self.lbl_proj_folder.setToolTip(str(self.project_dir))
         self._set_dirty(True)
@@ -707,9 +695,6 @@ class LegendPage(QWidget):
                 self.project_data = LegendProjectService.load(dir_path)
                 self.lbl_proj_folder.setText(f"CARPETA: {dir_path}")
                 self.lbl_proj_folder.setToolTip(str(dir_path))
-            self.btn_save_proj.setEnabled(True)
-            self.btn_preview.setEnabled(True)
-            self.btn_export.setEnabled(True)
             self._render_project()
             self._set_dirty(False)
         except Exception as exc:
@@ -729,6 +714,13 @@ class LegendPage(QWidget):
         if isinstance(self.project_data, dict):
             data["compressors"] = dict(self.project_data.get("compressors", {}) or {})
         return data
+    def _slug(self, text: str) -> str:
+        import re
+
+        t = (text or "").strip().lower()
+        t = re.sub(r"[^a-z0-9]+", "_", t)
+        t = re.sub(r"_+", "_", t).strip("_")
+        return t or "proyecto"
 
     def _on_preview_legend(self) -> None:
         if not build_legend_workbook:
@@ -751,7 +743,7 @@ class LegendPage(QWidget):
         except Exception as exc:
             QMessageBox.critical(self, "LEGEND", f"No se pudo generar vista previa:\n{exc}")
 
-    def _on_export_legend(self) -> None:
+    def _export_project(self) -> None:
         if not build_legend_workbook:
             QMessageBox.warning(self, "LEGEND", "Exportador no disponible.")
             return
@@ -760,13 +752,18 @@ class LegendPage(QWidget):
             return
         template_path = self._resolve_legend_template()
         if not template_path:
-            QMessageBox.warning(self, "LEGEND", "No se encontró la plantilla legend_template.xlsx en data/legend/plantillas/")
+            QMessageBox.warning(self, "LEGEND", "No se encontr? la plantilla legend_template.xlsx en data/legend/plantillas/")
             return
-        path, _ = QFileDialog.getSaveFileName(self, "Exportar Legend", str(Path.cwd()), "Excel (*.xlsx)")
-        if not path:
+        specs = self.project_data.get("specs", {}) if isinstance(self.project_data, dict) else {}
+        proj_name = str(specs.get("proyecto", "") or "PROYECTO")
+        stamp = datetime.now().strftime("%Y%m%d")
+        base_name = f"{stamp}_{self._slug(proj_name)}"
+        target_dir = QFileDialog.getExistingDirectory(self, "Selecciona carpeta destino", str(Path.cwd()))
+        if not target_dir:
             return
         try:
-            wb = build_legend_workbook(template_path, self._collect_project_data())
+            data = self._collect_project_data()
+            wb = build_legend_workbook(template_path, data)
             tmp_fd, tmp_name = tempfile.mkstemp(suffix=".xlsx")
             os.close(tmp_fd)
             Path(tmp_name).unlink(missing_ok=True)
@@ -777,10 +774,36 @@ class LegendPage(QWidget):
                 ok = restore_template_assets(template_path, tmp_path, logo_path if logo_path.exists() else None)
                 if not ok:
                     QMessageBox.warning(self, "LEGEND", "No se pudo restaurar el logo del template.")
-            Path(path).write_bytes(tmp_path.read_bytes())
-            QMessageBox.information(self, "LEGEND", "EXPORTACIÓN LISTA.")
+            excel_path = Path(target_dir) / f"{base_name}.xlsx"
+            excel_path.write_bytes(tmp_path.read_bytes())
+
+            lib_dir = Path(__file__).resolve().parents[3] / "data" / "proyectos" / "legend"
+            lib_dir.mkdir(parents=True, exist_ok=True)
+            json_path = lib_dir / f"{base_name}.json"
+            json_path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+            QMessageBox.information(
+                self,
+                "LEGEND",
+                f"EXPORTACION LISTA.\nExcel: {excel_path}\nJSON (biblioteca): {json_path}",
+            )
         except Exception as exc:
             QMessageBox.critical(self, "LEGEND", f"No se pudo exportar:\n{exc}")
+
+    def _open_library(self) -> None:
+        lib_dir = Path(__file__).resolve().parents[3] / "data" / "proyectos" / "legend"
+        danger_qss = (
+            "QPushButton{background:#fdecec;color:#c53030;font-weight:700;border:none;border-radius:10px;padding:8px 12px;}"
+            "QPushButton:hover{background:#fbd5d5;}"
+        )
+        dlg = BibliotecaLegendDialog(
+            parent=self,
+            library_dir=lib_dir,
+            on_load=lambda p: self._load_project(p),
+            primary_qss=self.btn_export_project.styleSheet(),
+            danger_qss=danger_qss,
+        )
+        dlg.exec()
 
     def _resolve_legend_template(self) -> Path | None:
         candidates = [
