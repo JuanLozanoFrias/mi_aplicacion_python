@@ -176,6 +176,7 @@ class LegendPage(QWidget):
         self.project_data: Dict[str, Any] = {}
         self._dirty = False
         self._suspend_updates = False
+        self._loading_project = False
         self.total_bt = 0.0
         self.total_mt = 0.0
         self._equipos_bt: List[str] = []
@@ -910,6 +911,7 @@ class LegendPage(QWidget):
         self._set_dirty(True)
 
     def _render_project(self) -> None:
+        self._loading_project = True
         bt_items = self.project_data.get("bt_items", []) if isinstance(self.project_data, dict) else []
         mt_items = self.project_data.get("mt_items", []) if isinstance(self.project_data, dict) else []
         specs = self.project_data.get("specs", {}) if isinstance(self.project_data, dict) else {}
@@ -955,6 +957,8 @@ class LegendPage(QWidget):
         self._fit_table_to_contents_view(self.mt_view)
         self._recalc_totals()
         self._render_compressors()
+        self._loading_project = False
+        self._update_compressors()
 
     def _add_row(self, model, view: QTableView) -> None:
         model.add_row({})
@@ -2235,6 +2239,8 @@ class LegendPage(QWidget):
             self._on_comp_changed(block)
 
     def _update_compressors(self) -> None:
+        if self._loading_project:
+            return
         try:
             self._update_compressors_block("bt", self.comp_bt)
             self._update_compressors_block("mt", self.comp_mt)
