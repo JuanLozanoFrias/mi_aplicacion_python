@@ -83,6 +83,280 @@ def _find_comp_section_row(ws, max_row: int = 200) -> int | None:
     return None
 
 
+def _clear_merges_in_rows(ws, min_row: int, max_row: int) -> None:
+    if min_row > max_row:
+        return
+    for rng in list(ws.merged_cells.ranges):
+        if rng.min_row >= min_row and rng.max_row <= max_row:
+            ws.unmerge_cells(str(rng))
+
+
+def _clear_merges_in_cells(ws, min_row: int, max_row: int, min_col: int, max_col: int) -> None:
+    for rng in list(ws.merged_cells.ranges):
+        if rng.max_row < min_row or rng.min_row > max_row:
+            continue
+        if rng.max_col < min_col or rng.min_col > max_col:
+            continue
+        try:
+            ws.unmerge_cells(str(rng))
+        except KeyError:
+            try:
+                ws.merged_cells.ranges.remove(rng)
+            except (ValueError, KeyError):
+                pass
+
+def _clear_merges_on_row(ws, row: int) -> None:
+    for rng in list(ws.merged_cells.ranges):
+        if rng.min_row <= row <= rng.max_row:
+            try:
+                ws.unmerge_cells(str(rng))
+            except KeyError:
+                try:
+                    ws.merged_cells.ranges.remove(rng)
+                except (ValueError, KeyError):
+                    pass
+
+
+def _merge_safe(ws, start_row: int, start_col: int, end_row: int, end_col: int) -> None:
+    if start_row > end_row or start_col > end_col:
+        return
+    if start_row == end_row and start_col == end_col:
+        return
+    rng = f"{get_column_letter(start_col)}{start_row}:{get_column_letter(end_col)}{end_row}"
+    if any(str(r) == rng for r in ws.merged_cells.ranges):
+        return
+    ws.merge_cells(rng)
+
+
+def _find_label_row(ws, label: str, max_row: int = 200) -> int | None:
+    pos = _find_label_cell(ws, label, max_row=max_row)
+    if pos:
+        return pos[0]
+    return None
+
+
+def _comp_position_cols(ws, pos_row: int) -> List[Tuple[int, int]]:
+    cols: List[Tuple[int, int]] = []
+    for c in range(1, ws.max_column + 1):
+        val = ws.cell(pos_row, c).value
+        if isinstance(val, (int, float)):
+            cols.append((_to_int(val), c))
+    cols.sort(key=lambda t: t[0])
+    return cols
+
+
+def _merged_range_for_label(ws, row: int, label: str) -> Tuple[int, int] | None:
+    target = _norm_label(label)
+    for rng in ws.merged_cells.ranges:
+        if rng.min_row <= row <= rng.max_row:
+            cell_val = ws.cell(rng.min_row, rng.min_col).value
+            if _norm_label(cell_val) == target:
+                return rng.min_col, rng.max_col
+    # fallback to exact cell in row
+    for c in range(1, ws.max_column + 1):
+        if _norm_label(ws.cell(row, c).value) == target:
+            return c, c
+    return None
+
+
+def _expand_comp_models(items: Any) -> List[str]:
+    models: List[str] = []
+    if not isinstance(items, list):
+        return models
+    for it in items:
+        if not isinstance(it, dict):
+            continue
+        model = str(it.get("model", "") or "").strip()
+        qty = _to_int(it.get("n", 0), 0)
+        if model and qty > 0:
+            models.extend([model] * qty)
+    return models
+
+
+def _write_compresores(ws, project_data: Dict[str, Any]) -> None:
+    comp = project_data.get("compressors", {}) if isinstance(project_data, dict) else {}
+    if not isinstance(comp, dict):
+        return
+    pos_row = _find_label_row(ws, "POSICION DE COMPRESOR EN EL RACK")
+    if pos_row is None:
+        pos_row = _find_label_row(ws, "POSICION DE  COMPRESOR EN EL RACK")
+    model_row = _find_label_row(ws, "MODELO DE COMPRESOR")
+    if pos_row is None or model_row is None:
+        return
+
+    positions = _comp_position_cols(ws, pos_row)
+    if not positions:
+        return
+
+    baja_range = _merged_range_for_label(ws, pos_row - 1, "BAJA")
+    media_range = _merged_range_for_label(ws, pos_row - 1, "MEDIA")
+
+    bt_cols: List[int] = []
+    mt_cols: List[int] = []
+    use_merged = False
+    if baja_range and media_range and (baja_range != media_range):
+        if (baja_range[1] - baja_range[0]) >= 1 or (media_range[1] - media_range[0]) >= 1:
+            use_merged = True
+    if use_merged:
+        for pos, col in positions:
+            if baja_range[0] <= col <= baja_range[1]:
+                bt_cols.append(col)
+            elif media_range[0] <= col <= media_range[1]:
+                mt_cols.append(col)
+    else:
+        media_col = media_range[0] if media_range else None
+        if media_col:
+            for pos, col in positions:
+                if col < media_col:
+                    bt_cols.append(col)
+                else:
+                    mt_cols.append(col)
+        else:
+            for pos, col in positions:
+                if pos <= 3:
+                    bt_cols.append(col)
+                else:
+                    mt_cols.append(col)
+
+    bt_models = _expand_comp_models(comp.get("bt", {}).get("items", []))
+    mt_models = _expand_comp_models(comp.get("mt", {}).get("items", []))
+
+    for idx, col in enumerate(bt_cols):
+        val = bt_models[idx] if idx < len(bt_models) else ""
+        _safe_set(ws, model_row, col, val)
+    for idx, col in enumerate(mt_cols):
+        val = mt_models[idx] if idx < len(mt_models) else ""
+        _safe_set(ws, model_row, col, val)
+
+
+def _cleanup_invalid_merges(ws) -> None:
+    seen = set()
+    for rng in list(ws.merged_cells.ranges):
+        if rng.min_row > rng.max_row or rng.min_col > rng.max_col:
+            ws.unmerge_cells(str(rng))
+            continue
+        key = str(rng)
+        if key in seen:
+            ws.unmerge_cells(key)
+            continue
+        seen.add(key)
+
+
+def _restore_template_merges(
+    ws,
+    tpl_ranges: List[Tuple[int, int, int, int]],
+    row_shift: int,
+    min_row_tpl: int,
+) -> None:
+    if not tpl_ranges or row_shift == 0 and min_row_tpl <= 0:
+        return
+    max_tpl_row = max(r[2] for r in tpl_ranges)
+    target_min = min_row_tpl + row_shift
+    target_max = max_tpl_row + row_shift
+    for rng in list(ws.merged_cells.ranges):
+        if rng.min_row >= target_min and rng.max_row <= target_max:
+            try:
+                ws.unmerge_cells(str(rng))
+            except KeyError:
+                try:
+                    ws.merged_cells.ranges.remove(rng)
+                except ValueError:
+                    pass
+    for r1, c1, r2, c2 in tpl_ranges:
+        if r1 < min_row_tpl:
+            continue
+        _merge_safe(ws, r1 + row_shift, c1, r2 + row_shift, c2 + row_shift)
+
+
+def _row_max_used_col(ws, row: int) -> int | None:
+    for c in range(ws.max_column, 0, -1):
+        val = ws.cell(row, c).value
+        if val not in (None, ""):
+            return c
+    return None
+
+
+def _repair_comp_block_merges(ws) -> None:
+    sys_row = _find_label_row(ws, "SISTEMA PARALELO", max_row=ws.max_row)
+    comp_row = _find_label_row(ws, "COMPRESORES Y ACESORIOS", max_row=ws.max_row)
+    pos_row = _find_label_row(ws, "POSICION DE COMPRESOR EN EL RACK", max_row=ws.max_row)
+    if not sys_row or not comp_row or not pos_row:
+        return
+    # locate BAJA/MEDIA columns in comp_row
+    baja_col = None
+    media_col = None
+    for c in range(1, ws.max_column + 1):
+        val = _norm_label(ws.cell(comp_row, c).value)
+        if val == "BAJA":
+            baja_col = c
+        elif val == "MEDIA":
+            media_col = c
+    last_col = _row_max_used_col(ws, pos_row)
+    if not last_col:
+        last_col = ws.max_column
+    # clear merges on comp block rows
+    for r in (sys_row, comp_row):
+        _clear_merges_on_row(ws, r)
+    # rebuild merges
+    if last_col and last_col > 1:
+        _merge_safe(ws, sys_row, 1, sys_row, last_col)
+    if baja_col and media_col and baja_col < media_col:
+        _merge_safe(ws, comp_row, 1, comp_row, baja_col - 1)
+        _merge_safe(ws, comp_row, baja_col, comp_row, media_col - 1)
+        _merge_safe(ws, comp_row, media_col, comp_row, last_col)
+
+
+def _repair_rh_merges(ws) -> None:
+    cap_row = _find_label_row(ws, "CAP", max_row=ws.max_row)
+    rh_pos = _find_label_cell(ws, "RH", max_row=ws.max_row)
+    if not cap_row or not rh_pos:
+        return
+    rh_row, rh_col = rh_pos
+    # clear merges in RH block area
+    _clear_merges_in_cells(ws, rh_row, rh_row + 3, rh_col, rh_col + 1)
+    for r in range(rh_row, rh_row + 4):
+        _merge_safe(ws, r, rh_col, r, rh_col + 1)
+
+
+def _prune_overlapping_merges(ws, min_row: int | None = None, max_row: int | None = None) -> None:
+    def _area(rng) -> int:
+        return (rng.max_row - rng.min_row + 1) * (rng.max_col - rng.min_col + 1)
+
+    def _overlaps(a, b) -> bool:
+        return not (
+            a.max_row < b.min_row
+            or a.min_row > b.max_row
+            or a.max_col < b.min_col
+            or a.min_col > b.max_col
+        )
+
+    ranges = list(ws.merged_cells.ranges)
+    if min_row is not None and max_row is not None:
+        ranges = [
+            r
+            for r in ranges
+            if not (r.max_row < min_row or r.min_row > max_row)
+        ]
+    ranges = sorted(ranges, key=lambda r: (r.min_row, r.min_col, r.max_row, r.max_col))
+    kept = []
+    for rng in ranges:
+        conflict = None
+        for k in kept:
+            if _overlaps(rng, k):
+                conflict = k
+                break
+        if conflict is None:
+            kept.append(rng)
+            continue
+        # si hay solapamiento, mantener el de mayor área
+        if _area(rng) > _area(conflict):
+            ws.unmerge_cells(str(conflict))
+            kept.remove(conflict)
+            kept.append(rng)
+        else:
+            ws.unmerge_cells(str(rng))
+
+
 def _map_header_cols(ws, header_row: int) -> Dict[str, int]:
     mapping: Dict[str, int] = {}
     for c in range(1, ws.max_column + 1):
@@ -91,6 +365,38 @@ def _map_header_cols(ws, header_row: int) -> Dict[str, int]:
             continue
         mapping.setdefault(val, c)
     return mapping
+
+
+def _find_btu_col(ws, header_row: int, mapping: Dict[str, int]) -> int | None:
+    col = _col_for(mapping, ["CARGA (BTU/HR)", "CARGA (BTU/H)", "CARGA (BTU/HR)"])
+    if col:
+        return col
+    for c in range(1, ws.max_column + 1):
+        val = _norm_label(ws.cell(header_row, c).value)
+        if "CARGA" in val and "BTU" in val:
+            return c
+    return None
+
+
+def _find_tevap_col(ws, header_row: int, mapping: Dict[str, int]) -> int | None:
+    col = _col_for(mapping, ["TEVAP (F)", "TEVAP(°F)", "TEVAP"])
+    if col:
+        return col
+    for c in range(1, ws.max_column + 1):
+        val = _norm_label(ws.cell(header_row, c).value)
+        if "TEVAP" in val:
+            return c
+    return None
+
+
+def _force_total_value(ws, label: str, total: float, btu_col: int | None) -> None:
+    if not btu_col:
+        return
+    pos = _find_label_cell(ws, label, max_row=ws.max_row)
+    if not pos:
+        return
+    row = pos[0]
+    _safe_set(ws, row, btu_col, int(round(total)))
 
 
 def _find_subheader_cols(ws, header_row: int, look_ahead: int = 3) -> Dict[str, int]:
@@ -124,6 +430,51 @@ def _copy_row_style(ws, src_row: int, dst_row: int, max_col: int) -> None:
         dst.fill = copy(src.fill)
 
 
+def _copy_row_style_from(ws_src, ws_dst, src_row: int, dst_row: int, max_col: int) -> None:
+    for col in range(1, max_col + 1):
+        src = ws_src.cell(src_row, col)
+        dst = ws_dst.cell(dst_row, col)
+        if src.has_style:
+            dst._style = copy(src._style)
+        dst.number_format = src.number_format
+        dst.alignment = copy(src.alignment)
+        dst.font = copy(src.font)
+        dst.border = copy(src.border)
+        dst.fill = copy(src.fill)
+
+
+def _restore_template_block(ws, tpl_ws, start_row_tpl: int, start_row_new: int) -> None:
+    if start_row_tpl is None or start_row_new is None:
+        return
+    row_shift = start_row_new - start_row_tpl
+    max_row_tpl = tpl_ws.max_row
+    max_col_tpl = tpl_ws.max_column
+    target_min = start_row_new
+    target_max = start_row_new + (max_row_tpl - start_row_tpl)
+    # clear merges in target area
+    for rng in list(ws.merged_cells.ranges):
+        if rng.min_row >= target_min and rng.max_row <= target_max:
+            try:
+                ws.unmerge_cells(str(rng))
+            except KeyError:
+                try:
+                    ws.merged_cells.ranges.remove(rng)
+                except (ValueError, KeyError):
+                    pass
+    # copy rows (values + styles)
+    for r in range(start_row_tpl, max_row_tpl + 1):
+        dst_r = r + row_shift
+        _copy_row_style_from(tpl_ws, ws, r, dst_r, max_col_tpl)
+        _set_row_height(ws, dst_r, _row_height(tpl_ws, r))
+        for c in range(1, max_col_tpl + 1):
+            _safe_set(ws, dst_r, c, tpl_ws.cell(r, c).value)
+    # restore merges from template in this block
+    for rng in list(tpl_ws.merged_cells.ranges):
+        if rng.min_row < start_row_tpl:
+            continue
+        _merge_safe(ws, rng.min_row + row_shift, rng.min_col, rng.max_row + row_shift, rng.max_col)
+
+
 def _row_height(ws, row: int) -> float | None:
     return ws.row_dimensions[row].height
 
@@ -136,10 +487,14 @@ def _set_row_height(ws, row: int, height: float | None) -> None:
 def _safe_set(ws, row: int, col: int, value: Any) -> None:
     cell = ws.cell(row, col)
     if isinstance(cell, MergedCell):
+        target = None
         for rng in ws.merged_cells.ranges:
             if rng.min_row <= row <= rng.max_row and rng.min_col <= col <= rng.max_col:
-                cell = ws.cell(rng.min_row, rng.min_col)
+                target = ws.cell(rng.min_row, rng.min_col)
                 break
+        if target is None:
+            return
+        cell = target
     cell.value = value
 
 
@@ -594,6 +949,15 @@ def _make_block_rows(
 def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
     wb = load_workbook(template_path)
     ws = wb.active
+    tpl_wb = load_workbook(template_path)
+    tpl_ws = tpl_wb.active
+    cap_row_tpl = _find_label_row(tpl_ws, "CAP")
+    rh_row_tpl = _find_label_row(tpl_ws, "RH")
+    block_row_tpl = None
+    if cap_row_tpl or rh_row_tpl:
+        block_row_tpl = min(r for r in (cap_row_tpl, rh_row_tpl) if r)
+        if block_row_tpl > 1:
+            block_row_tpl -= 1
 
     specs = project_data.get("specs", {}) if isinstance(project_data, dict) else {}
 
@@ -628,8 +992,8 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
     dim_col = _col_for(header_map, ["DIM (FT)", "DIM"])
     equipo_col = _col_for(header_map, ["EQUIPO"])
     uso_col = _col_for(header_map, ["USO"])
-    btu_col = _col_for(header_map, ["CARGA (BTU/HR)", "CARGA (BTU/H)", "CARGA (BTU/HR)"])
-    tevap_col = _col_for(header_map, ["TEVAP (°F)", "TEVAP (F)", "TEVAP"])
+    btu_col = _find_btu_col(ws, header_row, header_map)
+    tevap_col = _find_tevap_col(ws, header_row, header_map)
     evap_hdr_col = _col_for(header_map, ["EVAPORADORES"])
     qty_col = sub_map.get("CANTIDAD") or evap_hdr_col
     model_col = sub_map.get("MODELO") or (evap_hdr_col + 1 if evap_hdr_col else None)
@@ -660,7 +1024,7 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
         ws, "RESERVA%", max_row=200
     )
     summary_rows: List[int] = []
-    for label in ("CAP", "CARGA", "RESERVA %", "RESERVA%"):
+    for label in ("CAP", "CARGA", "RESERVA %", "RESERVA%", "RH"):
         pos = _find_label_cell(ws, label, max_row=200)
         if pos:
             summary_rows.append(pos[0])
@@ -693,6 +1057,17 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
         rows_to_insert = max(needed_rows, 0)
         if rows_to_insert:
             ws.insert_rows(start_row, rows_to_insert)
+    # recalcular anchor_row luego de insertar/borrar filas
+    if anchor_row:
+        cap_row_new = _find_label_row(ws, "CAP", max_row=ws.max_row)
+        rh_row_new = _find_label_row(ws, "RH", max_row=ws.max_row)
+        if cap_row_new or rh_row_new:
+            anchor_row = min(r for r in (cap_row_new, rh_row_new) if r) - 1
+            if anchor_row < 1:
+                anchor_row = 1
+    # limpiar merges en el bloque de datos para evitar rangos superpuestos
+    clear_end = (anchor_row - 1) if anchor_row and anchor_row > start_row else (start_row + needed_rows + 2)
+    _clear_merges_in_rows(ws, start_row, min(clear_end, ws.max_row))
 
     data_style_row = start_row
     total_style_row = header_row
@@ -710,7 +1085,7 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
     def _set_block_label(label: str, start: int, end: int) -> None:
         if not suction_col or start > end:
             return
-        ws.merge_cells(start_row=start, start_column=suction_col, end_row=end, end_column=suction_col)
+        _merge_safe(ws, start, suction_col, end, suction_col)
         cell = ws.cell(start, suction_col)
         cell.value = label
         cell.alignment = cell.alignment.copy(horizontal="center", vertical="center")
@@ -721,7 +1096,7 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
         for r in range(start, end + 1):
             ws.cell(r, loop_col).value = ""
         if end > start:
-            ws.merge_cells(start_row=start, start_column=loop_col, end_row=end, end_column=loop_col)
+            _merge_safe(ws, start, loop_col, end, loop_col)
         cell = ws.cell(start, loop_col)
         cell.alignment = cell.alignment.copy(horizontal="center", vertical="center")
 
@@ -742,7 +1117,7 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
                     continue
                 break
             if next_row - row > 1:
-                ws.merge_cells(start_row=row, start_column=loop_col, end_row=next_row - 1, end_column=loop_col)
+                _merge_safe(ws, row, loop_col, next_row - 1, loop_col)
                 cell = ws.cell(row, loop_col)
                 cell.alignment = cell.alignment.copy(horizontal="center", vertical="center")
             row = next_row
@@ -753,9 +1128,9 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
             _copy_row_style(ws, data_style_row, cur, max_col)
             _set_row_height(ws, cur, data_row_height)
             if equipo_span and equipo_span[1] > equipo_span[0]:
-                ws.merge_cells(start_row=cur, start_column=equipo_span[0], end_row=cur, end_column=equipo_span[1])
+                _merge_safe(ws, cur, equipo_span[0], cur, equipo_span[1])
             if deshielo_span and deshielo_span[1] > deshielo_span[0]:
-                ws.merge_cells(start_row=cur, start_column=deshielo_span[0], end_row=cur, end_column=deshielo_span[1])
+                _merge_safe(ws, cur, deshielo_span[0], cur, deshielo_span[1])
             if loop_col:
                 _safe_set(ws, cur, loop_col, row.get("loop", ""))
                 lcell = ws.cell(cur, loop_col)
@@ -789,14 +1164,15 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
 
     def _write_total(label: str, total: float, *, add_spacer: bool) -> None:
         nonlocal cur
+        _clear_merges_on_row(ws, cur)
         _copy_row_style(ws, total_style_row, cur, max_col)
         _set_row_height(ws, cur, total_row_height)
         label_col = suction_col or 1
         end_col = deshielo_span[1] if deshielo_span else (deshielo_col or max_col)
         if btu_col and btu_col > label_col + 1:
-            ws.merge_cells(start_row=cur, start_column=label_col, end_row=cur, end_column=btu_col - 1)
+            _merge_safe(ws, cur, label_col, cur, btu_col - 1)
         if tevap_col and end_col and end_col >= tevap_col:
-            ws.merge_cells(start_row=cur, start_column=tevap_col, end_row=cur, end_column=end_col)
+            _merge_safe(ws, cur, tevap_col, cur, end_col)
         _safe_set(ws, cur, label_col, label)
         if btu_col:
             _safe_set(ws, cur, btu_col, int(round(total)))
@@ -810,7 +1186,7 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
             total_ranges.append((cur, tevap_col, end_col))
         if add_spacer:
             spacer_row = cur + 1
-            ws.merge_cells(start_row=spacer_row, start_column=1, end_row=spacer_row, end_column=max_col)
+            _clear_merges_on_row(ws, spacer_row)
             spacer_rows.append(spacer_row)
             cur += 2
         else:
@@ -847,6 +1223,19 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
             for row_idx in spacer_rows:
                 for c in range(1, max_col + 1):
                     ws.cell(row_idx, c).border = empty_border
+    if block_row_tpl:
+        cap_row_new = _find_label_row(ws, "CAP", max_row=ws.max_row)
+        rh_row_new = _find_label_row(ws, "RH", max_row=ws.max_row)
+        if cap_row_new or rh_row_new:
+            block_row_new = min(r for r in (cap_row_new, rh_row_new) if r)
+            if block_row_new > 1:
+                block_row_new -= 1
+            _restore_template_block(ws, tpl_ws, block_row_tpl, block_row_new)
+    _write_compresores(ws, project_data)
+    _cleanup_invalid_merges(ws)
+    _prune_overlapping_merges(ws, header_row, last_row)
+    _force_total_value(ws, "CARGA TOTAL BAJA", bt_total, btu_col)
+    _force_total_value(ws, "CARGA TOTAL MEDIA", mt_total, btu_col)
     ws.calculate_dimension()
     try:
         _write_eev_sheet(wb, project_data, bt_count)

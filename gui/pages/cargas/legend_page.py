@@ -19,6 +19,7 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QSizePolicy,
     QTableView,
+    QAbstractScrollArea,
     QAbstractItemView,
     QStyledItemDelegate,
     QComboBox,
@@ -211,8 +212,11 @@ class LegendPage(QWidget):
 
         self.btn_export_project = QPushButton("EXPORTAR PROYECTO")
         self.btn_library = QPushButton("BIBLIOTECA")
+        self._proj_folder_full = ""
         self.lbl_proj_folder = QLabel("CARPETA: --")
         self.lbl_proj_folder.setToolTip("")
+        self.lbl_proj_folder.setMinimumWidth(0)
+        self.lbl_proj_folder.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         self.lbl_total_general = QLabel("TOTAL GENERAL: 0.0")
         proj_hdr = QHBoxLayout()
         proj_hdr.addWidget(self.btn_export_project)
@@ -360,6 +364,9 @@ class LegendPage(QWidget):
 
         self.bt_view = QTableView()
         self.bt_view.setModel(self.bt_model)
+        self.bt_view.setMinimumWidth(0)
+        self.bt_view.setSizePolicy(QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed))
+        self.bt_view.setSizeAdjustPolicy(QAbstractScrollArea.AdjustIgnored)
         self.bt_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.bt_view.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.bt_view.setFocusPolicy(Qt.StrongFocus)
@@ -391,6 +398,9 @@ class LegendPage(QWidget):
 
         self.mt_view = QTableView()
         self.mt_view.setModel(self.mt_model)
+        self.mt_view.setMinimumWidth(0)
+        self.mt_view.setSizePolicy(QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed))
+        self.mt_view.setSizeAdjustPolicy(QAbstractScrollArea.AdjustIgnored)
         self.mt_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.mt_view.setSelectionMode(QAbstractItemView.ExtendedSelection)
         self.mt_view.setFocusPolicy(Qt.StrongFocus)
@@ -620,8 +630,7 @@ class LegendPage(QWidget):
         self.project_dir = Path(dir_path)
         self.project_data = LegendProjectService.load(self.project_dir)
         self._render_project()
-        self.lbl_proj_folder.setText(f"CARPETA: {self.project_dir}")
-        self.lbl_proj_folder.setToolTip(str(self.project_dir))
+        self._set_folder_label(self.project_dir)
         self._set_dirty(True)
 
     def _init_cold_engine(self) -> None:
@@ -671,9 +680,9 @@ class LegendPage(QWidget):
             if not dir_path:
                 return
             self.project_dir = Path(dir_path)
-            self.lbl_proj_folder.setText(f"CARPETA: {self.project_dir}")
-            self.lbl_proj_folder.setToolTip(str(self.project_dir))
+            self._set_folder_label(self.project_dir)
         try:
+            self._update_compressors()
             self.project_data = self._collect_project_data()
             LegendProjectService.save(self.project_dir, self.project_data)
             QMessageBox.information(self, "LEGEND", "GUARDADO OK.")
@@ -688,13 +697,11 @@ class LegendPage(QWidget):
             if dir_path.is_file():
                 self.project_dir = dir_path.parent
                 self.project_data = LegendProjectService.load_file(dir_path)
-                self.lbl_proj_folder.setText(f"CARPETA: {self.project_dir}")
-                self.lbl_proj_folder.setToolTip(str(self.project_dir))
+                self._set_folder_label(self.project_dir)
             else:
                 self.project_dir = dir_path
                 self.project_data = LegendProjectService.load(dir_path)
-                self.lbl_proj_folder.setText(f"CARPETA: {dir_path}")
-                self.lbl_proj_folder.setToolTip(str(dir_path))
+                self._set_folder_label(dir_path)
             self._render_project()
             self._set_dirty(False)
         except Exception as exc:
@@ -711,9 +718,35 @@ class LegendPage(QWidget):
             else:
                 specs[k] = widget.text()
         data["specs"] = specs
-        if isinstance(self.project_data, dict):
-            data["compressors"] = dict(self.project_data.get("compressors", {}) or {})
+        # compresores: leer directo de la UI para no perder selección
+        brand = self.comp_brand_cb.currentText() if hasattr(self, "comp_brand_cb") else ""
+        comp = dict(self.project_data.get("compressors", {}) or {}) if isinstance(self.project_data, dict) else {}
+        bt_items = self._read_comp_model_rows(self.comp_bt) if hasattr(self, "comp_bt") else []
+        mt_items = self._read_comp_model_rows(self.comp_mt) if hasattr(self, "comp_mt") else []
+        bt_target = float(self.comp_bt["target"].value()) if hasattr(self, "comp_bt") else 25.0
+        mt_target = float(self.comp_mt["target"].value()) if hasattr(self, "comp_mt") else 25.0
+        comp["brand"] = brand
+        comp["bt"] = {"items": bt_items, "target_reserva_pct": bt_target}
+        comp["mt"] = {"items": mt_items, "target_reserva_pct": mt_target}
+        data["compressors"] = comp
         return data
+
+    def _set_folder_label(self, path: Path | str | None) -> None:
+        self._proj_folder_full = str(path) if path else ""
+        self._update_folder_label()
+
+    def _update_folder_label(self) -> None:
+        text = f"CARPETA: {self._proj_folder_full}" if self._proj_folder_full else "CARPETA: --"
+        if not self.lbl_proj_folder:
+            return
+        fm = self.lbl_proj_folder.fontMetrics()
+        available = self.lbl_proj_folder.width()
+        if available and available > 30:
+            elided = fm.elidedText(text, Qt.ElideMiddle, available)
+            self.lbl_proj_folder.setText(elided)
+        else:
+            self.lbl_proj_folder.setText(text)
+        self.lbl_proj_folder.setToolTip(self._proj_folder_full or "")
     def _slug(self, text: str) -> str:
         import re
 
@@ -762,6 +795,7 @@ class LegendPage(QWidget):
         if not target_dir:
             return
         try:
+            self._update_compressors()
             data = self._collect_project_data()
             wb = build_legend_workbook(template_path, data)
             tmp_fd, tmp_name = tempfile.mkstemp(suffix=".xlsx")
@@ -1088,7 +1122,8 @@ class LegendPage(QWidget):
                 header.setSectionResizeMode(col, QHeaderView.Interactive)
         view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        view.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        view.setMinimumWidth(0)
+        view.setSizePolicy(QSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed))
         view.setAlternatingRowColors(True)
         self._apply_combo_column_widths(view)
         self._apply_dim_spans(view, model)
@@ -1850,6 +1885,10 @@ class LegendPage(QWidget):
         self.lbl_total_mt.setText(f"TOTAL MT (BTU/H): {fmt(self.total_mt)}")
         self.lbl_total_general.setText(f"TOTAL GENERAL: {fmt(self.total_bt + self.total_mt)}")
         self._update_eev()
+
+    def resizeEvent(self, event) -> None:
+        super().resizeEvent(event)
+        self._update_folder_label()
         self._update_compressors()
 
     def _load_compresores_perf(self) -> Dict[str, Any]:
