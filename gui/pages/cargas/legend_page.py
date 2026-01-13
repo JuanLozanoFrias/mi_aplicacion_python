@@ -2087,7 +2087,9 @@ class LegendPage(QWidget):
                     combo.clear()
                     combo.addItem("")
                     combo.addItems(models)
-                    combo.setCurrentText(current if current in models else "")
+                    if current and current not in models:
+                        combo.addItem(current)
+                    combo.setCurrentText(current if current else "")
                     combo.blockSignals(False)
             self._on_comp_changed(block)
 
@@ -2104,9 +2106,12 @@ class LegendPage(QWidget):
         combo = QComboBox()
         combo.addItem("")
         brand = self.comp_brand_cb.currentText() if hasattr(self, "comp_brand_cb") else ""
-        combo.addItems(self._get_comp_models(brand))
+        models = self._get_comp_models(brand)
+        combo.addItems(models)
         combo.blockSignals(True)
         if model:
+            if model not in models:
+                combo.addItem(model)
             combo.setCurrentText(model)
         combo.blockSignals(False)
         combo.currentTextChanged.connect(lambda _t, b=block: self._on_comp_changed(b))
@@ -2323,7 +2328,9 @@ class LegendPage(QWidget):
         self._suspend_updates = True
         if hasattr(self, "comp_brand_cb"):
             self.comp_brand_cb.blockSignals(True)
-            self.comp_brand_cb.setCurrentText(brand if brand in self._comp_brands else "")
+            if brand and brand not in self._comp_brands:
+                self.comp_brand_cb.addItem(brand)
+            self.comp_brand_cb.setCurrentText(brand if brand else "")
             self.comp_brand_cb.blockSignals(False)
             self._on_comp_brand_changed()
         for key, block in (("bt", self.comp_bt), ("mt", self.comp_mt)):
