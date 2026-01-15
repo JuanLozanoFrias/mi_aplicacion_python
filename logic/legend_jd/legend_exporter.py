@@ -79,6 +79,24 @@ def _find_label_cell_in_rows(
     return None
 
 
+def _find_label_cell_in_range(
+    ws, label: str, min_row: int, max_row: int, min_col: int, max_col: int
+) -> Tuple[int, int] | None:
+    target = _norm_label(label)
+    for r in range(min_row, min(max_row, ws.max_row) + 1):
+        for c in range(min_col, min(max_col, ws.max_column) + 1):
+            if _norm_label(ws.cell(r, c).value) == target:
+                return r, c
+    return None
+
+
+def _merged_range_for_cell(ws, row: int, col: int) -> Tuple[int, int, int, int] | None:
+    for rng in ws.merged_cells.ranges:
+        if rng.min_row <= row <= rng.max_row and rng.min_col <= col <= rng.max_col:
+            return (rng.min_row, rng.max_row, rng.min_col, rng.max_col)
+    return None
+
+
 def _find_cell_contains(ws, text: str, max_row: int | None = None) -> Tuple[int, int] | None:
     target = _norm_label(text)
     max_r = max_row or ws.max_row
@@ -1375,13 +1393,33 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
 
     specs = project_data.get("specs", {}) if isinstance(project_data, dict) else {}
 
+    spec_labels = {
+        "PROYECTO",
+        "CIUDAD",
+        "TIPO SISTEMA",
+        "VOLTAJE PRINCIPAL",
+        "VOLTAJE CONTROL",
+        "T. CONDENSACION",
+        "REFRIGERANTE",
+        "CONTROLADOR",
+        "MEDIDAS",
+    }
+    spec_positions: Dict[str, Tuple[int, int, int, int]] = {}
+    for label in spec_labels:
+        pos = _find_label_cell(tpl_ws, label, max_row=10)
+        if not pos:
+            continue
+        val_row, val_col = _col_after_label(tpl_ws, pos[0], pos[1])
+        spec_positions[label] = (pos[0], pos[1], val_row, val_col)
+
     def _write_spec(label: str, value: Any) -> None:
-        pos = _find_label_cell(ws, label, max_row=6)
+        pos = spec_positions.get(label)
         if not pos:
             return
-        row, col = pos
-        row, col = _col_after_label(ws, row, col)
-        _safe_set(ws, row, col, value)
+        label_row, label_col, val_row, val_col = pos
+        # restore label from template to avoid it being cleared
+        ws.cell(label_row, label_col).value = tpl_ws.cell(label_row, label_col).value
+        _safe_set(ws, val_row, val_col, value)
 
     _write_spec("PROYECTO", specs.get("proyecto", ""))
     _write_spec("CIUDAD", specs.get("ciudad", ""))
@@ -1711,6 +1749,24 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
     _prune_overlapping_merges(ws, header_row, last_row)
     _force_total_value(ws, "CARGA TOTAL BAJA", bt_total, btu_col)
     _force_total_value(ws, "CARGA TOTAL MEDIA", mt_total, btu_col)
+    # Reescribir especificaciones al final para evitar sobrescrituras por merges/insert rows
+    for label, val in (
+        ("PROYECTO", specs.get("proyecto", "")),
+        ("CIUDAD", specs.get("ciudad", "")),
+        ("TIPO SISTEMA", specs.get("tipo_sistema", "")),
+        ("VOLTAJE PRINCIPAL", specs.get("voltaje_principal", "")),
+        ("VOLTAJE CONTROL", specs.get("voltaje_control", "")),
+        ("T. CONDENSACION", specs.get("tcond_f", "")),
+        ("REFRIGERANTE", specs.get("refrigerante", "")),
+        ("CONTROLADOR", specs.get("controlador", "")),
+        ("MEDIDAS", "FT"),
+    ):
+        pos = _find_label_cell(tpl_ws, label, max_row=10)
+        if not pos:
+            continue
+        ws.cell(pos[0], pos[1]).value = tpl_ws.cell(pos[0], pos[1]).value
+        v_row, v_col = _col_after_label(tpl_ws, pos[0], pos[1])
+        _safe_set(ws, v_row, v_col, val)
     ws.calculate_dimension()
     try:
         _write_eev_sheet(wb, project_data, bt_count)

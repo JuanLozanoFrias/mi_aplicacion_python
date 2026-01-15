@@ -279,6 +279,14 @@ class LegendPage(QWidget):
         self.spec_fields["ciudad"] = ciudad_edit
         _add_single("CIUDAD", ciudad_edit)
 
+        # CALCULO
+        calculo_cb = QComboBox()
+        calculo_cb.addItems(["", "JUAN LOZANO", "NICOLAS LEON", "JAVIER PARDO"])
+        calculo_cb.setEditable(False)
+        calculo_cb.currentTextChanged.connect(lambda _t: self._on_spec_changed("calculo"))
+        self.spec_fields["calculo"] = calculo_cb
+        _add_single("CALCULO", calculo_cb)
+
         # VENDEDOR
         vendedor_edit = QLineEdit()
         vendedor_edit.textEdited.connect(lambda txt, w=vendedor_edit: self._on_spec_changed_upper("vendedor", w, txt))
