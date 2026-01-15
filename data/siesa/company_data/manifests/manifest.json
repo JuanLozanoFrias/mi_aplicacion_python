@@ -1,0 +1,32 @@
+{
+  "package_name": "weston-company-data",
+  "schema_version": "1.0",
+  "generated_at": "2026-01-14T18:07:28.691674-05:00",
+  "files": [
+    {
+      "path": "master_data/assets.json",
+      "sha256": "5374e976151d3b4f4fff531b9a68cc4d802d2ae3acc1a2b4ddbc4c495ff309bd",
+      "kind": "master"
+    },
+    {
+      "path": "master_data/locations.json",
+      "sha256": "f37112b7c23ab2564297341c1e3cd906c28dd335bffe34218cc782c9b20c0f9b",
+      "kind": "master"
+    },
+    {
+      "path": "snapshots/inventory_Weston.json",
+      "sha256": "d9e120301d9803d154a6132052ca7478cbda0f4e91230ff00d323c7df6a2356f",
+      "kind": "snapshot"
+    },
+    {
+      "path": "rules/materiales_rules.json",
+      "sha256": "8a11358b1f3eda8e23099c3188fc619e36fc40ab629771374ed59f7f86fc3704",
+      "kind": "rules"
+    },
+    {
+      "path": "audit/changelog.jsonl",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "kind": "audit"
+    }
+  ]
+}

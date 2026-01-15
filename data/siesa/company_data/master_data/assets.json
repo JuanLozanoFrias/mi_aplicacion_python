@@ -1,0 +1,36 @@
+[
+  {
+    "schema_version": "1.0",
+    "asset_id": "WES-AC-000154",
+    "type": "TABLERO_ELECTRICO",
+    "name": "Tablero Rack CO2 - Maikawa",
+    "status": "EN_OPERACION",
+    "company": "Weston",
+    "location_id": "BOG-PLANTA-11F",
+    "tags": [
+      "CO2",
+      "RACK",
+      "UL"
+    ],
+    "serial_number": "SN12345",
+    "purchase": {
+      "supplier_id": "ABB-CO",
+      "date": "2024-11-18",
+      "invoice": "FV-88921"
+    },
+    "erp": {
+      "siesa_item_code": "IN1410E01",
+      "siesa_asset_code": "AF0009912"
+    },
+    "maintenance": {
+      "criticality": "ALTA",
+      "interval_days": 180,
+      "last_service": "2025-08-10"
+    },
+    "meta": {
+      "updated_at": "2026-01-13T09:20:00-05:00",
+      "updated_by": "seed",
+      "source": "seed"
+    }
+  }
+]

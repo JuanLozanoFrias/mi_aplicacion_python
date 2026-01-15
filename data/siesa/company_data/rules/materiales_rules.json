@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "notes": "Reglas de ejemplo (aquí van equivalencias, UL/IEC, tensiones, etc.)",
+  "mappings": {
+    "company_to_idcia": {
+      "Weston": 1,
+      "WBR": 5,
+      "TEKOAM": 6
+    },
+    "tension_control_map": {
+      "120": "120V",
+      "220": "220V"
+    }
+  }
+}

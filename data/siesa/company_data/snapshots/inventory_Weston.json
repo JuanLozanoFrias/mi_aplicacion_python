@@ -1,0 +1,352 @@
+[
+  {
+    "Referencia": 0,
+    "Modelo": "*                                                 ",
+    "Desc. item": "ERROR NO USAR",
+    "Unidad inventario": "UNI ",
+    "Unidad orden": "KGS "
+  },
+  {
+    "Referencia": 1,
+    "Modelo": "600000                                            ",
+    "Desc. item": "NO UTILIZAR",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 2,
+    "Modelo": "601000                                            ",
+    "Desc. item": "MATERIALES MONTAJES",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 3,
+    "Modelo": "602000                                            ",
+    "Desc. item": "NO UTILIZAR",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 4,
+    "Modelo": "610000                                            ",
+    "Desc. item": "MANO DE OBRA SERVICIOS",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 5,
+    "Modelo": "000005                                            ",
+    "Desc. item": "BLOQUEADO",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 6,
+    "Modelo": "611000                                            ",
+    "Desc. item": "VIATICOS SERVICIOS",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 7,
+    "Modelo": "612000                                            ",
+    "Desc. item": "TIQUETES SERVICIOS",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 8,
+    "Modelo": "620000                                            ",
+    "Desc. item": "MANO DE OBRA GASTRONOMIA",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 9,
+    "Modelo": "620001                                            ",
+    "Desc. item": "MANO DE OBRA INVENTARIO GASTRONOMIA",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 10,
+    "Modelo": "630000                                            ",
+    "Desc. item": "FLETE URBANO AGENTE",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 11,
+    "Modelo": "630001                                            ",
+    "Desc. item": "ACOMPAÑAMIENTO LOCAL                    ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 12,
+    "Modelo": "630002                                            ",
+    "Desc. item": "ALISTAMIENTO DE PEDIDOS                 ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 13,
+    "Modelo": "630003                                            ",
+    "Desc. item": "ARANCEL                                 ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 14,
+    "Modelo": "630004                                            ",
+    "Desc. item": "BODEGAJE/ MANEJO EN PUERTO ING PROPIOS",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 15,
+    "Modelo": "630005                                            ",
+    "Desc. item": "CERTFICADO DE ORIGEN",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 16,
+    "Modelo": "630006                                            ",
+    "Desc. item": "DEMORAS DE CONTENEDOR",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 17,
+    "Modelo": "630007                                            ",
+    "Desc. item": "DESCARGUE DIRECTO                       ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 18,
+    "Modelo": "630008                                            ",
+    "Desc. item": "DOCUMENTACION Y ELABORACION             ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 19,
+    "Modelo": "630009                                            ",
+    "Desc. item": "DROOP OFF                               ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 20,
+    "Modelo": "630010                                            ",
+    "Desc. item": "ESCOLTA                                 ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 21,
+    "Modelo": "630011                                            ",
+    "Desc. item": "FLETE AEREO                             ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 22,
+    "Modelo": "630012                                            ",
+    "Desc. item": "FLETE MARITIMO                          ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 23,
+    "Modelo": "630013                                            ",
+    "Desc. item": "FLETE NACIONAL SIN ICA TRANSPORTADORA",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 24,
+    "Modelo": "630014                                            ",
+    "Desc. item": "FLETE NACIONAL CON ICA TRANSPORTADORA",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 25,
+    "Modelo": "630015                                            ",
+    "Desc. item": "GASTOS AGENTE DE CARGA PROPIOS          ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 26,
+    "Modelo": "630016                                            ",
+    "Desc. item": "GASTOS AGENTE DE CARGA TERCEROS",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 27,
+    "Modelo": "630017                                            ",
+    "Desc. item": "GASTOS EXW                              ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 28,
+    "Modelo": "630018                                            ",
+    "Desc. item": "GASTOS FINANCIEROS CON IVA",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 29,
+    "Modelo": "630019                                            ",
+    "Desc. item": "GASTOS LOCALES AGENTE DE ADUANA AGRUPADO",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 30,
+    "Modelo": "630020                                            ",
+    "Desc. item": "INLAND FREIGHT",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 31,
+    "Modelo": "630021                                            ",
+    "Desc. item": "LIBERACION Y ENDOSO PROPIOS",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 32,
+    "Modelo": "630022                                            ",
+    "Desc. item": "LIBERACION Y ENDOSO TERCEROS            ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 33,
+    "Modelo": "630023                                            ",
+    "Desc. item": "LOGISTICA EN ADMON DE INVENTARIOS       ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 34,
+    "Modelo": "630024                                            ",
+    "Desc. item": "MANEJO                                  ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 35,
+    "Modelo": "630025                                            ",
+    "Desc. item": "OTROS GASTOS AGENTE DE CARGA",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 36,
+    "Modelo": "630026                                            ",
+    "Desc. item": "OTROS GASTOS AGENTE DE ADUANA           ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 37,
+    "Modelo": "630027                                            ",
+    "Desc. item": "PRIMA POLIZA DE SEGURO                  ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 38,
+    "Modelo": "630028                                            ",
+    "Desc. item": "PROTEKTO                                ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 39,
+    "Modelo": "630029                                            ",
+    "Desc. item": "REGISTRO DE IMPORTACION                 ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 40,
+    "Modelo": "630030                                            ",
+    "Desc. item": "SERVICIOS DE COMERCIO EXTERIOR          ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 41,
+    "Modelo": "630031                                            ",
+    "Desc. item": "SERVICIOS BANCARIOS                     ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 42,
+    "Modelo": "630032                                            ",
+    "Desc. item": "SERVICIOS DE BODEGA                     ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 43,
+    "Modelo": "630033                                            ",
+    "Desc. item": "SERVICIOS DE INTERMEDIACION             ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 45,
+    "Modelo": "183104                                            ",
+    "Desc. item": "ANCLA 3/8 X 2\" REF. HN 3817             ",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 47,
+    "Modelo": "0047                                              ",
+    "Desc. item": "NO USAR=REEMPLAZA 290172",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 50,
+    "Modelo": "163037                                            ",
+    "Desc. item": "PACHA CON RESISTENCIA 1240 X 400 MM",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 53,
+    "Modelo": "0053                                              ",
+    "Desc. item": "NO USAR=REEMPLAZA 290134",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 59,
+    "Modelo": "0059                                              ",
+    "Desc. item": "NO USAR=REEMPLAZA 290140",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  },
+  {
+    "Referencia": 60,
+    "Modelo": "0060                                              ",
+    "Desc. item": "NO USAR=REEMPLAZA 290135",
+    "Unidad inventario": "UND ",
+    "Unidad orden": "UND "
+  }
+]

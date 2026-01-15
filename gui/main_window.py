@@ -13,6 +13,7 @@ from gui.pages.carga_page import CargaPage
 from gui.pages.cargas.industrial_page import IndustrialPage
 from gui.pages.cargas.legend_page import LegendPage
 from gui.pages.materiales_page import MaterialesPage
+from gui.pages.siesa_page import SiesaPage
 from gui.pages.carga_electrica.carga_electrica_page import CargaElectricaPage
 from gui.pages.creditos_page import CreditosPage
 
@@ -237,6 +238,7 @@ QListWidget::item:selected:hover {
 
         add_nav_item("TABLEROS ELECTRICOS", MaterialesPage())
         add_nav_item("CARGA ELECTRICA", CargaElectricaPage())
+        add_nav_item("SIESA", SiesaPage())
         add_nav_item("CREDITOS", CreditosPage())
         side_layout.addWidget(self.nav, stretch=1)
         root.addWidget(side)
