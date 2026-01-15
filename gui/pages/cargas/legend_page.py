@@ -1999,16 +1999,30 @@ class LegendPage(QWidget):
         btn_add_model = QPushButton("AGREGAR MODELO")
         btn_del_model = QPushButton("ELIMINAR MODELO")
 
-        models_tbl = QTableWidget(0, 2)
-        models_tbl.setHorizontalHeaderLabels(["MODELO", "CANTIDAD"])
-        models_tbl.horizontalHeader().setStretchLastSection(False)
+        if not hasattr(self, "_comp_option_defs"):
+            self._comp_option_defs = [
+                ("demand_cooling", "DEMAND COOLING / CIC", ["SI", "NO"]),
+                ("ventilador_cabeza", "VENTILADOR DE CABEZA", ["SI", "NO"]),
+                ("contactor", "CONTACTOR", ["SI", "NO"]),
+                ("breaker", "BREAKER", ["SI", "NO"]),
+                ("control_capacidad", "CONTROL DE CAPACIDAD", ["VARIADOR", "UNLOADER", "NO"]),
+                ("regulador_aceite", "REGULADOR NIVEL ACEITE", ["SI", "NO"]),
+            ]
+        opt_count = len(self._comp_option_defs)
+        models_tbl = QTableWidget(0, 2 + opt_count)
+        header_labels = ["MODELO", "CANTIDAD"] + [h[1] for h in self._comp_option_defs]
+        models_tbl.setHorizontalHeaderLabels(header_labels)
+        models_tbl.horizontalHeader().setStretchLastSection(True)
         models_tbl.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
         models_tbl.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
+        for c in range(2, 2 + opt_count):
+            models_tbl.horizontalHeader().setSectionResizeMode(c, QHeaderView.ResizeToContents)
         models_tbl.verticalHeader().setVisible(False)
         models_tbl.setSelectionBehavior(QAbstractItemView.SelectRows)
         models_tbl.setSelectionMode(QAbstractItemView.SingleSelection)
         models_tbl.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        models_tbl.setMinimumHeight(90)
+        models_tbl.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        models_tbl.setMinimumHeight(110)
         models_tbl.setStyleSheet(
             "QComboBox { background: #ffffff; color: #111827; }"
             "QComboBox QAbstractItemView { background: #ffffff; color: #111827;"
@@ -2028,12 +2042,12 @@ class LegendPage(QWidget):
         grid.addWidget(btn_auto, 0, 2)
 
         grid.addWidget(QLabel("MODELOS"), 1, 0)
-        grid.addWidget(models_tbl, 1, 1, 1, 2)
+        grid.addWidget(models_tbl, 1, 1, 1, 3)
         btns_row = QHBoxLayout()
         btns_row.addWidget(btn_add_model)
         btns_row.addWidget(btn_del_model)
         btns_row.addStretch(1)
-        grid.addLayout(btns_row, 2, 1, 1, 2)
+        grid.addLayout(btns_row, 2, 1, 1, 3)
 
         grid.addWidget(QLabel("TOTAL COMPRESORES"), 3, 0)
         grid.addWidget(n_spin, 3, 1)
@@ -2053,6 +2067,8 @@ class LegendPage(QWidget):
         grid.addWidget(QLabel("ESTADO"), 6, 2)
         grid.addWidget(lbl_state, 6, 3)
 
+        grid.setColumnStretch(1, 1)
+        grid.setColumnStretch(2, 1)
         grid.setColumnStretch(3, 1)
         box.setLayout(grid)
 
@@ -2076,6 +2092,7 @@ class LegendPage(QWidget):
         btn_auto.clicked.connect(lambda _=None, b=block: self._auto_select_compressor(b))
         btn_add_model.clicked.connect(lambda _=None, b=block: self._add_comp_model_row(b))
         btn_del_model.clicked.connect(lambda _=None, b=block: self._del_comp_model_row(b))
+        self._fit_comp_models_table(models_tbl)
         return block
 
     def _on_comp_brand_changed(self) -> None:
@@ -2102,7 +2119,14 @@ class LegendPage(QWidget):
         if not self._suspend_updates:
             self._set_dirty(True)
 
-    def _add_comp_model_row(self, block: Dict[str, Any], model: str = "", qty: int = 1, trigger_update: bool = True) -> None:
+    def _add_comp_model_row(
+        self,
+        block: Dict[str, Any],
+        model: str = "",
+        qty: int = 1,
+        opts: Dict[str, Any] | None = None,
+        trigger_update: bool = True,
+    ) -> None:
         tbl: QTableWidget = block["models_tbl"]
         row = tbl.rowCount()
         tbl.insertRow(row)
@@ -2127,7 +2151,27 @@ class LegendPage(QWidget):
 
         tbl.setCellWidget(row, 0, combo)
         tbl.setCellWidget(row, 1, spin)
+        defaults = {
+            "demand_cooling": "SI",
+            "ventilador_cabeza": "SI",
+            "contactor": "SI",
+            "breaker": "SI",
+            "control_capacidad": "VARIADOR",
+            "regulador_aceite": "SI",
+        }
+        opts = opts or {}
+        for idx, (key, _label, choices) in enumerate(self._comp_option_defs):
+            cb = QComboBox()
+            cb.addItem("")
+            cb.addItems(choices)
+            val = str(opts.get(key, defaults.get(key, "")) or "").upper()
+            if val and val not in choices:
+                cb.addItem(val)
+            cb.setCurrentText(val if val else "")
+            cb.currentTextChanged.connect(lambda _t, b=block: self._on_comp_changed(b))
+            tbl.setCellWidget(row, 2 + idx, cb)
         tbl.setRowHeight(row, 26)
+        self._fit_comp_models_table(tbl)
 
         if trigger_update:
             self._on_comp_changed(block)
@@ -2138,6 +2182,7 @@ class LegendPage(QWidget):
         if row < 0:
             return
         tbl.removeRow(row)
+        self._fit_comp_models_table(tbl)
         self._on_comp_changed(block)
 
     def _read_comp_model_rows(self, block: Dict[str, Any]) -> List[Dict[str, Any]]:
@@ -2151,8 +2196,27 @@ class LegendPage(QWidget):
             model = combo.currentText().strip()
             if not model:
                 continue
-            rows.append({"model": model, "n": int(spin.value())})
+            row_data: Dict[str, Any] = {"model": model, "n": int(spin.value())}
+            for idx, (key, _label, _choices) in enumerate(self._comp_option_defs):
+                cb = tbl.cellWidget(r, 2 + idx)
+                if isinstance(cb, QComboBox):
+                    val = cb.currentText().strip().upper()
+                    if val:
+                        row_data[key] = val
+            rows.append(row_data)
         return rows
+
+    def _fit_comp_models_table(self, tbl: QTableWidget) -> None:
+        rows = tbl.rowCount()
+        header_h = tbl.horizontalHeader().height()
+        row_h = tbl.sizeHintForRow(0) if rows > 0 else 26
+        if row_h <= 0:
+            row_h = 26
+        visible_rows = max(rows, 1)
+        height = header_h + (row_h * visible_rows) + (tbl.frameWidth() * 2) + 8
+        tbl.setMinimumHeight(height)
+        tbl.setMaximumHeight(height)
+        tbl.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
     def _sync_comp_total(self, block: Dict[str, Any], total_n: int) -> None:
         n_spin: QSpinBox = block["n"]
@@ -2178,6 +2242,7 @@ class LegendPage(QWidget):
         tbl: QTableWidget = block["models_tbl"]
         if load <= 0:
             tbl.setRowCount(0)
+            self._fit_comp_models_table(tbl)
             self._sync_comp_total(block, 0)
             block["lbl_cap"].setText("--")
             block["lbl_res"].setText("--")
@@ -2190,52 +2255,98 @@ class LegendPage(QWidget):
         required = load * (1.0 + target / 100.0)
         n_min = 1
         n_max = 8
-        if load >= 400000:
-            n_pref = 4
-        elif load >= 250000:
-            n_pref = 3
-        else:
-            n_pref = 2
+        max_n = 6
+        min_n_by_load = 1
+        if load > 160_000:
+            min_n_by_load = 3
+        elif load > 80_000:
+            min_n_by_load = 2
+
+        def _n_penalty(n: int) -> float:
+            if 2 <= n <= 4:
+                return 0.0
+            if n in (1, 5):
+                return 0.15
+            if n == 6:
+                return 0.35
+            return 0.5
 
         best = None
         best_score = None
         best_ref_warn = False
-        max_choice = None
-        max_cap = None
+        fallback = None
+        fallback_cap = None
 
-        for n in range(n_min, n_max + 1):
-            for m in models:
-                perf, ref_warn = self._get_comp_perf(brand, m, tcond_f, tevap_design, refrigerante)
-                if not perf:
+        for m in models:
+            perf, ref_warn = self._get_comp_perf(brand, m, tcond_f, tevap_design, refrigerante)
+            if not perf:
+                continue
+            cap1 = self._to_float(
+                perf.get("capacity_btu_h", perf.get("evaporator_capacity_btu_h", 0.0)), 0.0
+            )
+            if cap1 <= 0:
+                continue
+            for n in range(n_min, n_max + 1):
+                if n > max_n:
                     continue
-                cap = self._to_float(
-                    perf.get("capacity_btu_h", perf.get("evaporator_capacity_btu_h", 0.0)), 0.0
-                )
-                cap_total = n * cap
-                if cap_total >= required:
-                    oversize = cap_total / required - 1.0
-                    penalty_n = (n - n_pref) ** 2
-                    score = oversize * 100.0 + penalty_n * 3.0
-                    if best_score is None or score < best_score:
-                        best_score = score
-                        best = (m, n, cap_total)
+                if n < min_n_by_load:
+                    continue
+                cap_total = n * cap1
+                if cap_total < required:
+                    if fallback_cap is None or cap_total > fallback_cap:
+                        fallback_cap = cap_total
+                        fallback = (m, n, cap_total, ref_warn)
+                    continue
+                if cap1 > 0.75 * required and n > 1:
+                    continue
+                if cap1 < 0.12 * required and n < 4:
+                    continue
+                oversize = (cap_total - required) / required
+                score = oversize + _n_penalty(n)
+                if best_score is None or score < best_score:
+                    best_score = score
+                    best = (m, n, cap_total, oversize)
+                    best_ref_warn = ref_warn
+                elif best_score is not None and score == best_score and best is not None:
+                    _, best_n, best_cap, best_over = best
+                    if oversize < best_over or (oversize == best_over and abs(n - 3) < abs(best_n - 3)):
+                        best = (m, n, cap_total, oversize)
                         best_ref_warn = ref_warn
-                if max_cap is None or cap_total > max_cap:
-                    max_cap = cap_total
-                    max_choice = (m, n, cap_total, ref_warn)
 
+        chosen = None
+        oversize_pct = None
         if best is not None:
-            chosen_model, chosen_n, _cap_total = best
+            chosen_model, chosen_n, cap_total, overs = best
+            chosen = (chosen_model, chosen_n)
+            oversize_pct = overs * 100.0
+        elif fallback is not None:
+            chosen_model, chosen_n, cap_total, _ref_warn = fallback
+            chosen = (chosen_model, chosen_n)
+            if required > 0:
+                oversize_pct = (cap_total - required) / required * 100.0
+
+        if chosen:
+            chosen_model, chosen_n = chosen
             tbl.setRowCount(0)
             self._add_comp_model_row(block, chosen_model, chosen_n, trigger_update=False)
             self._on_comp_changed(block)
-        elif max_choice is not None:
-            chosen_model, chosen_n, _cap_total, _ref_warn = max_choice
-            tbl.setRowCount(0)
-            self._add_comp_model_row(block, chosen_model, chosen_n, trigger_update=False)
-            self._on_comp_changed(block)
+            perf_sel, _ref_warn = self._get_comp_perf(brand, chosen_model, tcond_f, tevap_design, refrigerante)
+            cap1 = self._to_float(
+                (perf_sel or {}).get("capacity_btu_h", (perf_sel or {}).get("evaporator_capacity_btu_h", 0.0)),
+                0.0,
+            )
+            cap_total = chosen_n * cap1
+            reserva = (cap_total - load) / load * 100.0 if load > 0 else 0.0
+            if oversize_pct is None and required > 0:
+                oversize_pct = (cap_total - required) / required * 100.0
+            oversize_txt = f"{oversize_pct:.1f}%" if oversize_pct is not None else "--"
+            tip = f"Auto: {chosen_model} x {chosen_n} | Oversize {oversize_txt} | Reserva {reserva:.1f}%"
+            if best_ref_warn:
+                tip += " | REF?"
+            block["lbl_state"].setToolTip(tip)
         else:
             tbl.setRowCount(0)
+            self._fit_comp_models_table(tbl)
             self._on_comp_changed(block)
 
     def _update_compressors(self) -> None:
@@ -2358,7 +2469,15 @@ class LegendPage(QWidget):
             tbl: QTableWidget = block["models_tbl"]
             tbl.setRowCount(0)
             for entry in models_list:
-                self._add_comp_model_row(block, str(entry.get("model", "") or ""), int(entry.get("n", 1) or 1), trigger_update=False)
+                opts = {k: entry.get(k) for k, _label, _choices in self._comp_option_defs if entry.get(k)}
+                self._add_comp_model_row(
+                    block,
+                    str(entry.get("model", "") or ""),
+                    int(entry.get("n", 1) or 1),
+                    opts=opts,
+                    trigger_update=False,
+                )
+            self._fit_comp_models_table(tbl)
 
         self._suspend_updates = False
         self._update_compressors()

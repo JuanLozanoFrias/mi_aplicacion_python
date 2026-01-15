@@ -8,6 +8,7 @@ import tempfile
 import zipfile
 import xml.etree.ElementTree as ET
 from typing import Any, Dict, Iterable, List, Tuple
+from datetime import datetime
 
 import json
 from openpyxl import load_workbook
@@ -55,6 +56,45 @@ def _find_label_cell(ws, label: str, max_row: int = 20) -> Tuple[int, int] | Non
             if _norm_label(ws.cell(r, c).value) == target:
                 return r, c
     return None
+
+
+def _find_all_label_cells(ws, label: str, max_row: int = 200) -> List[Tuple[int, int]]:
+    target = _norm_label(label)
+    found: List[Tuple[int, int]] = []
+    for r in range(1, min(max_row, ws.max_row) + 1):
+        for c in range(1, ws.max_column + 1):
+            if _norm_label(ws.cell(r, c).value) == target:
+                found.append((r, c))
+    return found
+
+
+def _find_label_cell_in_rows(
+    ws, label: str, start_row: int, end_row: int
+) -> Tuple[int, int] | None:
+    target = _norm_label(label)
+    for r in range(start_row, min(end_row, ws.max_row) + 1):
+        for c in range(1, ws.max_column + 1):
+            if _norm_label(ws.cell(r, c).value) == target:
+                return r, c
+    return None
+
+
+def _find_cell_contains(ws, text: str, max_row: int | None = None) -> Tuple[int, int] | None:
+    target = _norm_label(text)
+    max_r = max_row or ws.max_row
+    for r in range(1, max_r + 1):
+        for c in range(1, ws.max_column + 1):
+            val = _norm_label(ws.cell(r, c).value)
+            if val and target in val:
+                return r, c
+    return None
+
+
+def _merged_anchor_cell(ws, row: int, col: int) -> Tuple[int, int]:
+    for rng in ws.merged_cells.ranges:
+        if rng.min_row <= row <= rng.max_row and rng.min_col <= col <= rng.max_col:
+            return rng.min_row, rng.min_col
+    return row, col
 
 
 def _col_after_label(ws, row: int, col: int) -> Tuple[int, int]:
@@ -173,6 +213,249 @@ def _expand_comp_models(items: Any) -> List[str]:
     return models
 
 
+def _expand_comp_items(items: Any) -> List[Dict[str, Any]]:
+    expanded: List[Dict[str, Any]] = []
+    if not isinstance(items, list):
+        return expanded
+    for it in items:
+        if not isinstance(it, dict):
+            continue
+        model = str(it.get("model", "") or "").strip()
+        qty = _to_int(it.get("n", 0), 0)
+        if not model or qty <= 0:
+            continue
+        for _ in range(qty):
+            expanded.append(dict(it))
+    return expanded
+
+
+def _load_compresores_perf() -> Dict[str, Any]:
+    for path in (
+        Path("data/LEGEND/compresores_perf.json"),
+        Path("data/legend/compresores_perf.json"),
+    ):
+        if path.exists():
+            try:
+                return json.loads(path.read_text(encoding="utf-8"))
+            except Exception:
+                return {}
+    return {}
+
+
+def _norm_ref(text: Any) -> str:
+    return _norm_label(text).replace("-", "")
+
+
+def _parse_perf_points(points: Dict[str, Any]) -> List[Dict[str, Any]]:
+    parsed: List[Dict[str, Any]] = []
+    for key, val in points.items():
+        if not isinstance(key, str):
+            continue
+        parts = key.split("|")
+        if len(parts) < 3:
+            continue
+        try:
+            ref = parts[0].strip()
+            tcond = float(parts[1])
+            tevap = float(parts[2])
+        except Exception:
+            continue
+        parsed.append({"ref": ref, "tcond_f": tcond, "tevap_f": tevap, "data": val})
+    return parsed
+
+
+def _get_nearest_perf_point(
+    perf_db: Dict[str, Any],
+    brand: str,
+    model: str,
+    refrigerante: str,
+    tcond_f: float,
+    tevap_f: float,
+) -> Dict[str, Any] | None:
+    brands = perf_db.get("brands", {}) if isinstance(perf_db, dict) else {}
+    brand_data = brands.get(brand, {}) if isinstance(brands, dict) else {}
+    models = brand_data.get("models", {}) if isinstance(brand_data, dict) else {}
+    model_data = models.get(model, {}) if isinstance(models, dict) else {}
+    points = model_data.get("points", {}) if isinstance(model_data, dict) else {}
+    parsed = _parse_perf_points(points) if isinstance(points, dict) else []
+    if not parsed:
+        return None
+    ref_norm = _norm_ref(refrigerante)
+    matches = []
+    for p in parsed:
+        pref = _norm_ref(p.get("ref", ""))
+        if ref_norm and pref and ref_norm in pref:
+            matches.append(p)
+    candidates = matches if matches else parsed
+    best = None
+    best_score = None
+    for p in candidates:
+        score = abs(p["tcond_f"] - tcond_f) + abs(p["tevap_f"] - tevap_f)
+        if best is None or best_score is None or score < best_score:
+            best = p
+            best_score = score
+    return best.get("data") if best else None
+
+
+def _compute_tevap_design(items: List[Dict[str, Any]]) -> float | None:
+    vals: List[float] = []
+    for it in items:
+        load = _to_float(it.get("btu_hr", it.get("carga_btu_h", 0)) or 0)
+        if load <= 0:
+            continue
+        tev = _to_float(it.get("tevap_f", it.get("tevap", 0)) or 0, default=None)  # type: ignore
+        if tev is None:
+            continue
+        vals.append(tev)
+    if not vals:
+        return None
+    return min(vals)
+
+
+def _format_fecha_es(value: Any) -> str:
+    months = [
+        "ENERO",
+        "FEBRERO",
+        "MARZO",
+        "ABRIL",
+        "MAYO",
+        "JUNIO",
+        "JULIO",
+        "AGOSTO",
+        "SEPTIEMBRE",
+        "OCTUBRE",
+        "NOVIEMBRE",
+        "DICIEMBRE",
+    ]
+    if isinstance(value, datetime):
+        dt = value
+    else:
+        try:
+            dt = datetime.fromisoformat(str(value))
+        except Exception:
+            dt = datetime.now()
+    return f"{months[dt.month - 1]} {dt.day} DE {dt.year}"
+
+
+def _write_next_label(
+    ws, label: str, value: Any, number_format: str | None = None, uppercase: bool = False
+) -> bool:
+    pos = _find_label_cell(ws, label, max_row=ws.max_row)
+    if not pos:
+        return False
+    row, col = _merged_anchor_cell(ws, pos[0], pos[1])
+    tgt_row, tgt_col = _col_after_label(ws, row, col)
+    tgt_row, tgt_col = _merged_anchor_cell(ws, tgt_row, tgt_col)
+    cell = ws.cell(tgt_row, tgt_col)
+    if uppercase and isinstance(value, str):
+        value = value.upper()
+    cell.value = value
+    if number_format:
+        cell.number_format = number_format
+    return True
+
+
+def _write_next_label_in_rows(
+    ws,
+    label: str,
+    value: Any,
+    start_row: int,
+    end_row: int,
+    number_format: str | None = None,
+    uppercase: bool = False,
+) -> bool:
+    pos = _find_label_cell_in_rows(ws, label, start_row, end_row)
+    if not pos:
+        return False
+    row, col = _merged_anchor_cell(ws, pos[0], pos[1])
+    tgt_row, tgt_col = _col_after_label(ws, row, col)
+    tgt_row, tgt_col = _merged_anchor_cell(ws, tgt_row, tgt_col)
+    cell = ws.cell(tgt_row, tgt_col)
+    if uppercase and isinstance(value, str):
+        value = value.upper()
+    cell.value = value
+    if number_format:
+        cell.number_format = number_format
+    return True
+
+
+def _write_baja_media(
+    ws, label: str, baja: Any, media: Any, number_format: str | None = None
+) -> bool:
+    pos = _find_label_cell(ws, label, max_row=ws.max_row)
+    if not pos:
+        return False
+    row, col = _merged_anchor_cell(ws, pos[0], pos[1])
+    for idx, val in enumerate((baja, media), start=1):
+        tgt_row, tgt_col = _merged_anchor_cell(ws, row, col + idx)
+        cell = ws.cell(tgt_row, tgt_col)
+        cell.value = val
+        if number_format:
+            cell.number_format = number_format
+    return True
+
+
+def _write_rh_box(ws, rh_bt: float, rh_mt: float, rh_total: float) -> None:
+    pos = _find_label_cell(ws, "RH", max_row=ws.max_row)
+    if not pos:
+        return
+    row, col = _merged_anchor_cell(ws, pos[0], pos[1])
+    for offset, val in enumerate((rh_bt, rh_mt, rh_total), start=1):
+        r, c = _merged_anchor_cell(ws, row + offset, col)
+        cell = ws.cell(r, c)
+        cell.value = int(round(val))
+        cell.number_format = "#,##0"
+
+
+def _compute_comp_totals(
+    project_data: Dict[str, Any],
+    perf_db: Dict[str, Any],
+    tcond_f: float,
+    tevap_bt: float | None,
+    tevap_mt: float | None,
+    refrigerante: str,
+) -> Tuple[float, float, float, float]:
+    comp = project_data.get("compressors", {}) if isinstance(project_data, dict) else {}
+    brand = str(comp.get("brand", "") or "")
+    def _sum_group(items: Any, tevap_design: float | None) -> Tuple[float, float]:
+        if tevap_design is None or not brand:
+            return 0.0, 0.0
+        items_exp = _expand_comp_items(items)
+        cap_total = 0.0
+        rh_total = 0.0
+        for it in items_exp:
+            model = str(it.get("model", "") or "")
+            if not model:
+                continue
+            perf = _get_nearest_perf_point(perf_db, brand, model, refrigerante, tcond_f, tevap_design)
+            if not perf:
+                continue
+            cap = _to_float(perf.get("capacity_btu_h", perf.get("evaporator_capacity_btu_h", 0.0)), 0.0)
+            rh = _to_float(perf.get("heat_rejection_btu_h", 0.0), 0.0)
+            power_kw = _to_float(perf.get("consumption_kw", 0.0), 0.0)
+            if not power_kw:
+                power_kw = _to_float(perf.get("power_kw", 0.0), 0.0)
+            if not power_kw:
+                power_kw = _to_float(perf.get("power_w", 0.0), 0.0) / 1000.0
+            if rh <= 0 and power_kw > 0:
+                rh = cap + power_kw * 3412.142
+            cap_total += cap
+            rh_total += rh
+        return cap_total, rh_total
+
+    cap_bt, rh_bt = _sum_group(comp.get("bt", {}).get("items", []), tevap_bt)
+    cap_mt, rh_mt = _sum_group(comp.get("mt", {}).get("items", []), tevap_mt)
+    return cap_bt, cap_mt, rh_bt, rh_mt
+
+
+def _find_label_row_any(ws, labels: List[str], max_row: int = 200) -> int | None:
+    for label in labels:
+        row = _find_label_row(ws, label, max_row=max_row)
+        if row:
+            return row
+    return None
+
+
 def _write_compresores(ws, project_data: Dict[str, Any]) -> None:
     comp = project_data.get("compressors", {}) if isinstance(project_data, dict) else {}
     if not isinstance(comp, dict):
@@ -218,8 +501,10 @@ def _write_compresores(ws, project_data: Dict[str, Any]) -> None:
                 else:
                     mt_cols.append(col)
 
-    bt_models = _expand_comp_models(comp.get("bt", {}).get("items", []))
-    mt_models = _expand_comp_models(comp.get("mt", {}).get("items", []))
+    bt_items_exp = _expand_comp_items(comp.get("bt", {}).get("items", []))
+    mt_items_exp = _expand_comp_items(comp.get("mt", {}).get("items", []))
+    bt_models = [str(it.get("model", "") or "") for it in bt_items_exp]
+    mt_models = [str(it.get("model", "") or "") for it in mt_items_exp]
 
     for idx, col in enumerate(bt_cols):
         val = bt_models[idx] if idx < len(bt_models) else ""
@@ -227,6 +512,135 @@ def _write_compresores(ws, project_data: Dict[str, Any]) -> None:
     for idx, col in enumerate(mt_cols):
         val = mt_models[idx] if idx < len(mt_models) else ""
         _safe_set(ws, model_row, col, val)
+
+    overflow_msgs: List[str] = []
+    if bt_cols and len(bt_items_exp) > len(bt_cols):
+        overflow_msgs.append("EXCEDE SLOTS BAJA")
+    if mt_cols and len(mt_items_exp) > len(mt_cols):
+        overflow_msgs.append("EXCEDE SLOTS MEDIA")
+    if overflow_msgs:
+        pos = _find_label_cell(ws, "NOTAS", max_row=ws.max_row)
+        if pos:
+            r, c = _col_after_label(ws, pos[0], pos[1])
+            _safe_set(ws, r, c, "; ".join(overflow_msgs))
+
+    labels = {
+        "DEMAND": ["DEMAND COOLING / CIC", "DEMAND COOLING/CIC"],
+        "VENTILADOR": ["VENTILADOR DE CABEZA"],
+        "CONTACTOR": ["CONTACTOR"],
+        "BREAKER": ["BREAKER"],
+        "CONTROL": ["CONTROL DE CAPACIDAD"],
+        "REGULADOR": ["REGULADOR DE NIVEL DE ACEITE"],
+        "HP": ["HP NOMINAL"],
+        "REF": ["REFRIGERANTE"],
+        "TSUCCION": ["TEMPERATURA DE SUCCION", "TEMPERATURA DE SUCCIÓN"],
+        "TCOND": ["TEMPERATURA DE CONDENSACION", "TEMPERATURA DE CONDENSACIÓN"],
+        "CAP": ["CAPACIDAD  BTU/HR", "CAPACIDAD BTU/HR", "CAPACIDAD  BTU/HR"],
+        "RH": ["RH  BTU/HR", "RH BTU/HR", "RH  BTU/HR"],
+        "RLA": ["RLA"],
+        "CONSUMO": ["CONSUMO EN PUNTO DE OPERACION", "CONSUMO EN PUNTO DE OPERACIÓN"],
+        "RLA_TOTAL": ["RLA TOTAL"],
+        "CONSUMO_TOTAL": ["CONSUMO TOTAL  PUNTO OPERACION", "CONSUMO TOTAL PUNTO OPERACION"],
+    }
+    row_map = {k: _find_label_row_any(ws, v) for k, v in labels.items()}
+
+    perf_db = _load_compresores_perf()
+    specs = project_data.get("specs", {}) if isinstance(project_data, dict) else {}
+    tcond_f = _to_float(specs.get("tcond_f", 0) or 0)
+    refrigerante = str(specs.get("refrigerante", "") or "").strip()
+    bt_items = project_data.get("bt_items", []) if isinstance(project_data, dict) else []
+    mt_items = project_data.get("mt_items", []) if isinstance(project_data, dict) else []
+    tevap_bt = _compute_tevap_design(bt_items) if isinstance(bt_items, list) else None
+    tevap_mt = _compute_tevap_design(mt_items) if isinstance(mt_items, list) else None
+
+    def _control_cap(idx: int) -> str:
+        if idx == 0:
+            return "VARIADOR"
+        if idx == 1:
+            return "UNLOADER"
+        return "NO"
+
+    def _fill_group(cols: List[int], items_exp: List[Dict[str, Any]], tevap_design: float | None) -> Tuple[float, float]:
+        rla_total = 0.0
+        power_total = 0.0
+        for idx, col in enumerate(cols):
+            item = items_exp[idx] if idx < len(items_exp) else {}
+            model = str(item.get("model", "") or "")
+            perf = None
+            if model and tcond_f and tevap_design is not None:
+                perf = _get_nearest_perf_point(
+                    perf_db, comp.get("brand", ""), model, refrigerante, tcond_f, tevap_design
+                )
+            cap = _to_float(perf.get("capacity_btu_h", 0) if isinstance(perf, dict) else 0)
+            rh = _to_float(perf.get("heat_rejection_btu_h", 0) if isinstance(perf, dict) else 0)
+            rla = _to_float(perf.get("rla", 0) if isinstance(perf, dict) else 0)
+            power_kw = _to_float(perf.get("consumption_kw", 0) if isinstance(perf, dict) else 0)
+            if not power_kw and isinstance(perf, dict):
+                power_kw = _to_float(perf.get("power_kw", 0))
+            if not power_kw and isinstance(perf, dict):
+                power_kw = _to_float(perf.get("power_w", 0)) / 1000.0
+            hp = _to_float(perf.get("hp_nominal", 0) if isinstance(perf, dict) else 0)
+
+            ctrl = str(item.get("control_capacidad", "") or "").strip().upper()
+            if not ctrl:
+                ctrl = _control_cap(idx)
+            demand = str(item.get("demand_cooling", "") or "").strip().upper()
+            if not demand:
+                demand = "SI" if ctrl != "NO" else "NO"
+            vent = str(item.get("ventilador_cabeza", "") or "").strip().upper() or "SI"
+            contactor = str(item.get("contactor", "") or "").strip().upper() or "SI"
+            breaker = str(item.get("breaker", "") or "").strip().upper() or "SI"
+            reg_aceite = str(item.get("regulador_aceite", "") or "").strip().upper() or "SI"
+            if row_map["CONTROL"]:
+                _safe_set(ws, row_map["CONTROL"], col, ctrl if model else "")
+            if row_map["DEMAND"]:
+                _safe_set(ws, row_map["DEMAND"], col, demand if model else "")
+            if row_map["VENTILADOR"]:
+                _safe_set(ws, row_map["VENTILADOR"], col, vent if model else "")
+            if row_map["CONTACTOR"]:
+                _safe_set(ws, row_map["CONTACTOR"], col, contactor if model else "")
+            if row_map["BREAKER"]:
+                _safe_set(ws, row_map["BREAKER"], col, breaker if model else "")
+            if row_map["REGULADOR"]:
+                _safe_set(ws, row_map["REGULADOR"], col, reg_aceite if model else "")
+            if row_map["HP"]:
+                _safe_set(ws, row_map["HP"], col, hp if model else "")
+            if row_map["REF"]:
+                _safe_set(ws, row_map["REF"], col, refrigerante if model else "")
+            if row_map["TSUCCION"]:
+                _safe_set(ws, row_map["TSUCCION"], col, tevap_design if model else "")
+            if row_map["TCOND"]:
+                _safe_set(ws, row_map["TCOND"], col, tcond_f if model else "")
+            if row_map["CAP"]:
+                _safe_set(ws, row_map["CAP"], col, int(round(cap)) if model else "")
+            if row_map["RH"]:
+                _safe_set(ws, row_map["RH"], col, int(round(rh)) if model else "")
+            if row_map["RLA"]:
+                _safe_set(ws, row_map["RLA"], col, round(rla, 2) if model else "")
+            if row_map["CONSUMO"]:
+                _safe_set(ws, row_map["CONSUMO"], col, round(power_kw, 2) if model else "")
+
+            if model and rla:
+                rla_total += rla
+            if model and power_kw:
+                power_total += power_kw
+        return rla_total, power_total
+
+    bt_rla_total, bt_power_total = _fill_group(bt_cols, bt_items_exp, tevap_bt)
+    mt_rla_total, mt_power_total = _fill_group(mt_cols, mt_items_exp, tevap_mt)
+
+    total_rla = bt_rla_total + mt_rla_total
+    total_power = bt_power_total + mt_power_total
+    if row_map["RLA_TOTAL"]:
+        pos = _find_label_cell(ws, labels["RLA_TOTAL"][0], max_row=ws.max_row)
+        if pos:
+            r, c = _col_after_label(ws, pos[0], pos[1])
+            _safe_set(ws, r, c, round(total_rla, 2) if total_rla else "")
+    if row_map["CONSUMO_TOTAL"]:
+        pos = _find_label_cell(ws, labels["CONSUMO_TOTAL"][0], max_row=ws.max_row)
+        if pos:
+            r, c = _col_after_label(ws, pos[0], pos[1])
+            _safe_set(ws, r, c, round(total_power, 2) if total_power else "")
 
 
 def _cleanup_invalid_merges(ws) -> None:
@@ -1232,6 +1646,67 @@ def build_legend_workbook(template_path: Path, project_data: Dict[str, Any]):
                 block_row_new -= 1
             _restore_template_block(ws, tpl_ws, block_row_tpl, block_row_new)
     _write_compresores(ws, project_data)
+    # ------------------------ resumen CAP/CARGA/RESERVA + RH + bloques ------------------------
+    try:
+        perf_db = _load_compresores_perf()
+        tcond_f = _to_float(specs.get("tcond_f", 0) or 0)
+        refrigerante = str(specs.get("refrigerante", "") or "").strip()
+        tevap_bt = _compute_tevap_design(bt_items) if isinstance(bt_items, list) else None
+        tevap_mt = _compute_tevap_design(mt_items) if isinstance(mt_items, list) else None
+        cap_bt, cap_mt, rh_bt, rh_mt = _compute_comp_totals(
+            project_data, perf_db, tcond_f, tevap_bt, tevap_mt, refrigerante
+        )
+        carga_bt = bt_total
+        carga_mt = mt_total
+        reserva_bt_pct = (cap_bt - carga_bt) / carga_bt * 100.0 if carga_bt > 0 else 0.0
+        reserva_mt_pct = (cap_mt - carga_mt) / carga_mt * 100.0 if carga_mt > 0 else 0.0
+
+        _write_baja_media(ws, "CAP", int(round(cap_bt)), int(round(cap_mt)), number_format="#,##0")
+        _write_baja_media(ws, "CARGA", int(round(carga_bt)), int(round(carga_mt)), number_format="#,##0")
+        _write_baja_media(ws, "RESERVA %", reserva_bt_pct / 100.0, reserva_mt_pct / 100.0, number_format="0%")
+
+        _write_rh_box(ws, rh_bt, rh_mt, rh_bt + rh_mt)
+
+        # Bloque CONDENSADOR
+        cond_header = _find_cell_contains(ws, "CONDENSADOR", max_row=ws.max_row)
+        cond_start = cond_header[0] if cond_header else 1
+        cond_end = cond_start + 20 if cond_header else ws.max_row
+        _write_next_label_in_rows(ws, "REFR.", refrigerante, cond_start, cond_end, uppercase=True)
+        _write_next_label_in_rows(ws, "T. COND", tcond_f, cond_start, cond_end, number_format="0")
+        def _spec(*keys: str) -> Any:
+            for k in keys:
+                if k in specs:
+                    return specs.get(k)
+            return ""
+        _write_next_label_in_rows(ws, "MODELO", _spec("condensador_modelo", "condenser_model"), cond_start, cond_end)
+        _write_next_label_in_rows(ws, "CANTIDAD", _spec("condensador_cantidad", "condenser_qty"), cond_start, cond_end, number_format="0")
+        _write_next_label_in_rows(ws, "CAPACIDAD", _spec("condensador_capacidad", "condenser_capacity"), cond_start, cond_end)
+        _write_next_label_in_rows(ws, "RPM", _spec("condensador_rpm", "condenser_rpm"), cond_start, cond_end)
+        _write_next_label_in_rows(ws, "DBA", _spec("condensador_dba", "condenser_dba"), cond_start, cond_end)
+        _write_next_label_in_rows(ws, "DIMENSION", _spec("condensador_dimension", "condenser_dimension"), cond_start, cond_end)
+
+        # Bloque WESTON
+        west_header = _find_cell_contains(ws, "WESTON SAS - BOGOTA - COLOMBIA", max_row=ws.max_row)
+        west_start = west_header[0] if west_header else 1
+        west_end = west_start + 20 if west_header else ws.max_row
+        _write_next_label_in_rows(ws, "CALCULO", specs.get("calculo", ""), west_start, west_end)
+        reviso_val = specs.get("reviso", "")
+        rev_cells = _find_all_label_cells(ws, "REVISO", max_row=ws.max_row)
+        for pos in rev_cells:
+            if pos[0] < west_start or pos[0] > west_end:
+                continue
+            r, c = _merged_anchor_cell(ws, pos[0], pos[1])
+            tr, tc = _col_after_label(ws, r, c)
+            tr, tc = _merged_anchor_cell(ws, tr, tc)
+            ws.cell(tr, tc).value = reviso_val
+        _write_next_label_in_rows(ws, "VENDEDOR", specs.get("vendedor", ""), west_start, west_end)
+        _write_next_label_in_rows(ws, "CLIENTE", specs.get("cliente", ""), west_start, west_end)
+        fecha_val = specs.get("fecha") or datetime.now()
+        _write_next_label_in_rows(ws, "FECHA", _format_fecha_es(fecha_val), west_start, west_end, uppercase=True)
+        _write_next_label_in_rows(ws, "ULTIMA REFORMA", specs.get("ultima_reforma", ""), west_start, west_end)
+        _write_next_label_in_rows(ws, "VERSION", specs.get("version", ""), west_start, west_end)
+    except Exception:
+        pass
     _cleanup_invalid_merges(ws)
     _prune_overlapping_merges(ws, header_row, last_row)
     _force_total_value(ws, "CARGA TOTAL BAJA", bt_total, btu_col)
