@@ -328,17 +328,24 @@ class BibliotecaProyectosDialog(QDialog):
             return
         try:
             # usar Excel base por defecto (igual que en export)
-            base_dir = Path(__file__).resolve().parents[3] / "data"
+            base_data = Path(__file__).resolve().parents[3] / "data"
+            base_dir = base_data / "tableros_electricos"
             candidates = [
                 base_dir / "BD_TABLEROS.xlsx",
                 base_dir / "basedatos.xlsx",
                 base_dir / "CUADRO DE CARGAS -INDIVIDUAL JUAN LOZANO.xlsx",
+                base_data / "BD_TABLEROS.xlsx",
+                base_data / "basedatos.xlsx",
+                base_data / "CUADRO DE CARGAS -INDIVIDUAL JUAN LOZANO.xlsx",
             ]
             basedatos = next((c for c in candidates if c.exists()), candidates[0])
 
             engine = Step4Engine(basedatos)
             brand_map = _build_brand_map(basedatos)
-            inv_map = _load_inventario_map(base_dir / "inventarios.xlsx")
+            inv_path = base_dir / "inventarios.xlsx"
+            if not inv_path.exists():
+                inv_path = base_data / "inventarios.xlsx"
+            inv_map = _load_inventario_map(inv_path)
 
             all_rows = []
             for e in entries:

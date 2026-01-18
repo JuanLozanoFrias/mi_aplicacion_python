@@ -4,10 +4,11 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+import json
 import unicodedata
 
 import pandas as pd
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt, Signal, QTimer, QObject, QEvent
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QFrame,
     QLabel, QLineEdit, QComboBox, QCompleter,
@@ -46,6 +47,15 @@ except Exception:  # pragma: no cover
 EMPTY_CELL = "--"
 
 
+class _NoWheelFilter(QObject):
+    def eventFilter(self, obj, event):  # type: ignore[override]
+        if event.type() == QEvent.Wheel:
+            return True
+        if event.type() == QEvent.MouseButtonPress and event.button() == Qt.MiddleButton:
+            return True
+        return False
+
+
 class Step2Panel(QWidget):
     """
     Paso 2 â€” ConfiguraciÃ³n de Compresores.
@@ -58,10 +68,18 @@ class Step2Panel(QWidget):
         super().__init__()
         self._sheet_cache_comp: Dict[str, Optional[pd.DataFrame]] = {}
         self._sheet_cache_var: Dict[str, Optional[pd.DataFrame]] = {}
+        self._perf_cache: Optional[Dict[str, object]] = None
+        self._corrientes_cache: Optional[Dict[str, object]] = None
+        self._pending_corr_updates: set[str] = set()
+        self._last_corr_key: Dict[str, tuple] = {}
+        self._corr_timer = QTimer(self)
+        self._corr_timer.setSingleShot(True)
+        self._corr_timer.timeout.connect(self._apply_pending_corr_updates)
         self._step2_state: Dict[str, Dict[str, str]] = {}     # Ãºltimo estado exportado
         self._sel_state: Dict[str, str] = {}                   # **recordatorio de V1/V2 por grupo**
         self._puente_state: Dict[str, Dict[str, str]] = {}     # **NUEVO**: {comp: {"modelo":..., "codigo":...}}
         self._step2_widgets: Dict[str, Dict[str, object]] = {}
+        self._no_wheel_filter = _NoWheelFilter(self)
 
         # fuentes globales (combos del Paso 1)
         self._cb_tipo_comp: Optional[QComboBox] = None
@@ -278,6 +296,7 @@ class Step2Panel(QWidget):
             cb_modelo.setMinimumWidth(220)
             cb_modelo.setStyleSheet(combo_style)
             cb_modelo.setFixedHeight(26)
+            cb_modelo.installEventFilter(self._no_wheel_filter)
             if cb_modelo.lineEdit():
                 cb_modelo.lineEdit().setStyleSheet(line_style)
                 cb_modelo.lineEdit().setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
@@ -305,6 +324,7 @@ class Step2Panel(QWidget):
             cb_arranque.setStyleSheet(combo_style)
             cb_arranque.setMinimumWidth(130)
             cb_arranque.setFixedHeight(26)
+            cb_arranque.installEventFilter(self._no_wheel_filter)
             if cb_arranque.lineEdit():
                 cb_arranque.lineEdit().setStyleSheet(line_style)
                 cb_arranque.lineEdit().setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
@@ -414,10 +434,10 @@ class Step2Panel(QWidget):
                 else:
                     cmb.setCurrentIndex(0)
                     cmb.lineEdit().clear()
-                self._update_corriente_for(n)
+                self._schedule_corr_update(n)
 
             cb_modelo.lineEdit().editingFinished.connect(_ensure_valid_and_current); self.changed.emit()
-            cb_modelo.currentTextChanged.connect(lambda _=None, n=name: (self._update_corriente_for(n), self.changed.emit()))
+            cb_modelo.currentTextChanged.connect(lambda _=None, n=name: (self._schedule_corr_update(n), self.changed.emit()))
             cb_arranque.currentIndexChanged.connect(lambda _=None, n=name: (self._on_arranque_changed(n), self.changed.emit()))
             rb_v1.toggled.connect(lambda _=None, n=name: (self._on_var_selection_changed(n), self.changed.emit()))
             rb_v2.toggled.connect(lambda _=None, n=name: (self._on_var_selection_changed(n), self.changed.emit()))
@@ -454,27 +474,43 @@ class Step2Panel(QWidget):
         if sel:
             self._sel_state[name] = sel
 
+    def _schedule_corr_update(self, name: str) -> None:
+        self._pending_corr_updates.add(name)
+        # debounce rápido para evitar recalcular dos veces por el mismo cambio
+        self._corr_timer.start(120)
+
+    def _apply_pending_corr_updates(self) -> None:
+        pending = list(self._pending_corr_updates)
+        self._pending_corr_updates.clear()
+        for name in pending:
+            self._update_corriente_for(name)
+
     def _update_corriente_for(self, name: str) -> None:
         w = self._step2_widgets.get(name)
         if not w: return
 
         modelo = w["modelo"].currentText().strip()
         le = w["corriente"]
+        marca = (self._cb_tipo_comp.currentText() or "").upper().strip() if self._cb_tipo_comp else ""
+        tension = (self._cb_t_alim.currentText() or "").strip() if self._cb_t_alim else ""
+        refrig = (self._cb_refrig.currentText() or "").upper().strip() if self._cb_refrig else ""
+        key = (modelo, marca, tension, refrig)
+        if key == self._last_corr_key.get(name):
+            return
         if not modelo:
             le.setText("")
             self._set_gm(name,""); self._set_cont(name,""); self._set_vars(name,"","")
             self._set_breaker(name,""); self._puente_state.pop(name, None); self._toggle_var_radios(name); return
 
-        marca = (self._cb_tipo_comp.currentText() or "").upper().strip() if self._cb_tipo_comp else ""
-        tension = (self._cb_t_alim.currentText() or "").strip() if self._cb_t_alim else ""
-        refrig = (self._cb_refrig.currentText() or "").upper().strip() if self._cb_refrig else ""
-
-        if refrig != "R744":
+        amps_raw = ""
+        if refrig in ("R744", "CO2", "R-744", "R507", "R-507", "R507A", "R-507A"):
+            amps_raw = self._buscar_corriente_json(marca, modelo, tension, refrig)
+            if not amps_raw and refrig in ("R744", "CO2", "R-744"):
+                amps_raw = self._buscar_corriente_en_hoja(marca, modelo, tension)
+        else:
             le.setText("")
             self._set_gm(name,""); self._set_cont(name,""); self._set_vars(name,"","")
             self._set_breaker(name,""); self._puente_state.pop(name, None); self._toggle_var_radios(name); return
-
-        amps_raw = self._buscar_corriente_en_hoja(marca, modelo, tension)
         if not amps_raw:
             le.setText("")
             self._set_gm(name,""); self._set_cont(name,""); self._set_vars(name,"","")
@@ -486,6 +522,7 @@ class Step2Panel(QWidget):
             le.setText(""); self._set_gm(name,""); self._set_cont(name,""); self._set_vars(name,"","")
             self._set_breaker(name,""); self._puente_state.pop(name, None); self._toggle_var_radios(name); return
 
+        self._last_corr_key[name] = key
         # despuÃ©s de corriente: recalcular
         self._recalc_guardamotor(name)
         self._recalc_contactor(name)
@@ -693,6 +730,149 @@ class Step2Panel(QWidget):
         val = df.iat[idxs[0], col_idx]
         return "" if pd.isna(val) else str(val).strip()
 
+    def _buscar_corriente_json(self, marca: str, modelo: str, tension: str, refrigerante: str) -> str:
+        data = self._load_comp_corrientes()
+        ref_key = self._normalize_refrig(refrigerante).replace("-", "")
+        if ref_key in ("R507", "R507A"):
+            ref = "R507"
+        elif ref_key in ("R744", "CO2"):
+            ref = "R744"
+        else:
+            return ""
+
+        brands = data.get("refrigerants", {}).get(ref, {}).get("brands", {})
+        bdata = brands.get((marca or "").upper().strip())
+        if not isinstance(bdata, dict):
+            return ""
+        models = bdata.get("models", {})
+        mdata = models.get(modelo)
+        if not isinstance(mdata, dict):
+            return ""
+
+        if ref == "R744":
+            currents = mdata.get("currents", {})
+            val = self._pick_current_for_tension(currents, tension)
+            if val is None:
+                return ""
+            try:
+                return str(float(val))
+            except ValueError:
+                return ""
+
+        # R507: primero intenta corrientes directas por tensión (si existen)
+        currents = mdata.get("currents", {})
+        val = self._pick_current_for_tension(currents, tension)
+        if val is not None:
+            try:
+                return str(float(val))
+            except ValueError:
+                return ""
+
+        # R507: fallback a points con RLA (nearest)
+        ref_norm = self._normalize_refrig(refrigerante)
+        points = mdata.get("points", {})
+        if not isinstance(points, dict) or not points:
+            return ""
+
+        tcond_target = bdata.get("tcond_f")
+        tevaps = bdata.get("tevaps_f") or []
+        try:
+            tevap_target = min(float(x) for x in tevaps) if tevaps else None
+        except Exception:
+            tevap_target = None
+
+        best = None
+        best_dist = None
+        for key, pt in points.items():
+            parts = str(key).split("|")
+            if len(parts) < 3:
+                continue
+            ref, tcond_s, tevap_s = parts[0], parts[1], parts[2]
+            if self._normalize_refrig(ref) != ref_norm:
+                continue
+            try:
+                tcond_v = float(tcond_s)
+                tevap_v = float(tevap_s)
+            except ValueError:
+                continue
+            dist = 0.0
+            if tcond_target is not None:
+                dist += abs(tcond_v - float(tcond_target))
+            if tevap_target is not None:
+                dist += abs(tevap_v - float(tevap_target))
+            if best is None or dist < (best_dist or 0.0):
+                best = pt
+                best_dist = dist
+
+        if not isinstance(best, dict):
+            return ""
+        rla = best.get("rla")
+        if rla is None:
+            return ""
+        try:
+            return str(float(rla))
+        except ValueError:
+            return ""
+
+    @staticmethod
+    def _normalize_refrig(refrig: str) -> str:
+        raw = (refrig or "").upper().replace(" ", "").replace("-", "")
+        if raw in ("R507", "R507A"):
+            return "R-507"
+        if raw in ("R744", "CO2"):
+            return "R-744"
+        return (refrig or "").upper().strip()
+
+    @staticmethod
+    def _pick_current_for_tension(currents: object, tension: str):
+        if not isinstance(currents, dict) or not currents:
+            return None
+        t = "".join(ch for ch in str(tension) if ch.isdigit())
+        candidates = []
+        if t in ("220", "230", "208"):
+            candidates = ["220", "230", "208"]
+        elif t in ("460", "480", "440"):
+            candidates = ["460", "480", "440"]
+        elif t:
+            candidates = [t]
+        for c in candidates:
+            if c in currents and currents[c] not in ("", None):
+                return currents[c]
+        # fallback: si solo hay un voltaje, usarlo
+        if len(currents) == 1:
+            return next(iter(currents.values()))
+        return None
+
+    def _load_comp_perf(self) -> Dict[str, object]:
+        if self._perf_cache is not None:
+            return self._perf_cache
+        base = Path(__file__).resolve().parents[3] / "data"
+        path = base / "LEGEND" / "compresores_perf.json"
+        if not path.exists():
+            path = base / "legend" / "compresores_perf.json"
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                self._perf_cache = json.load(f)
+        except Exception:
+            self._perf_cache = {}
+        return self._perf_cache
+
+    def _load_comp_corrientes(self) -> Dict[str, object]:
+        if self._corrientes_cache is not None:
+            return self._corrientes_cache
+        base = Path(__file__).resolve().parents[3] / "data"
+        path = base / "tableros_electricos" / "compresores_corrientes.json"
+        if not path.exists():
+            path = base / "legend" / "compresores_corrientes.json"
+        if not path.exists():
+            path = base / "LEGEND" / "compresores_corrientes.json"
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                self._corrientes_cache = json.load(f)
+        except Exception:
+            self._corrientes_cache = {}
+        return self._corrientes_cache
+
     def _load_var_sheet(self, marca_var: str) -> Optional[pd.DataFrame]:
         def norm(s: str) -> str:
             raw = (s or "").strip().upper()
@@ -752,7 +932,7 @@ class Step2Panel(QWidget):
     # ---------- util ----------
     def _book(self) -> Path:
         # archivo Excel en la raíz del proyecto (data/basedatos.xlsx)
-        return Path(__file__).resolve().parents[3] / "data" / "basedatos.xlsx"
+        return Path(__file__).resolve().parents[3] / "data" / "tableros_electricos" / "basedatos.xlsx"
 
     # ---------- helpers pÃºblicos para orquestador ----------
     def get_group_keys(self) -> List[str]:

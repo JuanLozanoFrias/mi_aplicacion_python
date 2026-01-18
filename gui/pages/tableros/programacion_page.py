@@ -27,7 +27,7 @@ class ProgramacionPage(QWidget):
         super().__init__()
         self._get_step2 = get_step2_state
         self._get_globals = get_globals
-        self._book = basedatos_path or Path(__file__).resolve().parents[3] / "data" / "basedatos.xlsx"
+        self._book = basedatos_path or Path(__file__).resolve().parents[3] / "data" / "tableros_electricos" / "basedatos.xlsx"
 
         self._out_dir = (Path.home() / "Documents" / "ElectroCalc_Exports")
         self._out_dir.mkdir(parents=True, exist_ok=True)

@@ -498,7 +498,7 @@ def export_step4_excel_only(
     marca_global = str(globs.get("marca_elem", "")).strip() or "SIN MARCA"
     tot_rows = _collect_totales(all_rows_for_totals, marca_global)
     # inventario local
-    inv_path = Path("data/inventarios.xlsx")
+    inv_path = Path("data/tableros_electricos/inventarios.xlsx")
     inv_map = _load_inventario_map(inv_path)
 
     headers_tot = ["CÓDIGO", "MODELO", "NOMBRE", "DESCRIPCIÓN", "MARCA",

@@ -4,7 +4,7 @@ import pandas as pd
 
 
 def main() -> None:
-    base = Path("data") / "basedatos.xlsx"
+    base = Path(\"data\") / \"tableros_electricos\" / \"basedatos.xlsx\"
     if not base.exists():
         raise SystemExit(f"No encontré {base}")
 
@@ -43,7 +43,7 @@ def main() -> None:
             else:
                 items.append({"pregunta": q, "tipo": "combo", "opciones": opts})
 
-    out_path = Path("data") / "preguntas_opciones_co2.json"
+    out_path = Path("data") / "tableros_electricos" / "preguntas_opciones_co2.json"
     payload = {"version": 1, "items": items}
     out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"Generado {out_path} con {len(items)} ítems")

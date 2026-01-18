@@ -1918,7 +1918,29 @@ class LegendPage(QWidget):
     def _get_comp_models(self, brand: str) -> List[str]:
         brands = self._comp_perf.get("brands", {}) if isinstance(self._comp_perf, dict) else {}
         models = brands.get(brand, {}).get("models", {}) if isinstance(brands, dict) else {}
-        return sorted(models.keys())
+
+        def has_rla(mdata: Any) -> bool:
+            pts = mdata.get("points", {}) if isinstance(mdata, dict) else {}
+            return any(isinstance(v, dict) and v.get("rla") is not None for v in pts.values())
+
+        def clean_name(m: str) -> str:
+            m = (m or "").strip()
+            if not m:
+                return ""
+            if m.startswith("=") or any(ch in m for ch in ("=", "+")):
+                return ""
+            return m
+
+        out: List[str] = []
+        for m, mdata in models.items():
+            name = clean_name(m)
+            if not name:
+                continue
+            if not has_rla(mdata):
+                continue
+            out.append(name)
+
+        return sorted(set(out))
 
     def _parse_perf_points(self, points: Dict[str, Any]) -> List[Dict[str, Any]]:
         parsed = []
@@ -2116,9 +2138,7 @@ class LegendPage(QWidget):
                     combo.clear()
                     combo.addItem("")
                     combo.addItems(models)
-                    if current and current not in models:
-                        combo.addItem(current)
-                    combo.setCurrentText(current if current else "")
+                    combo.setCurrentText(current if current in models else "")
                     combo.blockSignals(False)
             self._on_comp_changed(block)
 
@@ -2145,10 +2165,10 @@ class LegendPage(QWidget):
         models = self._get_comp_models(brand)
         combo.addItems(models)
         combo.blockSignals(True)
-        if model:
-            if model not in models:
-                combo.addItem(model)
+        if model and model in models:
             combo.setCurrentText(model)
+        else:
+            combo.setCurrentText("")
         combo.blockSignals(False)
         combo.currentTextChanged.connect(lambda _t, b=block: self._on_comp_changed(b))
 

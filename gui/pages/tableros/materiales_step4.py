@@ -36,7 +36,7 @@ class MaterialesStep4Page(QWidget):
         self._get_step2_state = get_step2_state
         self._get_globals = get_globals
 
-        self._book = Path(__file__).resolve().parents[3] / "data" / "basedatos.xlsx"
+        self._book = Path(__file__).resolve().parents[3] / "data" / "tableros_electricos" / "basedatos.xlsx"
         self.engine = Step4Engine(self._book)
         self._comp_enabled: Dict[str, bool] = {}
         self._comp_rows: Dict[str, Dict[str, QLabel]] = {}

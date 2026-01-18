@@ -13,6 +13,28 @@ from PySide6.QtWidgets import (
 
 def _norm(s: str) -> str:
     return (s or "").strip().upper()
+
+
+class _NoWheelCombo(QComboBox):
+    def wheelEvent(self, event) -> None:  # type: ignore[override]
+        event.ignore()
+
+    def mousePressEvent(self, event) -> None:  # type: ignore[override]
+        if event.button() == Qt.MiddleButton:
+            event.ignore()
+            return
+        super().mousePressEvent(event)
+
+
+class _NoWheelSpin(QSpinBox):
+    def wheelEvent(self, event) -> None:  # type: ignore[override]
+        event.ignore()
+
+    def mousePressEvent(self, event) -> None:  # type: ignore[override]
+        if event.button() == Qt.MiddleButton:
+            event.ignore()
+            return
+        super().mousePressEvent(event)
 class YesNoToggle(QFrame):
     """Boton doble SI/NO con estilo similar al modulo de carga electrica."""
 
@@ -232,7 +254,7 @@ class Step3OptionsPanel(QWidget):
         Formato esperado:
             {"version":1,"items":[{"pregunta":"...","tipo":"radio|spin|combo","opciones":[...]}]}
         """
-        cache_path = Path(__file__).resolve().parents[3] / "data" / "preguntas_opciones_co2.json"
+        cache_path = Path(__file__).resolve().parents[3] / "data" / "tableros_electricos" / "preguntas_opciones_co2.json"
         try:
             payload = json.loads(cache_path.read_text(encoding="utf-8"))
             items_in = payload.get("items", []) if isinstance(payload, dict) else []
@@ -305,13 +327,13 @@ class Step3OptionsPanel(QWidget):
             h.addWidget(toggle, 1)
             self._inputs[pregunta] = {"type":"radio","toggle":toggle}
         elif typ == "spin":
-            sp = QSpinBox(); sp.setRange(0,5); sp.setFixedWidth(90)
+            sp = _NoWheelSpin(); sp.setRange(0,5); sp.setFixedWidth(90)
             sp.setStyleSheet("QSpinBox{background:#ffffff;color:#0f172a;border:1px solid #c8d4eb;border-radius:8px;padding:4px 6px;}")
             h.addWidget(sp, 0, Qt.AlignLeft)
             sp.valueChanged.connect(lambda *_: self.changed.emit())
             self._inputs[pregunta] = {"type":"spin","spin":sp}
         else:
-            cb = QComboBox(); cb.addItem(""); cb.addItems([str(o) for o in opts]); cb.setMaximumWidth(240)
+            cb = _NoWheelCombo(); cb.addItem(""); cb.addItems([str(o) for o in opts]); cb.setMaximumWidth(240)
             cb.setStyleSheet("QComboBox{background:#ffffff;color:#0f172a;border:1px solid #c8d4eb;border-radius:8px;padding:6px 8px;}")
             h.addWidget(cb, 0, Qt.AlignLeft)
             cb.currentIndexChanged.connect(lambda *_: self.changed.emit())

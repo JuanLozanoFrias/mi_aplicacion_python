@@ -33,7 +33,7 @@ class ParamsMateriales:
 
 def catalogo_materiales(path: Path | None = None, sheet: str = "MATERIALES") -> List[str]:
     """Lista de descripciones para combos (col A). Si falla, usa un catálogo mínimo."""
-    book = path or Path(__file__).resolve().parents[2] / "data" / "basedatos.xlsx"
+    book = path or Path(__file__).resolve().parents[2] / "data" / "tableros_electricos" / "basedatos.xlsx"
     try:
         df = pd.read_excel(book, sheet_name=sheet, usecols="A", header=None)
         items = df.iloc[:, 0].dropna().astype(str).str.strip().unique().tolist()
