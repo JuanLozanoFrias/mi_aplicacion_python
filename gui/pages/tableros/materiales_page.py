@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Any
 
 import pandas as pd
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import Qt, QTimer, QObject, QEvent
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QFrame,
     QLabel, QLineEdit, QComboBox, QPushButton,
@@ -33,6 +33,15 @@ except Exception:  # pragma: no cover
 STRICT_VALIDATION = False
 
 
+class _NoWheelFilter(QObject):
+    def eventFilter(self, obj, event):  # type: ignore[override]
+        if event.type() == QEvent.Wheel:
+            return True
+        if event.type() == QEvent.MouseButtonPress and event.button() == Qt.MiddleButton:
+            return True
+        return False
+
+
 class MaterialesPage(QWidget):
     """
     Página 'Materiales' (orquestador)
@@ -49,6 +58,8 @@ class MaterialesPage(QWidget):
         self._refresh_timer.timeout.connect(self._refresh_all)
         self._summary_only: bool = False
         self._summary_pending: bool = False
+        self._no_wheel_filter = _NoWheelFilter(self)
+        self._defer_step4: bool = True
         self._build_ui()
 
     # --------------------------------------------------------------------- UI
@@ -154,6 +165,17 @@ class MaterialesPage(QWidget):
         self.marca_var  = QComboBox(); self.marca_var.addItems(
             ["", "NO", "SCHNEIDER", "DANFOSS"]
         )
+        for cb in (
+            self.resp,
+            self.t_alim,
+            self.refrig,
+            self.t_ctl,
+            self.norma_ap,
+            self.tipo_comp,
+            self.marca_elem,
+            self.marca_var,
+        ):
+            cb.installEventFilter(self._no_wheel_filter)
 
         def add_pair(row: int, right: bool, text: str, widget: QWidget) -> None:
             c0 = 2 if right else 0
@@ -238,7 +260,12 @@ class MaterialesPage(QWidget):
         p3l.addWidget(self.step3_panel, 1)
 
         nav3 = QHBoxLayout()
-        nav3.addStretch(1)  # se recalcula automáticamente
+        self.btn_generate_rest = QPushButton("CALCULAR LISTADO DE MATERIALES")
+        self.btn_generate_rest.setStyleSheet(primary_qss)
+        self.btn_generate_rest.clicked.connect(self._on_generate_rest)
+        nav3.addStretch(1)
+        nav3.addWidget(self.btn_generate_rest)
+        nav3.addStretch(1)  # se recalcula automaticamente
         p3l.addLayout(nav3)
 
         cl.addWidget(self.p3_frame)
@@ -267,9 +294,10 @@ class MaterialesPage(QWidget):
             self._dev_prefill_form()
 
         # Cambios globales → refrescar Step2Panel
+        self._refreshing_globals = False
         self.t_alim.currentIndexChanged.connect(self.step2_panel.refresh_all)
-        self.refrig.currentIndexChanged.connect(self.step2_panel.refresh_all)
-        self.tipo_comp.currentIndexChanged.connect(self.step2_panel.refresh_all)
+        self.refrig.currentIndexChanged.connect(self._on_globals_changed)
+        self.tipo_comp.currentIndexChanged.connect(self._on_globals_changed)
         self.marca_var.currentIndexChanged.connect(self.step2_panel.refresh_all)
 
     # -------------------------------------------------------- Navegación
@@ -294,7 +322,7 @@ class MaterialesPage(QWidget):
             self._warn(f"No hay base de datos para compresores de la marca '{marca}' (hoja COMP{marca}). Se usará una lista genérica.")
 
         modelos = self._get_modelos_r744_por_hoja(marca) if refrigerante == "R744" \
-                  else self._get_modelos_master(marca, tension)
+                  else self._get_modelos_master(marca, tension, refrigerante)
 
         self.step2_panel.rebuild(nb, nm, np, modelos)
 
@@ -327,7 +355,10 @@ class MaterialesPage(QWidget):
                 pass
 
         # Encadenar opciones CO2 y resumen en la misma vista
-        self._on_next_from_calc()
+        if self._defer_step4:
+            self._prepare_step3_only()
+        else:
+            self._on_next_from_calc()
 
     def _on_next_from_calc(self) -> None:
         _ = self.step2_panel.export_state()
@@ -353,10 +384,33 @@ class MaterialesPage(QWidget):
         self._loaded_step3_state = None
         self._co2_loaded = True
         self._go_to_step4()
+    def _prepare_step3_only(self) -> None:
+        _ = self.step2_panel.export_state()
+        if hasattr(self.step3_panel, "load_options"):
+            already = False
+            try:
+                already = bool(self.step3_panel.is_loaded())
+            except Exception:
+                already = False
+            try:
+                init_state = self._loaded_step3_state
+                force_flag = True if init_state else (not already)
+                self.step3_panel.load_options(initial_state=init_state, force=force_flag)
+            except TypeError:
+                self.step3_panel.load_options()
+                if self._loaded_step3_state and hasattr(self.step3_panel, "import_state"):
+                    try:
+                        self.step3_panel.import_state(self._loaded_step3_state)
+                    except Exception:
+                        pass
+        self._loaded_step3_state = None
+        self._co2_loaded = True
+
 
     def _schedule_refresh(self) -> None:
+        self._defer_step4 = True
         # Espera breve para agrupar cambios de UI y evitar recalcular en cada tecla
-        self._refresh_timer.start(250)
+        return
 
     def _schedule_summary_only(self) -> None:
         """
@@ -367,12 +421,32 @@ class MaterialesPage(QWidget):
         """
         if not self._co2_loaded:
             return
-        if self._summary_pending:
+        self._defer_step4 = True
+        return
+
+    def _on_globals_changed(self) -> None:
+        # Rebuild Step2 models when refrigerant/brand changes, only if user already avanzó
+        try:
+            if not getattr(self, "p2_frame", None) or not self.p2_frame.isVisible():
+                return
+        except Exception:
             return
+        if self._refreshing_globals:
+            return
+        if not self._validate_required():
+            return
+        self._refreshing_globals = True
+        try:
+            self._on_next_from_form()
+        finally:
+            self._refreshing_globals = False
         self._summary_pending = True
         QTimer.singleShot(0, self._refresh_summary_only)
 
     def _refresh_summary_only(self) -> None:
+        if self._defer_step4:
+            self._summary_pending = False
+            return
         self._summary_pending = False
         try:
             if hasattr(self, "page4") and self.page4 is not None:
@@ -382,6 +456,8 @@ class MaterialesPage(QWidget):
 
     def _refresh_all(self) -> None:
         # Recalcula evitando reconstruir CO2 si ya está cargado
+        if self._defer_step4:
+            return
         try:
             if self._co2_loaded:
                 self.page4.reload_and_render()
@@ -389,6 +465,17 @@ class MaterialesPage(QWidget):
                 self._on_next_from_calc()
         except Exception:
             pass
+
+    def _on_generate_rest(self) -> None:
+        self._defer_step4 = False
+        try:
+            if not self._co2_loaded:
+                self._on_next_from_calc()
+            else:
+                self._go_to_step4()
+        except Exception:
+            pass
+
 
     def _go_to_step4(self) -> None:
         try:
@@ -425,6 +512,7 @@ class MaterialesPage(QWidget):
         self._loaded_step2_state = None
         self._loaded_step3_state = None
         self._co2_loaded = False
+        self._defer_step4 = True
         try:
             if hasattr(self.step3_panel, "clear_all"):
                 self.step3_panel.clear_all()
@@ -531,9 +619,12 @@ class MaterialesPage(QWidget):
                     pass
 
                 try:
+                    self._defer_step4 = False
                     self._on_next_from_form()
                 except Exception:
                     pass
+                finally:
+                    self._defer_step4 = True
                 self._info("Programación cargada y aplicada automáticamente.")
                 return
 
@@ -570,7 +661,15 @@ class MaterialesPage(QWidget):
             ("N COMPRESORES BAJA:", self.n_comp_baja),
 
             try:
+                self._defer_step4 = False
                 self._on_next_from_form()
+            except Exception:
+                pass
+            finally:
+                self._defer_step4 = True
+
+            try:
+                QTimer.singleShot(0, self._on_generate_rest)
             except Exception:
                 pass
 
@@ -635,7 +734,15 @@ class MaterialesPage(QWidget):
                 pass
 
             try:
+                self._defer_step4 = False
                 self._on_next_from_form()
+            except Exception:
+                pass
+            finally:
+                self._defer_step4 = True
+
+            try:
+                QTimer.singleShot(0, self._on_generate_rest)
             except Exception:
                 pass
 
@@ -653,6 +760,9 @@ class MaterialesPage(QWidget):
 
     # ---------------------------------------------------- Catálogo modelos
     def _get_modelos_r744_por_hoja(self, marca: str) -> List[str]:
+        modelos = self._get_modelos_corrientes("R744", marca)
+        if modelos:
+            return modelos
         df = self.step2_panel.load_comp_sheet(marca)
         if df is None or df.shape[0] < 3:
             return self._fallback_por_marca(marca)
@@ -664,8 +774,13 @@ class MaterialesPage(QWidget):
                 seen.add(m); result.append(m)
         return result if result else self._fallback_por_marca(marca)
 
-    def _get_modelos_master(self, marca: str, tension: str) -> List[str]:
-        book = Path(__file__).resolve().parents[3] / "data" / "basedatos.xlsx"
+    def _get_modelos_master(self, marca: str, tension: str, refrigerante: str) -> List[str]:
+        # R507: usar catalogo de corrientes (BITZER/COPELAND/DORIN)
+        if (refrigerante or "").upper().strip() in ("R507", "R-507", "R507A", "R-507A"):
+            modelos = self._get_modelos_corrientes("R507", marca)
+            if modelos:
+                return modelos
+        book = Path(__file__).resolve().parents[3] / "data" / "tableros_electricos" / "basedatos.xlsx"
         try:
             if self._df_master is None:
                 df = pd.read_excel(book, sheet_name="COMPRESORES")
@@ -698,6 +813,53 @@ class MaterialesPage(QWidget):
         except Exception:
             pass
         return self._fallback_por_marca(marca)
+
+    def _get_perf_catalog(self) -> Dict[str, object]:
+        if hasattr(self, "_perf_cache") and self._perf_cache is not None:
+            return self._perf_cache
+        base = Path(__file__).resolve().parents[3] / "data"
+        path = base / "LEGEND" / "compresores_perf.json"
+        if not path.exists():
+            path = base / "legend" / "compresores_perf.json"
+        try:
+            import json
+            with open(path, "r", encoding="utf-8") as f:
+                self._perf_cache = json.load(f)
+        except Exception:
+            self._perf_cache = {}
+        return self._perf_cache
+
+    def _get_corrientes_catalog(self) -> Dict[str, object]:
+        if hasattr(self, "_corrientes_cache") and self._corrientes_cache is not None:
+            return self._corrientes_cache
+        base = Path(__file__).resolve().parents[3] / "data"
+        path = base / "tableros_electricos" / "compresores_corrientes.json"
+        if not path.exists():
+            path = base / "legend" / "compresores_corrientes.json"
+        if not path.exists():
+            path = base / "LEGEND" / "compresores_corrientes.json"
+        try:
+            import json
+            with open(path, "r", encoding="utf-8") as f:
+                self._corrientes_cache = json.load(f)
+        except Exception:
+            self._corrientes_cache = {}
+        return self._corrientes_cache
+
+    def _get_modelos_corrientes(self, refrigerante: str, marca: str) -> List[str]:
+        data = self._get_corrientes_catalog()
+        refrig = (refrigerante or "").upper().replace("-", "").replace(" ", "")
+        if refrig in ("R507A", "R507"):
+            refrig_key = "R507"
+        elif refrig in ("R744", "CO2"):
+            refrig_key = "R744"
+        else:
+            return []
+        brands = data.get("refrigerants", {}).get(refrig_key, {}).get("brands", {})
+        models = brands.get((marca or "").upper().strip(), {}).get("models", {})
+        if not isinstance(models, dict):
+            return []
+        return sorted(models.keys())
 
     @staticmethod
     def _fallback_por_marca(marca: str) -> List[str]:
