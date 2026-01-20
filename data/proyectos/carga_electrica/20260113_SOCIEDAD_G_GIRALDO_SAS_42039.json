@@ -1,0 +1,48 @@
+{
+  "proyecto": "SOCIEDAD G & GIRALDO SAS 42039",
+  "fecha": "20260113",
+  "analisis_economico": false,
+  "eco_params": {
+    "costo_kwh": 900.0,
+    "horas_anuales": 8760.0,
+    "aumento_carga": 1.0,
+    "aumento_energia": 3.0,
+    "tasa_descuento": 5.0,
+    "vida_economica": 20.0
+  },
+  "ramales": [
+    {
+      "ramal": 1,
+      "equipo": "AUTOARGOS CON PUERTAS",
+      "uso": "CARNE",
+      "medida": "3.75",
+      "descongelamiento": "GAS CALIENTE",
+      "tiene_unidad": true,
+      "ref_unidad": "HEX 151",
+      "niveles": 4,
+      "distancia": 0.0
+    },
+    {
+      "ramal": 2,
+      "equipo": "AUTOARGOS CON PUERTAS",
+      "uso": "LACTEOS",
+      "medida": "2.5",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HEX 101",
+      "niveles": 4,
+      "distancia": 0.0
+    },
+    {
+      "ramal": 3,
+      "equipo": "AUTOARGOS CON PUERTAS",
+      "uso": "LACTEOS",
+      "medida": "2.85",
+      "descongelamiento": "TIEMPO",
+      "tiene_unidad": true,
+      "ref_unidad": "HEX 101",
+      "niveles": 4,
+      "distancia": 0.0
+    }
+  ]
+}

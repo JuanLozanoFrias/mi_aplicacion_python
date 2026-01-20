@@ -14,6 +14,7 @@ from gui.pages.cargas.industrial_page import IndustrialPage
 from gui.pages.cargas.legend_page import LegendPage
 from gui.pages.materiales_page import MaterialesPage
 from gui.pages.siesa_page import SiesaPage
+from gui.pages.produccion_page import ProduccionPage
 from gui.pages.carga_electrica.carga_electrica_page import CargaElectricaPage
 from gui.pages.creditos_page import CreditosPage
 
@@ -230,12 +231,15 @@ QListWidget::item:selected:hover {
                     self.stack.addWidget(page)
                     self.pages.append(page)
             self.nav.addItem(item)
+            return item
+
 
         add_nav_item("CARGAS TERMICAS", None, header=True)
         add_nav_item("CUARTOS FRIOS", CargaPage(), indent=True, section="cargas")
         add_nav_item("CUARTOS INDUSTRIALES", IndustrialPage(), indent=True, section="cargas")
         add_nav_item("LEGEND", LegendPage(self), indent=True, section="cargas")
 
+        add_nav_item("PRODUCCION", ProduccionPage())
         add_nav_item("TABLEROS ELECTRICOS", MaterialesPage())
         add_nav_item("CARGA ELECTRICA", CargaElectricaPage())
         add_nav_item("SIESA", SiesaPage())

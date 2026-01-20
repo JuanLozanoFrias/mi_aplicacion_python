@@ -4,7 +4,9 @@ from __future__ import annotations
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Tuple
+import math
 import json
+import re
 import pandas as pd
 
 from openpyxl import Workbook
@@ -262,7 +264,7 @@ def _build_brand_map(book: Path) -> Dict[str, str]:
 
 
 # ----------------------------- inventario ------------------------------------
-def _load_inventario_map(inv_path: Path) -> Dict[str, Dict[str, float]]:
+def _load_inventario_map(inv_path: Path) -> Dict[str, Dict[str, float | str]]:
     """
     Lee data/inventarios.xlsx (Hoja1) y devuelve un mapa codigo->{disp, solic}.
     Columnas esperadas (case-insensitive):
@@ -289,6 +291,8 @@ def _load_inventario_map(inv_path: Path) -> Dict[str, Dict[str, float]]:
 
     cols = {norm_col(c): c for c in df.columns if isinstance(c, str)}
     c_ref = cols.get("REFERENCIA")
+    c_desc = cols.get("DESC. ITEM") or cols.get("DESC ITEM")
+    c_um = cols.get("U.M. INVENT.") or cols.get("U.M. INVENT") or cols.get("U.M. INVENTARIO")
     c_disp = cols.get("CANT. DISPONIBLE") or cols.get("CANT DISPONIBLE")
     c_solic = cols.get("CANT. SOLIC. COMPRA") or cols.get("CANT SOLIC COMPRA")
     if not c_ref:
@@ -304,6 +308,8 @@ def _load_inventario_map(inv_path: Path) -> Dict[str, Dict[str, float]]:
                 code = str(int(code_num))
         except Exception:
             pass
+        desc = str(row.get(c_desc, "")).strip() if c_desc else ""
+        um = str(row.get(c_um, "")).strip() if c_um else ""
         disp = row.get(c_disp, 0) if c_disp else 0
         solic = row.get(c_solic, 0) if c_solic else 0
         try:
@@ -314,14 +320,18 @@ def _load_inventario_map(inv_path: Path) -> Dict[str, Dict[str, float]]:
             solic_f = float(solic)
         except Exception:
             solic_f = 0.0
-        cur = inv.get(code, {"disp": 0.0, "solic": 0.0})
+        cur = inv.get(code, {"disp": 0.0, "solic": 0.0, "desc": "", "um": ""})
+        if desc and not cur.get("desc"):
+            cur["desc"] = desc
+        if um and not cur.get("um"):
+            cur["um"] = um
         cur["disp"] += disp_f
         cur["solic"] += solic_f
         inv[code] = cur
     return inv
 
 
-def _write_inventario_sheet(wb: Workbook, tot_rows: List[List[str]], inv_map: Dict[str, Dict[str, float]]) -> None:
+def _write_inventario_sheet(wb: Workbook, tot_rows: List[List[str]], inv_map: Dict[str, Dict[str, float | str]]) -> None:
     """
     Agrega hoja INVENTARIO con comparativo requerido vs disponible/solicitado.
     tot_rows: filas [codigo, modelo, nombre, desc, marca, icc240, icc480, ref, torque, cantidad]
@@ -355,6 +365,241 @@ def _write_inventario_sheet(wb: Workbook, tot_rows: List[List[str]], inv_map: Di
             cell.border = _BORDER
         row += 1
 
+    _autosize(ws)
+
+
+def _as_num(value: object) -> object:
+    try:
+        f = float(value)
+        if f.is_integer():
+            return int(f)
+        return f
+    except Exception:
+        return value
+
+
+def _norm_text(s: object) -> str:
+    v = "" if s is None else str(s)
+    v = v.strip().upper()
+    v = v.translate(str.maketrans("ÁÉÍÓÚÜÑ", "AEIOUUN"))
+    v = v.replace("  ", " ")
+    return v
+
+
+def _norm_code(code: object) -> str:
+    s = "" if code is None else str(code).strip()
+    try:
+        f = float(s)
+        if f.is_integer():
+            return str(int(f))
+    except Exception:
+        pass
+    return s
+
+
+def _step3_yes(step3: Dict[str, object], label: str) -> bool:
+    if not isinstance(step3, dict):
+        return False
+    want = _norm_text(label)
+    for k, v in step3.items():
+        if _norm_text(k) == want:
+            if isinstance(v, dict) and "value" in v:
+                v = v["value"]
+            vv = _norm_text(v)
+            return vv in ("SI", "S", "TRUE", "1")
+    return False
+
+
+def _qty_from_notes(notes: str, total_comp: int, total_borneras: int) -> int:
+    if not notes:
+        return 0
+    t = _norm_text(notes)
+    nums = [int(n) for n in re.findall(r"\d+", t)]
+    if "BORNER" in t:
+        if 20 in nums:
+            factor = nums[-1] if nums else 1
+            return int(math.ceil(total_borneras / 20.0) * factor)
+        return nums[-1] if nums else 1
+    if "COMPRESOR" in t:
+        factor = nums[-1] if nums else 1
+        return max(total_comp, 0) * factor
+    if "PROYECTO" in t:
+        return nums[-1] if nums else 1
+    return nums[-1] if nums else 1
+
+
+def _load_reglas_listado(path: Path) -> List[Dict[str, str]]:
+    if not path.exists():
+        return []
+    try:
+        df = pd.read_excel(path, sheet_name=0)
+    except Exception:
+        return []
+    cols = {str(c).strip().lower(): c for c in df.columns}
+    def col(name: str) -> str | None:
+        return cols.get(name.lower())
+    c_code = col("codigo")
+    c_name = col("nombre")
+    c_um = col("um")
+    c_rule = col("regla")
+    c_param = col("parametro")
+    c_notes = col("notas")
+    if not c_code:
+        return []
+    rows: List[Dict[str, str]] = []
+    for _, row in df.iterrows():
+        code = _norm_code(row.get(c_code, ""))
+        if not code:
+            continue
+        rows.append({
+            "codigo": code,
+            "nombre": str(row.get(c_name, "") or "").strip(),
+            "um": str(row.get(c_um, "") or "").strip(),
+            "regla": str(row.get(c_rule, "") or "").strip(),
+            "parametro": str(row.get(c_param, "") or "").strip(),
+            "notas": str(row.get(c_notes, "") or "").strip(),
+        })
+    return rows
+
+
+def _apply_reglas_listado(
+    rules: List[Dict[str, str]],
+    step3: Dict[str, object],
+    norma_ap: str,
+    total_comp: int,
+    total_borneras: int,
+) -> Dict[str, Dict[str, object]]:
+    extras: Dict[str, Dict[str, object]] = {}
+    norma_u = _norm_text(norma_ap)
+    for r in rules:
+        regla = _norm_text(r.get("regla"))
+        if not regla:
+            continue
+        param = _norm_text(r.get("parametro"))
+        cond = False
+        if regla in ("IEC", "UL"):
+            cond = regla == norma_u
+        else:
+            cond = _step3_yes(step3, regla)
+
+        if param == "PONE":
+            if not cond:
+                continue
+        elif param == "QUITA":
+            if cond:
+                continue
+        else:
+            if not cond:
+                continue
+
+        qty = _qty_from_notes(r.get("notas", ""), total_comp, total_borneras)
+        if qty <= 0:
+            continue
+        code = _norm_code(r.get("codigo"))
+        if not code:
+            continue
+        cur = extras.get(code, {"qty": 0, "nombre": r.get("nombre", ""), "um": r.get("um", "")})
+        cur["qty"] = int(cur.get("qty", 0)) + int(qty)
+        if not cur.get("nombre"):
+            cur["nombre"] = r.get("nombre", "")
+        if not cur.get("um"):
+            cur["um"] = r.get("um", "")
+        extras[code] = cur
+    return extras
+
+
+def _write_listado_costos_sheet(
+    wb: Workbook,
+    tot_rows: List[List[str]],
+    inv_map: Dict[str, Dict[str, float | str]],
+    step2_state: Dict[str, Dict[str, str]],
+    globs: Dict[str, object],
+    res: Dict[str, object],
+) -> None:
+    """
+    Hoja tipo "LISTADO" para costos, similar a LISTADO DE MATERIALES.
+    Columnas: CODIGO, NOMBRE, U.M., Cant. requerida, Disponible, Cant. solic. compra, (saldo).
+    Inserta dos filas en blanco cada 36 ítems para impresión.
+    """
+    ws = wb.create_sheet("LISTADO", 1)
+    headers = ["CODIGO", "NOMBRE", "U.M.", "Cant. requerida", "Disponible", "Cant. solic. compra", ""]
+
+    # base desde tot_rows
+    listado: Dict[str, Dict[str, object]] = {}
+    for r in tot_rows:
+        if len(r) < 10:
+            continue
+        code = _norm_code(r[0])
+        if not code:
+            continue
+        try:
+            req = float(r[-1])
+        except Exception:
+            req = 0.0
+        if req <= 0:
+            continue
+        inv = inv_map.get(code, {})
+        desc = str(inv.get("desc") or r[2] or r[3] or "").strip()
+        um = str(inv.get("um") or "").strip()
+        cur = listado.get(code, {"req": 0.0, "desc": desc, "um": um})
+        cur["req"] = float(cur.get("req", 0.0)) + req
+        if not cur.get("desc"):
+            cur["desc"] = desc
+        if not cur.get("um"):
+            cur["um"] = um
+        listado[code] = cur
+
+    # aplicar reglas desde excel (si existe)
+    rules_path = Path("data/tableros_electricos/reglas_listado_costos_base.xlsx")
+    rules = _load_reglas_listado(rules_path)
+    step3 = (globs.get("step3_state") or globs.get("step3") or {}) if isinstance(globs, dict) else {}
+    norma_ap = str(globs.get("norma_ap", "")).strip() if isinstance(globs, dict) else ""
+    total_comp = len(step2_state or {})
+    b_total = res.get("borneras_total", {}) if isinstance(res, dict) else {}
+    total_borneras = int(b_total.get("fase", 0) or 0) + int(b_total.get("neutro", 0) or 0) + int(b_total.get("tierra", 0) or 0)
+    extras = _apply_reglas_listado(rules, step3, norma_ap, total_comp, total_borneras)
+    for code, data in extras.items():
+        cur = listado.get(code, {"req": 0.0, "desc": data.get("nombre", ""), "um": data.get("um", "")})
+        cur["req"] = float(cur.get("req", 0.0)) + float(data.get("qty", 0) or 0)
+        if not cur.get("desc"):
+            cur["desc"] = data.get("nombre", "")
+        if not cur.get("um"):
+            cur["um"] = data.get("um", "")
+        listado[code] = cur
+
+    # construir filas ordenadas
+    def _sort_key(x: str) -> tuple:
+        try:
+            return (0, int(float(x)))
+        except Exception:
+            return (1, x)
+
+    rows: List[List[object]] = []
+    count = 0
+    for code in sorted(listado.keys(), key=_sort_key):
+        cur = listado[code]
+        req = float(cur.get("req", 0.0) or 0.0)
+        if req <= 0:
+            continue
+        inv = inv_map.get(code, {})
+        disp = float(inv.get("disp", 0.0) or 0.0)
+        solic = float(inv.get("solic", 0.0) or 0.0)
+        saldo = (disp + solic) - req
+        rows.append([
+            code,
+            str(cur.get("desc", "") or "").strip(),
+            str(cur.get("um", "") or "").strip(),
+            _as_num(req),
+            _as_num(disp),
+            _as_num(solic),
+            _as_num(saldo),
+        ])
+        count += 1
+        if count % 36 == 0:
+            rows.append([""] * len(headers))
+            rows.append([""] * len(headers))
+
+    _write_table(ws, headers, rows, 1)
     _autosize(ws)
 
 
@@ -500,6 +745,7 @@ def export_step4_excel_only(
     # inventario local
     inv_path = Path("data/tableros_electricos/inventarios.xlsx")
     inv_map = _load_inventario_map(inv_path)
+    _write_listado_costos_sheet(wb, tot_rows, inv_map, step2_state, globs, res)
 
     headers_tot = ["CÓDIGO", "MODELO", "NOMBRE", "DESCRIPCIÓN", "MARCA",
                    "C 240 V (kA)", "C 480 V (kA)", "REFERENCIA", "TORQUE", "CANTIDAD",

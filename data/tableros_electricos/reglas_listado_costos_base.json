@@ -1,0 +1,1023 @@
+{
+  "generated_at": "2026-01-18T19:09:42",
+  "source": "data\\tableros_electricos\\faltantes_listado_san_diego.xlsx",
+  "count": 126,
+  "fields": [
+    "codigo",
+    "nombre",
+    "um",
+    "regla",
+    "parametro",
+    "notas"
+  ],
+  "items": [
+    {
+      "codigo": "108062.0",
+      "nombre": "CINCHO DE PUNTA C/ALAS 20CM WMCT-20048",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "112025.0",
+      "nombre": "PASACABLE PLASTICO NEGRO 1 1/2 IPS002-38",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "114280.0",
+      "nombre": "CIERRE SOFLINE ALETA EN 90°",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "115000.0",
+      "nombre": "PERFIL OMEGA REF-AM1DP100 (T X 1MT)",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "115097.0",
+      "nombre": "PORTA ROTULO ALTURA AJUSTABLE 249-119",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "119243.0",
+      "nombre": "BANDEJA ENMALLA Zn20X10.5 BEGFE(G/Z)2010",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "119515.0",
+      "nombre": "REJILLA PARA VENTILADOR 4\"",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "121003.0",
+      "nombre": "LAMINA HR CAL 12 1.20 X 2.40",
+      "um": "LAM",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "130058.0",
+      "nombre": "TERMOSTATO P/VENTILADOR REF 2002002",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "130077.0",
+      "nombre": "MONITOR DE VOLTAJE FULL GAUGE PLUS/02",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "130129.0",
+      "nombre": "FUENTE D/PODER 100-240V 080Z0055 AK-PS",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "130188.0",
+      "nombre": "AF-38-30-00-13",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "130192.0",
+      "nombre": "AF-52-30-00-13",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "130197.0",
+      "nombre": "CONTACTO AUXILIAR CA4-10",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "130198.0",
+      "nombre": "CONTACTO AUXILIAR CERRADO CONTACTOR CA4-01",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "130199.0",
+      "nombre": "CONTACTO AUXILIAR GUARDAMOTOR HKF1-11",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "130206.0",
+      "nombre": "MEDIDOR ENERGIA A9MEM3255",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "130255.0",
+      "nombre": "BORNA 2P 22-12AWG 24A 500V FASE-FASE",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "130259.0",
+      "nombre": "PUENTE ADY 6POLOS 25A P/BORNERA2002/2202",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "130263.0",
+      "nombre": "BORNA 2P 22-12AWG 24A NEUTRO 2002-2239",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "130264.0",
+      "nombre": "BORNA 2P 22-12AWG 24A TIERRA 2002-2237",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "130265.0",
+      "nombre": "FRENO RIEL OMEGA GRIS 249-116",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "130276.0",
+      "nombre": "TRANSFORMADOR CT XMER 62/40 500/5 55171",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "130280.0",
+      "nombre": "VARIADOR ALTIVAR 320 15KW ATV320D15M3C",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "130286.0",
+      "nombre": "VARIADOR ALTIVAR 320 11KW ATV320D11M3C",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "130379.0",
+      "nombre": "TRANSFORMADOR CT DIN 100 5 METSECT5CC010",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "130506.0",
+      "nombre": "CONTACTOR AUXILIAR NF31E-13",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "131004.0",
+      "nombre": "INTERRUPTOR CHERRY BLANCO",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "131013.0",
+      "nombre": "INTERRUPTOR GRANDE SIN NEON REF 28785",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "131129.0",
+      "nombre": "BREAKER 200 REGULABLE",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "131144.0",
+      "nombre": "SH203-C6 MINIBREAKER 3X6",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "131146.0",
+      "nombre": "SH203-C20 MINIBREAKER 3X20",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "131149.0",
+      "nombre": "SH201-C6 MINIBREAKER 1X6",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "131153.0",
+      "nombre": "MARCO P/PULSADORES NEGRO  210-853",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "131160.0",
+      "nombre": "SH201-C4 MINIBREAKER 1X4",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "131161.0",
+      "nombre": "SH201-C2 MINIBREAKER 1X2",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "131182.0",
+      "nombre": "SH202-C6",
+      "um": "nan",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "131183.0",
+      "nombre": "SH202-C4 MINIBREAKER 2X4",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "132009.0",
+      "nombre": "LAMPARA SENALIZ ELECT 22MM PLAST AMARILL",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "132085.0",
+      "nombre": "LUMINARIA LED 60 CM 10W-110V LUZ BLANCA",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "132192.0",
+      "nombre": "LAMPARA SENALIZACION ELECTRON 22MM VERDE",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "132195.0",
+      "nombre": "LAMPARA SENALIZACION ELECTRON 22MM ROJA",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "133029.0",
+      "nombre": "CR-M4SS BASE RELEVO 14 PINES",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "133034.0",
+      "nombre": "TEMPORIZADOR DIG MUL 24-240VAC",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "133045.0",
+      "nombre": "CR-M120AC4",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "134013.0",
+      "nombre": "CONECTOR 3 POLOS T/ PALANCA REF 222-413",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "134023.0",
+      "nombre": "BASE ADHESIVA P/CABLE HC102 BLANCA",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "134095.0",
+      "nombre": "MS165-54",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "134150.0",
+      "nombre": "SH203-C32",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "134151.0",
+      "nombre": "MINI BREAKER ABB SH203-C63 3X63 10Ka/240",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "134195.0",
+      "nombre": "MS165-32",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "136005.0",
+      "nombre": "CABLE THW No.6",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "136006.0",
+      "nombre": "CABLE THW No.8",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "136016.0",
+      "nombre": "CABLE CONTROL 2X18",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "136017.0",
+      "nombre": "CABLE THW No.2",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "136033.0",
+      "nombre": "CABLE VEHICULO No.18 AZUL",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "136034.0",
+      "nombre": "CABLE VEHICULO No.18 BLANCO",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "136038.0",
+      "nombre": "CABLE VEHICULO No.18 NARANJA",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "136040.0",
+      "nombre": "CABLE VEHICULO No.18 ROJO",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "136041.0",
+      "nombre": "CABLE VEHICULO No.18 VERDE",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "136069.0",
+      "nombre": "CABLE NF-FR-LS CALIBRE #12 AZUL",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "136070.0",
+      "nombre": "CABLE NF-FR-LS CALIBRE #12 NEGRO",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "136071.0",
+      "nombre": "CABLE NF-FR-LS CALIBRE #12 ROJO",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "136075.0",
+      "nombre": "CABLE NF-FR-LS CALIBRE #10 NEGRO",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "136082.0",
+      "nombre": "CABLE ENCAUCHETADO 4X10 AWG THWN-2 600V",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "136107.0",
+      "nombre": "CABLE NF-FR-LS CALIBRE #12 AMARILLO",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "136136.0",
+      "nombre": "CABLE ENCAUCHETADO  4X6 AWG THWN-2 600V",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "136137.0",
+      "nombre": "CABLE ENCAUCHETADO  4X8 AWG THWN-2 600V",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "136139.0",
+      "nombre": "CABLE INST  4X20 AWG +FOIL 600V 105 C",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "136192.0",
+      "nombre": "CANALETA RANURADA 60 X 100 (T X 2MT)",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "136199.0",
+      "nombre": "CABLE CONTROL  6X20 + TIERRA",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "137027.0",
+      "nombre": "VENTILADOR MONOF KEST-471BW 110V 4.7\"",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "138066.0",
+      "nombre": "BORNA/CONEXT/TORNILLO WT 10 PE AWG 20-6",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "138134.0",
+      "nombre": "BLOQUE DISTRIBUCI GRIS E1X70-S1X16 200A",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "138135.0",
+      "nombre": "BLOQUE DISTRIBUCION 760 AMP",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "138256.0",
+      "nombre": "TAPA LATERAL P/BORNA REF130255 WIELAND",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139000.0",
+      "nombre": "TERMINAL U 5/32 AZUL VTU 2-4",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139008.0",
+      "nombre": "TERMINAL HEMBRA 1/4 FULL AISLADA 16-14",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139014.0",
+      "nombre": "TERMINAL TUBULAR # 4",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139015.0",
+      "nombre": "TERMINAL TUBULAR # 6",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139016.0",
+      "nombre": "TERMINAL TUBULAR # 8",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139017.0",
+      "nombre": "TERMINAL TUBULAR # 10",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139018.0",
+      "nombre": "TERMINAL TUBULAR # 12",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139019.0",
+      "nombre": "TERMINAL TUBULAR # 14",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139020.0",
+      "nombre": "TERMINAL TUBULAR # 16",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139021.0",
+      "nombre": "TERMINAL TUBULAR # 18",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139028.0",
+      "nombre": "TERMINAL TUBULAR DOBLE 2 X 18",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139029.0",
+      "nombre": "TERMINAL TUBULAR DOBLE 2 X 16",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139031.0",
+      "nombre": "TERMINAL TUBULAR DOBLE 2 X 12",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139034.0",
+      "nombre": "AMARRE BLANCO PARA CABLE 2.4 X 95 MM",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139035.0",
+      "nombre": "AMARRE P/CABLE 8\" 200MM T8 BLANCO",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139062.0",
+      "nombre": "TERMOENCOGIBLE NEGRO 1/4",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139101.0",
+      "nombre": "CANALETA RANURADA 40 X 80 MM C/TAPA",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139148.0",
+      "nombre": "ESPIRAL PLASTICO BLANCO DE 1/2\"",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139223.0",
+      "nombre": "TERMINAL OJO COBRE 6 CON",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139239.0",
+      "nombre": "TERMOENCOGIBLE AZUL 30 MM",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139254.0",
+      "nombre": "TERMINAL TUBULAR #2",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139269.0",
+      "nombre": "PRENSAESTOPA PG36",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "139325.0",
+      "nombre": "TERMOENCOGIBLE AZUL 1/2",
+      "um": "MTS",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "146042.0",
+      "nombre": "CONTROLADOR AK-SM 880 080Z4029",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "146062.0",
+      "nombre": "TRANSDUCER DANFOSS 0-200 PSI 060G2030",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "146063.0",
+      "nombre": "TRANSDUCER DANFOSS 0-500 PSI 060G2031",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "146080.0",
+      "nombre": "SENSOR TEMP PT1000 AKS21M 084N2003",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "146102.0",
+      "nombre": "SENSOR TEMP PT1000 AKS11 REF 084N0003",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "147001.0",
+      "nombre": "TARJ/ MODULO EXTEN AK-XM-103A 080Z0032",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "147009.0",
+      "nombre": "TARJETA COMBINADA AK-XM-205B 080Z0017",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "147010.0",
+      "nombre": "TARJETA ENTRADA DIG 080Z0013 AK2-XM102B",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "147013.0",
+      "nombre": "MODULO COMUNICACION 080Z0061 AK2CM101",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "176004.0",
+      "nombre": "CALCOMANIA WESTON PRECAUCION ROJA",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "176006.0",
+      "nombre": "CALCOMANIA WESTON COLOR NARANJA",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "176068.0",
+      "nombre": "MARCACION DX CL 131#1 MRD 22 C11 x 100",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "176069.0",
+      "nombre": "MARCACION DX CL 131#2 MRD 22 C12 x100",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "176070.0",
+      "nombre": "MARCACION DX CL 131#3 MRD 22 C13 x 100",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "176071.0",
+      "nombre": "MARCACION DX CL 131#4 MRD 22 C14 x 100",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "176075.0",
+      "nombre": "MARCACION DX CL 131#8 MRD 22 C18 x 100",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "177014.0",
+      "nombre": "CINTA PARA ROTULADORA",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "177035.0",
+      "nombre": "CINTA AISLANTE AMARILLA (RLL X 8 MT)",
+      "um": "RLL",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "177037.0",
+      "nombre": "CINTA AISLANTE AZUL (RLL X 8 MT)",
+      "um": "RLL",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "177039.0",
+      "nombre": "CINTA AISLANTE ROJA (RLL X 8 MT)",
+      "um": "RLL",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "183032.0",
+      "nombre": "TOR ESTUFA C/OVAL RANUR (GARB) 3/16X1",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "183036.0",
+      "nombre": "TOR ESTUFA C/OVAL RANUR (GAR 5/32 X 1/2\"",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "183134.0",
+      "nombre": "TUERCA HEXAGONAL 5/32 ZINC (8-32)",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "183152.0",
+      "nombre": "TUERCA REMACHABLE 1/4\" UNC TSN R-9654-08",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "183269.0",
+      "nombre": "TOR C/BOTON A/I M8X40",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "183401.0",
+      "nombre": "ARANDELA PLANA 1/4\"A/I",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    },
+    {
+      "codigo": "183450.0",
+      "nombre": "ARANDELA 3/8\" A/I",
+      "um": "UND",
+      "regla": "",
+      "parametro": "",
+      "notas": ""
+    }
+  ]
+}
