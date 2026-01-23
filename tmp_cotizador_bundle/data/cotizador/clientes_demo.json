@@ -1,0 +1,22 @@
+{
+  "clients": [
+    {
+      "client_id": "C001",
+      "name": "Jerónimo Martins (D1)",
+      "city": "Bogotá",
+      "payment_terms": "30 días"
+    },
+    {
+      "client_id": "C002",
+      "name": "Ara",
+      "city": "Medellín",
+      "payment_terms": "Contado"
+    },
+    {
+      "client_id": "C003",
+      "name": "Cliente Demo",
+      "city": "Villavicencio",
+      "payment_terms": "15 días"
+    }
+  ]
+}

@@ -50,6 +50,9 @@ def get_inventory(company: str = "Weston") -> List[Dict[str, Any]]:
     return get_hub().get_inventory(company)
 
 
+def get_production_orders(company: str = "Weston") -> List[Dict[str, Any]]:
+    return get_hub().get_production_orders(company)
+
+
 def inventory_index(company: str = "Weston") -> Dict[str, Dict[str, Any]]:
     return get_hub().inventory_index(company)
-

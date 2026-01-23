@@ -1,0 +1,34 @@
+{
+  "rounding": {
+    "mode": "nearest",
+    "step": 100
+  },
+  "defaults": {
+    "validity_days": 15,
+    "discount_pct": 3.0,
+    "price_increase_pct": 0.0,
+    "estiba_surcharge_pct": 3.0
+  },
+  "toggles": {
+    "enable_usd_view": true,
+    "enable_margin_demo": true,
+    "enable_stock_mock": true
+  },
+  "taxes": [
+    {
+      "name": "IVA",
+      "pct": 19.0,
+      "apply": true
+    }
+  ],
+  "margin_demo": {
+    "target_pct": 22.0,
+    "warn_below_pct": 15.0,
+    "cost_assumption_pct_of_sales": 78.0
+  },
+  "export": {
+    "pdf_template": "demo_simple",
+    "word_template": "demo_simple",
+    "output_folder": "exports/cotizaciones"
+  }
+}

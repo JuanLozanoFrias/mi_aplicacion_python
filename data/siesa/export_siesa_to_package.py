@@ -5,6 +5,7 @@ import json
 import os
 import hashlib
 import datetime
+from pathlib import Path
 from typing import Any
 
 from siesa_uno_client import SiesaConfig, SiesaUNOClient, CIA_MAP, SQL_FN_INVENTARIO
@@ -33,6 +34,15 @@ _STRIP_COLUMNS = [
     "Estado",
 ]
 
+_ORDER_STRIP_COLUMNS = [
+    "OpNumero",
+    "Estado",
+    "OpReferencia1",
+    "OpReferencia2",
+    "Notas",
+    "CategoriasElectricas",
+]
+
 
 def _sha256_file(path: str) -> str:
     h = hashlib.sha256()
@@ -45,7 +55,7 @@ def _sha256_file(path: str) -> str:
 def _dump_json(path: str, obj: Any) -> None:
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
-        json.dump(obj, f, ensure_ascii=False, indent=2)
+        json.dump(obj, f, ensure_ascii=False, indent=2, default=str)
 
 
 def _env(name: str, default: str | None = None) -> str | None:
@@ -109,6 +119,96 @@ def _clean_strings(df) -> None:
             df[col] = df[col].fillna("").astype(str).str.strip()
 
 
+def _clean_order_strings(df) -> None:
+    for col in _ORDER_STRIP_COLUMNS:
+        if col in df.columns:
+            df[col] = df[col].fillna("").astype(str).str.strip()
+
+
+def _read_sql_file(path: Path) -> str | None:
+    if not path.exists():
+        return None
+    try:
+        raw = path.read_text(encoding="utf-8")
+    except Exception:
+        return None
+    lines = []
+    for line in raw.splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("--"):
+            continue
+        lines.append(line)
+    sql = "\n".join(lines).strip()
+    return sql or None
+
+
+def _get_orders_sql() -> str | None:
+    sql_env = _env("SIESA_ORDERS_SQL")
+    if sql_env:
+        return sql_env
+    sql_path = _env("SIESA_ORDERS_SQL_PATH")
+    if sql_path:
+        return _read_sql_file(Path(sql_path))
+    default_path = Path(__file__).resolve().parent / "sql" / "ordenes_produccion.sql"
+    return _read_sql_file(default_path)
+
+
+def _rename_orders_columns(df) -> None:
+    mapping = {}
+    for col in df.columns:
+        mapping[_normalize_col(col)] = col
+
+    def pick(*keys: str) -> str | None:
+        for k in keys:
+            if k in mapping:
+                return mapping[k]
+        return None
+
+    rename_map = {}
+    rename_map[pick("opnumero", "op_numero", "opnum", "op")] = "OpNumero"
+    rename_map[pick("fechadocto", "fecha_docto", "fechadoc", "fecha")] = "FechaDocto"
+    rename_map[pick("estado", "status")] = "Estado"
+    rename_map[pick("opreferencia1", "referencia1", "ref1")] = "OpReferencia1"
+    rename_map[pick("opreferencia2", "referencia2", "ref2")] = "OpReferencia2"
+    rename_map[pick("notas", "nota", "observaciones", "obs")] = "Notas"
+    rename_map[pick("categoriaselectricas", "categorias_electricas", "categorias")] = "CategoriasElectricas"
+
+    rename_map = {k: v for k, v in rename_map.items() if k}
+    if rename_map:
+        df.rename(columns=rename_map, inplace=True)
+
+
+def _find_orders_excel(base_dir: Path) -> Path | None:
+    if not base_dir.exists():
+        return None
+    for f in base_dir.glob("*.xlsx"):
+        if "ORDENES_PRODUCCION" in f.name.upper():
+            return f
+    for f in base_dir.glob("*.xlsx"):
+        if "CONTROL PERSONAL" not in f.name.upper():
+            return f
+    return None
+
+
+def _load_orders_excel_df():
+    base_dir = Path(__file__).resolve().parents[2] / "data" / "produccion"
+    path = _find_orders_excel(base_dir)
+    if not path:
+        return None, None
+    try:
+        import pandas as pd
+    except Exception:
+        return None, None
+    try:
+        df = pd.read_excel(path, sheet_name="Sheet1")
+    except Exception:
+        try:
+            df = pd.read_excel(path, sheet_name=0)
+        except Exception:
+            return None, None
+    return df, str(path)
+
+
 def export_inventory_snapshot(
     out_company_data_dir: str,
     company: str,
@@ -148,6 +248,69 @@ def export_inventory_snapshot(
     return rel
 
 
+def export_production_orders_snapshot(
+    out_company_data_dir: str,
+    company: str,
+    client: SiesaUNOClient | None = None,
+    sql: str | None = None,
+    allow_excel_fallback: bool = True,
+) -> str | None:
+    id_cia = CIA_MAP.get(company)
+    if id_cia is None:
+        raise KeyError(f"Company no registrada en CIA_MAP: {company}")
+
+    df = None
+    source = {}
+
+    sql_error = None
+    if sql:
+        if client is None:
+            raise ValueError("client requerido para exportar ordenes via SQL.")
+        params = [id_cia] if "?" in sql else []
+        try:
+            df = client.fetch_df(sql, params=params)
+            source = {
+                "type": "sql",
+                "server": client.cfg.server,
+                "database": client.cfg.database,
+            }
+        except Exception as e:
+            sql_error = e
+
+    if df is None and allow_excel_fallback:
+        df, path = _load_orders_excel_df()
+        if df is not None and path:
+            source = {"type": "excel", "path": path}
+            if sql_error:
+                print(f"WARNING: fallo SQL en ordenes, usando Excel -> {sql_error}")
+
+    if df is None:
+        if sql_error:
+            raise sql_error
+        return None
+
+    _rename_orders_columns(df)
+    _clean_order_strings(df)
+
+    rows = df.to_dict(orient="records")
+    payload = {
+        "meta": {
+            "company": company,
+            "id_cia": id_cia,
+            "source": source,
+            "generated_at": datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=-5))).isoformat(),
+            "row_count": len(rows),
+            "columns": list(df.columns),
+        },
+        "rows": rows,
+    }
+
+    rel = f"snapshots/production_orders_{company}.json"
+    out_path = os.path.join(out_company_data_dir, rel)
+    _dump_json(out_path, payload)
+    return rel
+
+
 def build_manifest(out_company_data_dir: str) -> None:
     manifest = {
         "package_name": "weston-company-data",
@@ -166,7 +329,7 @@ def build_manifest(out_company_data_dir: str) -> None:
                 if not (fn.endswith(".json") or fn.endswith(".jsonl")):
                     continue
                 full = os.path.join(dirpath, fn)
-                rel = os.path.relpath(full, out_company_data_dir).replace("\", "/")
+                rel = os.path.relpath(full, out_company_data_dir).replace("\\", "/")
                 kind = "master" if rel.startswith("master_data/") else (
                     "snapshot" if rel.startswith("snapshots/") else (
                         "rules" if rel.startswith("rules/") else "audit"
@@ -203,7 +366,26 @@ def main():
     )
     client = SiesaUNOClient(cfg)
 
-    export_inventory_snapshot(out_dir, "Weston", client)
+    try:
+        export_inventory_snapshot(out_dir, "Weston", client)
+    except SystemExit as e:
+        print(f"WARNING: inventario no exportado -> {e}")
+    except Exception as e:
+        print(f"WARNING: inventario no exportado -> {e}")
+
+    orders_sql = _get_orders_sql()
+    try:
+        rel_orders = export_production_orders_snapshot(
+            out_dir,
+            "Weston",
+            client=client,
+            sql=orders_sql,
+            allow_excel_fallback=True,
+        )
+        if not rel_orders:
+            print("INFO: no se encontraron ordenes de produccion para exportar.")
+    except Exception as e:
+        print(f"WARNING: ordenes de produccion no exportadas -> {e}")
     # export_inventory_snapshot(out_dir, "WBR", client)
     # export_inventory_snapshot(out_dir, "TEKOAM", client)
 

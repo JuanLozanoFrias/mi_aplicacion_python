@@ -1,7 +1,7 @@
 {
   "package_name": "weston-company-data",
   "schema_version": "1.0",
-  "generated_at": "2026-01-14T18:07:28.691674-05:00",
+  "generated_at": "2026-01-21T14:27:20.254057-05:00",
   "files": [
     {
       "path": "master_data/assets.json",
@@ -16,6 +16,11 @@
     {
       "path": "snapshots/inventory_Weston.json",
       "sha256": "d9e120301d9803d154a6132052ca7478cbda0f4e91230ff00d323c7df6a2356f",
+      "kind": "snapshot"
+    },
+    {
+      "path": "snapshots/production_orders_Weston.json",
+      "sha256": "c161d0c2f60010ce14f4cdeca9beb9468079dbdf854eafdff7bda2dd32a0f802",
       "kind": "snapshot"
     },
     {

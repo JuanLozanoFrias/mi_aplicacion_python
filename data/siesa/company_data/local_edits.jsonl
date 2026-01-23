@@ -1,0 +1,10 @@
+{"op": "50839", "codigo": "100004", "cantidad": 1, "timestamp": "2026-01-21T14:33:23.334967"}
+{"op": "50839", "codigo": "100004", "cantidad_anterior": 20, "cantidad_nueva": 21, "rowid": 3814485, "timestamp": "2026-01-21T14:34:47.014926"}
+{"op": "50839", "codigo": "100004", "cantidad_anterior": 21, "cantidad_nueva": 20, "rowid": 3814485, "timestamp": "2026-01-21T14:35:03.553090"}
+{"op": "50839", "codigo": "100004", "cantidad_anterior": 20, "cantidad_nueva": 21, "rowid": 3814485, "timestamp": "2026-01-21T14:35:20.473100"}
+{"op": "50839", "codigo": "100004", "cantidad_anterior": 21, "cantidad_nueva": 20, "rowid": 3814485, "timestamp": "2026-01-21T14:36:19.493635"}
+{"op": "50839", "codigo": "100004", "cantidad_anterior": 20, "cantidad_nueva": 21, "rowid": 3814485, "timestamp": "2026-01-21T14:39:37.945899"}
+{"op": "50839", "codigo": "100004", "cantidad_anterior": 21, "cantidad_nueva": 50, "rowid": 3814485, "timestamp": "2026-01-21T14:41:48.130095"}
+{"op": "50839", "codigo": "100004", "cantidad_anterior": 50, "cantidad_nueva": 20, "rowid": 3814485, "timestamp": "2026-01-21T14:54:13.273394"}
+{"op": "50839", "codigo": "100004", "cantidad_anterior": 20, "cantidad_nueva": 50, "rowid": 3814485, "timestamp": "2026-01-21T14:55:07.657092"}
+{"op": "50839", "codigo": "100004", "cantidad_anterior": 50, "cantidad_nueva": 20, "rowid": 3814485, "timestamp": "2026-01-21T14:55:25.721599"}

@@ -1,0 +1,132 @@
+{
+  "version": "demo-2026-01-20",
+  "currency_default": "COP",
+  "families": [
+    {
+      "family_id": "AUTO_ARGOS",
+      "name": "Autoservicio ARGOS",
+      "tag": "Top ventas",
+      "image": "resources/cotizador/img/argos.jpg",
+      "products": [
+        {
+          "product_id": "ARGOS_25",
+          "name": "ARGOS 2.5 m",
+          "sku": "AUTO-ARGOS-250",
+          "lead_time_days": 15,
+          "base_modules": [
+            {
+              "desc": "Módulo base 2.5 m",
+              "unit_price": 18500000
+            },
+            {
+              "desc": "Iluminación LED",
+              "unit_price": 980000
+            },
+            {
+              "desc": "Control básico",
+              "unit_price": 1250000
+            }
+          ],
+          "optional_addons": [
+            {
+              "desc": "Testero (par)",
+              "unit_price": 1450000
+            },
+            {
+              "desc": "Kit puertas",
+              "unit_price": 3200000
+            },
+            {
+              "desc": "Bumper / protección",
+              "unit_price": 650000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "VIT_TAYRONA",
+      "name": "Vitrina TAYRONA",
+      "tag": "Premium",
+      "image": "resources/cotizador/img/tayrona.jpg",
+      "products": [
+        {
+          "product_id": "TAYRONA_18",
+          "name": "TAYRONA 1.8 m",
+          "sku": "VIT-TAY-180",
+          "lead_time_days": 18,
+          "base_modules": [
+            {
+              "desc": "Vitrina 1.8 m",
+              "unit_price": 14200000
+            },
+            {
+              "desc": "Vidrio templado",
+              "unit_price": 1750000
+            },
+            {
+              "desc": "Iluminación premium",
+              "unit_price": 1200000
+            }
+          ],
+          "optional_addons": [
+            {
+              "desc": "Repisa extra",
+              "unit_price": 420000
+            },
+            {
+              "desc": "Branding frontal",
+              "unit_price": 380000
+            },
+            {
+              "desc": "Kit limpieza y cuidado",
+              "unit_price": 160000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family_id": "AUTO_207",
+      "name": "Autoservicio 2,07",
+      "tag": "Económico",
+      "image": "resources/cotizador/img/auto207.jpg",
+      "products": [
+        {
+          "product_id": "AUTO207_STD",
+          "name": "Autoservicio 2,07 (STD)",
+          "sku": "AUTO-207-STD",
+          "lead_time_days": 12,
+          "base_modules": [
+            {
+              "desc": "Módulo 2,07 m",
+              "unit_price": 13800000
+            },
+            {
+              "desc": "Iluminación LED",
+              "unit_price": 850000
+            },
+            {
+              "desc": "Control básico",
+              "unit_price": 980000
+            }
+          ],
+          "optional_addons": [
+            {
+              "desc": "Kit accesorios estándar",
+              "unit_price": 790000
+            },
+            {
+              "desc": "Testero (par)",
+              "unit_price": 1200000
+            },
+            {
+              "desc": "Top canopy / visera",
+              "unit_price": 560000
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

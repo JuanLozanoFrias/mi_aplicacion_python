@@ -131,6 +131,13 @@ class CompanyDataHub:
             return data.get('rows', [])
         return data
 
+    def get_production_orders(self, company: str = "Weston") -> List[Dict[str, Any]]:
+        filename = f"snapshots/production_orders_{company}.json"
+        data = self._get(filename)
+        if isinstance(data, dict) and "rows" in data:
+            return data.get("rows", [])
+        return data
+
     # ----------- Utilidades -----------
     def find_asset(self, asset_id: str) -> Optional[Dict[str, Any]]:
         for a in self.get_assets():

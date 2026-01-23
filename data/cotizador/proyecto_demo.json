@@ -1,0 +1,42 @@
+{
+  "project": {
+    "project_name": "Cotización Demo - Muebles",
+    "client_id": "C001",
+    "contact": "Compras",
+    "email": "compras@cliente.com",
+    "city": "Bogotá",
+    "currency": "COP",
+    "trm": 4100,
+    "discount_pct": 3.0,
+    "price_increase_pct": 0.0,
+    "estiba": true,
+    "options": {
+      "transporte": false,
+      "instalacion": false,
+      "stock_mock": true
+    },
+    "notes": "Demo para gerencia: valores ilustrativos (no constituyen oferta comercial)."
+  },
+  "cart_seed": [
+    {
+      "product_id": "ARGOS_25",
+      "qty": 1,
+      "selected_addons": [
+        {
+          "desc": "Kit puertas",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "product_id": "AUTO207_STD",
+      "qty": 2,
+      "selected_addons": [
+        {
+          "desc": "Kit accesorios estándar",
+          "qty": 2
+        }
+      ]
+    }
+  ]
+}
